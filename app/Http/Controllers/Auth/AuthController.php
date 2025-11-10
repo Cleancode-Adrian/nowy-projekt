@@ -62,6 +62,13 @@ class AuthController extends Controller
             'is_approved' => false, // require admin approval
         ]);
 
+        // Email do użytkownika - potwierdzenie rejestracji
+        try {
+            Mail::to($user->email)->send(new \App\Mail\UserRegisteredMail($user));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send user registration email: ' . $e->getMessage());
+        }
+
         // Powiadomienie do wszystkich adminów
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
@@ -72,7 +79,7 @@ class AuthController extends Controller
             }
         }
 
-        return redirect()->route('login')->with('success', 'Konto utworzone! Oczekuje na zatwierdzenie przez administratora.');
+        return redirect()->route('login')->with('success', 'Konto utworzone! Sprawdź swoją skrzynkę email i czekaj na zatwierdzenie przez administratora.');
     }
 
     public function logout(Request $request)

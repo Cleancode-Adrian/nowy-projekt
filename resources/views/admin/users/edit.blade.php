@@ -162,14 +162,22 @@
                 <p class="text-xs text-gray-500">Oddziel przecinkami</p>
             </div>
 
-            {{-- Verification --}}
-            <div class="bg-green-50 rounded-xl border border-green-200 p-6">
+            {{-- Approval & Verification --}}
+            <div class="bg-green-50 rounded-xl border border-green-200 p-6 space-y-4">
                 <label class="flex items-center cursor-pointer">
-                    <input type="checkbox" name="is_verified" value="1" {{ old('is_verified', $user->email_verified_at ? true : false) ? 'checked' : '' }}
+                    <input type="checkbox" name="is_approved" value="1" {{ old('is_approved', $user->is_approved) ? 'checked' : '' }}
                            class="rounded border-gray-300 text-green-600 focus:ring-green-500 mr-3">
                     <div>
-                        <span class="font-bold text-gray-900">✅ Zweryfikowany</span>
-                        <p class="text-xs text-gray-600 mt-1">Oznacz jako zweryfikowane konto</p>
+                        <span class="font-bold text-gray-900">✅ Zatwierdzony</span>
+                        <p class="text-xs text-gray-600 mt-1">Użytkownik może się logować</p>
+                    </div>
+                </label>
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" name="is_verified" value="1" {{ old('is_verified', $user->email_verified_at ? true : false) ? 'checked' : '' }}
+                           class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
+                    <div>
+                        <span class="font-bold text-gray-900">📧 Email zweryfikowany</span>
+                        <p class="text-xs text-gray-600 mt-1">Email został potwierdzony</p>
                     </div>
                 </label>
             </div>

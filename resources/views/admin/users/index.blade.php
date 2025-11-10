@@ -123,15 +123,29 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if($user->email_verified_at)
-                                <span class="text-green-600 text-sm font-medium">✅ Zweryfikowany</span>
-                            @else
-                                <span class="text-gray-400 text-sm font-medium">⏳ Niezweryfikowany</span>
-                            @endif
+                            <div class="flex flex-col gap-1">
+                                @if($user->is_approved)
+                                    <span class="text-green-600 text-xs font-medium">✅ Zatwierdzony</span>
+                                @else
+                                    <span class="text-yellow-600 text-xs font-bold">⏳ Oczekuje</span>
+                                @endif
+                                @if($user->email_verified_at)
+                                    <span class="text-blue-600 text-xs">📧 Email OK</span>
+                                @endif
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $user->created_at->format('d.m.Y') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex items-center justify-end gap-2">
+                                @if(!$user->is_approved && $user->role !== 'admin')
+                                    <form method="POST" action="{{ route('admin.users.approve', $user->id) }}" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-xs font-bold transition-colors" title="Zatwierdź użytkownika">
+                                            ✅ Zatwierdź
+                                        </button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('users.profile', $user) }}" target="_blank"
                                    class="text-blue-600 hover:text-blue-700 p-2 hover:bg-blue-50 rounded-lg transition-colors" title="Zobacz profil">
                                     <i class="fa-solid fa-eye"></i>

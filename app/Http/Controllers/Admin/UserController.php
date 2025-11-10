@@ -38,6 +38,7 @@ class UserController extends Controller
             'skills' => 'nullable|array',
             'experience_level' => 'nullable|in:junior,mid,senior,expert',
             'is_verified' => 'boolean',
+            'is_approved' => 'boolean',
         ], [
             'name.required' => 'Nazwa jest wymagana',
             'email.required' => 'Email jest wymagany',
@@ -62,6 +63,7 @@ class UserController extends Controller
             'skills' => $validated['skills'] ?? null,
             'experience_level' => $validated['experience_level'] ?? null,
             'is_verified' => $request->has('is_verified'),
+            'is_approved' => $request->has('is_approved'),
             'email_verified_at' => $request->has('is_verified') ? now() : null,
         ];
 
@@ -99,6 +101,7 @@ class UserController extends Controller
             'skills' => 'nullable|array',
             'experience_level' => 'nullable|in:junior,mid,senior,expert',
             'is_verified' => 'boolean',
+            'is_approved' => 'boolean',
         ], [
             'name.required' => 'Nazwa jest wymagana',
             'email.required' => 'Email jest wymagany',
@@ -121,6 +124,7 @@ class UserController extends Controller
             'skills' => $validated['skills'] ?? null,
             'experience_level' => $validated['experience_level'] ?? null,
             'is_verified' => $request->has('is_verified'),
+            'is_approved' => $request->has('is_approved'),
         ];
 
         if ($request->has('is_verified') && !$user->email_verified_at) {
@@ -143,6 +147,21 @@ class UserController extends Controller
         $user->update($data);
 
         return redirect()->route('admin.users.index')->with('success', 'Użytkownik został zaktualizowany!');
+    }
+
+    public function approve($id)
+    {
+        $user = User::findOrFail($id);
+        $user->update(['is_approved' => true]);
+
+        // Send email notification
+        try {
+            \Mail::to($user->email)->send(new \App\Mail\UserApprovedMail($user));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send approval email: ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Użytkownik został zatwierdzony!');
     }
 
     public function delete($id)

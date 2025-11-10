@@ -114,6 +114,7 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth'])->group(funct
     Route::get('/users/{id}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [AdminUserController::class, 'delete'])->name('users.delete');
+    Route::post('/users/{id}/approve', [AdminUserController::class, 'approve'])->name('users.approve');
 
     // Announcements Management
     Route::get('/announcements', [AdminController::class, 'announcements'])->name('announcements');
