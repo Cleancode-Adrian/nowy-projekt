@@ -30,7 +30,7 @@
 2. Załóż konto i zaloguj się
 3. Kliknij **"New Application"**
 4. Zaakceptuj warunki
-5. Nazwij aplikację (np. "WebFreelance Blog")
+5. Nazwij aplikację (np. "Projekciarz.pl Blog")
 6. Skopiuj **"Access Key"**
 
 **Darmowy tier:**
