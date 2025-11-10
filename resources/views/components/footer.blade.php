@@ -1,15 +1,15 @@
 <footer class="bg-gray-900 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
             {{-- Brand --}}
             <div>
-                <div class="flex items-center mb-4">
-                    <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                        <i class="fa-solid fa-helmet-safety text-white text-sm"></i>
+                <a href="{{ route('home') }}" class="flex items-center mb-4 hover:opacity-80 transition-opacity">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fa-solid fa-helmet-safety text-white text-xl"></i>
                     </div>
-                    <span class="ml-2 text-xl font-bold">Projekciarz.pl</span>
-                </div>
+                    <span class="ml-3 text-2xl font-bold">Projekciarz.pl</span>
+                </a>
                 <p class="text-gray-400 text-sm">
                     Platforma łącząca klientów z profesjonalnymi wykonawcami projektów.
                 </p>
@@ -34,18 +34,6 @@
                     <li><a href="{{ route('privacy-policy') }}" class="hover:text-white transition-colors">Polityka prywatności</a></li>
                     <li><a href="mailto:biuro@cleancodeas.pl" class="hover:text-white transition-colors">Kontakt</a></li>
                 </ul>
-            </div>
-
-            {{-- Company Info --}}
-            <div>
-                <h3 class="font-semibold mb-4">Administrator</h3>
-                <p class="text-sm text-gray-400">CleanCode Adrian Sadowski</p>
-                <p class="text-sm text-gray-400">NIP: 9880303943</p>
-                <p class="text-sm text-gray-400 mt-2">
-                    <a href="mailto:biuro@cleancodeas.pl" class="hover:text-white transition-colors">
-                        biuro@cleancodeas.pl
-                    </a>
-                </p>
             </div>
         </div>
 
