@@ -24,11 +24,10 @@
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">2. Rodzaje zbieranych danych</h2>
             <p class="text-gray-700 mb-4">Serwis zbiera następujące kategorie danych:</p>
             <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-                <li><strong>Dane identyfikacyjne:</strong> imię, nazwisko, adres email</li>
-                <li><strong>Dane kontaktowe:</strong> numer telefonu, nazwa firmy</li>
-                <li><strong>Dane techniczne:</strong> adres IP, typ przeglądarki, system operacyjny</li>
-                <li><strong>Dane dotyczące aktywności:</strong> historia przeglądania, kliknięcia, czas spędzony na stronie</li>
-                <li><strong>Pliki cookies:</strong> pliki przechowywane w urządzeniu użytkownika</li>
+                <li><strong>Dane z rejestracji:</strong> imię i nazwisko, adres email, numer telefonu, nazwa firmy (opcjonalnie)</li>
+                <li><strong>Dane analityczne:</strong> adres IP, typ przeglądarki, system operacyjny (Google Analytics)</li>
+                <li><strong>Dane dotyczące aktywności:</strong> historia przeglądania, interakcje ze stroną (Google Analytics)</li>
+                <li><strong>Pliki cookies:</strong> niezbędne do działania serwisu oraz analityczne (Google Analytics, Google Tag Manager)</li>
             </ul>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">3. Cel i podstawa prawna przetwarzania danych</h2>
@@ -39,48 +38,36 @@
                 <strong>Podstawa prawna:</strong> Art. 6 ust. 1 lit. b) RODO (wykonanie umowy)
             </p>
 
-            <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">3.2. Marketing i reklamy</h3>
+            <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">3.2. Analityka i statystyki</h3>
             <p class="text-gray-700 mb-4">
-                <strong>Cel:</strong> Wyświetlanie spersonalizowanych reklam, analiza zachowań użytkowników<br>
-                <strong>Podstawa prawna:</strong> Art. 6 ust. 1 lit. a) RODO (zgoda) oraz Art. 6 ust. 1 lit. f) RODO (prawnie uzasadniony interes)
+                <strong>Cel:</strong> Analiza ruchu, optymalizacja serwisu, poprawa funkcjonalności (Google Analytics, Google Tag Manager)<br>
+                <strong>Podstawa prawna:</strong> Art. 6 ust. 1 lit. f) RODO (prawnie uzasadniony interes administratora w optymalizacji serwisu)
             </p>
 
-            <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">3.3. Analityka i statystyki</h3>
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">4. Google Analytics, Google Tag Manager i pliki cookies</h2>
             <p class="text-gray-700 mb-4">
-                <strong>Cel:</strong> Analiza ruchu, optymalizacja serwisu, poprawa funkcjonalności<br>
-                <strong>Podstawa prawna:</strong> Art. 6 ust. 1 lit. f) RODO (prawnie uzasadniony interes)
+                Serwis wykorzystuje narzędzia Google do analizy ruchu i optymalizacji:
             </p>
-
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">4. Google Analytics i pliki cookies</h2>
-            <p class="text-gray-700 mb-4">
-                Serwis wykorzystuje <strong>Google Analytics</strong> - narzędzie do analizy ruchu na stronie, które zbiera informacje za pomocą plików cookies.
-            </p>
+            <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
+                <li><strong>Google Analytics</strong> - analiza ruchu na stronie, zbieranie statystyk odwiedzin</li>
+                <li><strong>Google Tag Manager</strong> - zarządzanie tagami marketingowymi i analitycznymi</li>
+            </ul>
 
             <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">4.1. Rodzaje cookies:</h3>
             <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-                <li><strong>Cookies niezbędne:</strong> umożliwiają podstawowe funkcje (logowanie, sesja)</li>
-                <li><strong>Cookies analityczne:</strong> Google Analytics (zbieranie statystyk)</li>
-                <li><strong>Cookies marketingowe:</strong> Google AdSense, Facebook Pixel (personalizacja reklam)</li>
+                <li><strong>Cookies niezbędne:</strong> umożliwiają podstawowe funkcje (logowanie, sesja, bezpieczeństwo)</li>
+                <li><strong>Cookies analityczne:</strong> Google Analytics, Google Tag Manager (zbieranie statystyk, optymalizacja serwisu)</li>
             </ul>
 
             <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">4.2. Zarządzanie cookies:</h3>
             <p class="text-gray-700 mb-4">
-                Użytkownik może w każdej chwili zmienić ustawienia cookies w swojej przeglądarce. Wyłączenie cookies może wpłynąć na funkcjonalność serwisu.
+                Użytkownik może w każdej chwili zmienić ustawienia cookies w swojej przeglądarce. Wyłączenie cookies analitycznych nie wpływa na podstawową funkcjonalność serwisu, ale może ograniczyć możliwość optymalizacji doświadczenia użytkownika.
             </p>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">5. Google AdSense i reklamy</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">5. Hosting i bezpieczeństwo danych</h2>
             <p class="text-gray-700 mb-4">
-                Serwis korzysta z <strong>Google AdSense</strong> do wyświetlania reklam. Google może wykorzystywać dane użytkowników do personalizacji reklam zgodnie z własną polityką prywatności.
-            </p>
-            <p class="text-gray-700 mb-4">
-                <strong>Możesz zrezygnować z personalizowanych reklam:</strong>
-                <a href="https://adssettings.google.com" target="_blank" class="text-blue-600 hover:text-blue-700 underline">Ustawienia reklam Google</a>
-            </p>
-
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">6. Hosting i bezpieczeństwo danych</h2>
-            <p class="text-gray-700 mb-4">
-                Serwis jest hostowany na serwerach VPS zlokalizowanych w Unii Europejskiej.
-                Stosujemy odpowiednie środki techniczne i organizacyjne zapewniające bezpieczeństwo danych.
+                Serwis jest hostowany na serwerach <strong>OVH</strong> (OVH SAS) zlokalizowanych w Unii Europejskiej (Francja).
+                OVH jest renomowanym dostawcą usług hostingowych stosującym najwyższe standardy bezpieczeństwa i ochrony danych.
             </p>
             <p class="text-gray-700 mb-4">
                 <strong>Środki bezpieczeństwa:</strong>
@@ -93,15 +80,16 @@
                 <li>Zapory ogniowe (firewall)</li>
             </ul>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">7. Udostępnianie danych osobom trzecim</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">6. Udostępnianie danych osobom trzecim</h2>
             <p class="text-gray-700 mb-4">Dane osobowe mogą być przekazywane następującym odbiorcom:</p>
             <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-                <li><strong>Dostawca hostingu VPS</strong> - hosting serwisu</li>
-                <li><strong>Dostawcy poczty email</strong> - wysyłka powiadomień</li>
+                <li><strong>OVH SAS</strong> - hosting serwisu (serwery w UE)</li>
+                <li><strong>Google LLC</strong> - Google Analytics, Google Tag Manager (analityka)</li>
+                <li><strong>Dostawcy poczty email</strong> - wysyłka powiadomień systemowych</li>
                 <li><strong>Organy państwowe</strong> - na żądanie uprawnione zgodnie z prawem</li>
             </ul>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">8. Prawa użytkownika (RODO)</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">7. Prawa użytkownika (RODO)</h2>
             <p class="text-gray-700 mb-4">Użytkownikowi przysługują następujące prawa:</p>
             <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
                 <li><strong>Prawo dostępu</strong> - do swoich danych osobowych</li>
@@ -116,21 +104,21 @@
                 <strong>Aby skorzystać z praw, skontaktuj się:</strong> <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 underline">biuro@cleancodeas.pl</a>
             </p>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">9. Okres przechowywania danych</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">8. Okres przechowywania danych</h2>
             <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-                <li><strong>Dane konta:</strong> do momentu usunięcia konta lub 3 lata od ostatniego logowania</li>
-                <li><strong>Dane analityczne:</strong> 26 miesięcy (Google Analytics)</li>
+                <li><strong>Dane konta:</strong> do momentu usunięcia konta lub żądania usunięcia danych</li>
+                <li><strong>Dane analityczne Google Analytics:</strong> 26 miesięcy od ostatniej aktywności</li>
                 <li><strong>Logi systemowe:</strong> 90 dni</li>
-                <li><strong>Korespondencja:</strong> 3 lata od zakończenia sprawy</li>
+                <li><strong>Korespondencja email:</strong> do momentu zakończenia sprawy</li>
             </ul>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">10. Zmiany w Polityce Prywatności</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">9. Zmiany w Polityce Prywatności</h2>
             <p class="text-gray-700 mb-4">
                 Administrator zastrzega sobie prawo do wprowadzania zmian w niniejszej Polityce Prywatności.
                 O wszelkich zmianach użytkownicy zostaną poinformowani za pośrednictwem wiadomości email lub powiadomienia na stronie.
             </p>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">11. Kontakt</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">10. Kontakt</h2>
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
                 <p class="text-gray-700 mb-2"><strong>CleanCode Adrian Sadowski</strong></p>
                 <p class="text-gray-700 mb-2">NIP: 9880303943</p>
