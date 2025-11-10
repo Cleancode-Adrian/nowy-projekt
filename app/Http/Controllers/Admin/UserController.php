@@ -166,7 +166,7 @@ class UserController extends Controller
 
     public function delete($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::withTrashed()->findOrFail($id);
 
         if ($user->id === auth()->id()) {
             return redirect()->route('admin.users.index')->with('error', 'Nie możesz usunąć własnego konta!');
@@ -176,9 +176,17 @@ class UserController extends Controller
             Storage::disk('public')->delete($user->avatar);
         }
 
-        $user->delete();
+        // Usuń powiązane dane
+        $user->announcements()->forceDelete();
+        $user->proposals()->forceDelete();
+        $user->messages()->forceDelete();
+        $user->portfolioItems()->forceDelete();
+        $user->ratings()->forceDelete();
 
-        return redirect()->route('admin.users.index')->with('success', 'Użytkownik został usunięty!');
+        // Usuń użytkownika na zawsze (force delete)
+        $user->forceDelete();
+
+        return redirect()->route('admin.users.index')->with('success', 'Użytkownik został trwale usunięty z systemu!');
     }
 }
 
