@@ -15,10 +15,10 @@
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">1. Informacje ogólne</h2>
             <p class="text-gray-700 mb-4">
-                Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem z serwisu <strong>Projekciarz.pl</strong> dostępnego pod adresem <strong>Projekciarz.pl.pl</strong>.
+                Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem z serwisu <strong>Projekciarz.pl</strong> dostępnego pod adresem <strong>projekciarz.pl</strong>.
             </p>
             <p class="text-gray-700 mb-4">
-                Administratorem danych osobowych jest <strong>Projekciarz.pl Sp. z o.o.</strong> z siedzibą w Warszawie, ul. Przykładowa 123, 00-001 Warszawa, NIP: 1234567890, REGON: 123456789.
+                Administratorem danych osobowych jest <strong>CleanCode Adrian Sadowski</strong>, NIP: 9880303943.
             </p>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">2. Rodzaje zbieranych danych</h2>
@@ -79,8 +79,8 @@
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">6. Hosting i bezpieczeństwo danych</h2>
             <p class="text-gray-700 mb-4">
-                Serwis jest hostowany na serwerach <strong>Hostinger International Ltd.</strong> zlokalizowanych w Unii Europejskiej.
-                Hostinger stosuje odpowiednie środki techniczne i organizacyjne zapewniające bezpieczeństwo danych.
+                Serwis jest hostowany na serwerach VPS zlokalizowanych w Unii Europejskiej.
+                Stosujemy odpowiednie środki techniczne i organizacyjne zapewniające bezpieczeństwo danych.
             </p>
             <p class="text-gray-700 mb-4">
                 <strong>Środki bezpieczeństwa:</strong>
@@ -96,9 +96,8 @@
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">7. Udostępnianie danych osobom trzecim</h2>
             <p class="text-gray-700 mb-4">Dane osobowe mogą być przekazywane następującym odbiorcom:</p>
             <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-                <li><strong>Hostinger International Ltd.</strong> - hosting serwisu</li>
-                <li><strong>Google LLC</strong> - Analytics, AdSense</li>
-                <li><strong>Dostawcy płatności</strong> - w przypadku płatnych usług (przyszłość)</li>
+                <li><strong>Dostawca hostingu VPS</strong> - hosting serwisu</li>
+                <li><strong>Dostawcy poczty email</strong> - wysyłka powiadomień</li>
                 <li><strong>Organy państwowe</strong> - na żądanie uprawnione zgodnie z prawem</li>
             </ul>
 
@@ -114,7 +113,7 @@
                 <li><strong>Prawo do cofnięcia zgody</strong> - w dowolnym momencie</li>
             </ul>
             <p class="text-gray-700 mb-4">
-                <strong>Aby skorzystać z praw, skontaktuj się:</strong> <a href="mailto:kontakt@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">kontakt@Projekciarz.pl.pl</a>
+                <strong>Aby skorzystać z praw, skontaktuj się:</strong> <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 underline">biuro@cleancodeas.pl</a>
             </p>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">9. Okres przechowywania danych</h2>
@@ -133,12 +132,10 @@
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">11. Kontakt</h2>
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
-                <p class="text-gray-700 mb-2"><strong>Projekciarz.pl Sp. z o.o.</strong></p>
-                <p class="text-gray-700 mb-2">ul. Przykładowa 123</p>
-                <p class="text-gray-700 mb-2">00-001 Warszawa, Polska</p>
-                <p class="text-gray-700 mb-2">Email: <a href="mailto:kontakt@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">kontakt@Projekciarz.pl.pl</a></p>
-                <p class="text-gray-700 mb-2">Email (RODO): <a href="mailto:iodo@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">iodo@Projekciarz.pl.pl</a></p>
-                <p class="text-gray-700">Tel: +48 22 123 45 67</p>
+                <p class="text-gray-700 mb-2"><strong>CleanCode Adrian Sadowski</strong></p>
+                <p class="text-gray-700 mb-2">NIP: 9880303943</p>
+                <p class="text-gray-700 mb-2">Email: <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 underline">biuro@cleancodeas.pl</a></p>
+                <p class="text-gray-700">Email (sprawy RODO): <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 underline">biuro@cleancodeas.pl</a></p>
             </div>
 
             <p class="text-gray-600 text-sm mt-8 italic">

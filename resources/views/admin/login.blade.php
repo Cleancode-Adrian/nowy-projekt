@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admina - Logowanie</title>
+    <title>Panel Admina - Logowanie | Projekciarz.pl</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Inter', sans-serif; }</style>
@@ -12,8 +14,8 @@
     <div class="w-full max-w-md">
         <div class="bg-white rounded-2xl shadow-xl p-8">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                    🔐
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-helmet-safety text-white text-3xl"></i>
                 </div>
                 <h2 class="text-3xl font-bold text-gray-900 mb-2">Panel Admina</h2>
                 <p class="text-gray-600">Zaloguj się aby zarządzać platformą</p>
@@ -54,12 +56,6 @@
                     🔓 Zaloguj się
                 </button>
             </form>
-
-            <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p class="text-sm text-blue-900 font-semibold mb-2">Dane testowe admina:</p>
-                <p class="text-sm text-blue-800">Email: admin@example.com</p>
-                <p class="text-sm text-blue-800">Hasło: password</p>
-            </div>
         </div>
     </div>
 </body>

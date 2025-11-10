@@ -1,6 +1,6 @@
 <footer class="bg-gray-900 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
             {{-- Brand --}}
             <div>
@@ -32,24 +32,20 @@
                 <ul class="space-y-2 text-sm text-gray-400">
                     <li><a href="{{ route('terms-of-service') }}" class="hover:text-white transition-colors">Regulamin</a></li>
                     <li><a href="{{ route('privacy-policy') }}" class="hover:text-white transition-colors">Polityka prywatności</a></li>
-                    <li><a href="mailto:kontakt@projekciarz.pl" class="hover:text-white transition-colors">Kontakt</a></li>
+                    <li><a href="mailto:biuro@cleancodeas.pl" class="hover:text-white transition-colors">Kontakt</a></li>
                 </ul>
             </div>
 
-            {{-- Social --}}
+            {{-- Company Info --}}
             <div>
-                <h3 class="font-semibold mb-4">Social Media</h3>
-                <div class="flex space-x-4">
-                    <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors">
-                        <i class="fa-brands fa-facebook-f"></i>
+                <h3 class="font-semibold mb-4">Administrator</h3>
+                <p class="text-sm text-gray-400">CleanCode Adrian Sadowski</p>
+                <p class="text-sm text-gray-400">NIP: 9880303943</p>
+                <p class="text-sm text-gray-400 mt-2">
+                    <a href="mailto:biuro@cleancodeas.pl" class="hover:text-white transition-colors">
+                        biuro@cleancodeas.pl
                     </a>
-                    <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors">
-                        <i class="fa-brands fa-twitter"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors">
-                        <i class="fa-brands fa-linkedin-in"></i>
-                    </a>
-                </div>
+                </p>
             </div>
         </div>
 

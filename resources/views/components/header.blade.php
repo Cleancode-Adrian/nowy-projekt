@@ -31,7 +31,7 @@
             </div>
 
             {{-- User Menu --}}
-            <div class="flex items-center space-x-1 sm:space-x-2 md:space-x-4">
+            <div class="flex items-center gap-2 sm:gap-3 md:gap-4">
                 @auth
                     {{-- Quick Actions (role-based) --}}
                     @if(auth()->user()->isClient())
@@ -49,26 +49,26 @@
                     @endif
 
                     {{-- Messages Icon --}}
-                    <a href="{{ route('messages.index') }}" class="relative p-1 sm:p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <i class="fa-solid fa-envelope text-lg sm:text-xl"></i>
+                    <a href="{{ route('messages.index') }}" class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="fa-solid fa-envelope text-base sm:text-lg md:text-xl"></i>
                         @php
                             $unreadMessages = \App\Models\Message::where('receiver_id', auth()->id())->where('is_read', false)->count();
                         @endphp
                         @if($unreadMessages > 0)
-                            <span class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                                 {{ $unreadMessages > 9 ? '9+' : $unreadMessages }}
                             </span>
                         @endif
                     </a>
 
                     {{-- Notifications Icon --}}
-                    <a href="{{ route('notifications') }}" class="relative p-1 sm:p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <i class="fa-solid fa-bell text-lg sm:text-xl"></i>
+                    <a href="{{ route('notifications') }}" class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="fa-solid fa-bell text-base sm:text-lg md:text-xl"></i>
                         @php
                             $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count();
                         @endphp
                         @if($unreadNotifications > 0)
-                            <span class="absolute top-0 right-0 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                            <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                                 {{ $unreadNotifications > 9 ? '9+' : $unreadNotifications }}
                             </span>
                         @endif
@@ -162,10 +162,10 @@
                     </div>
 
                 @else
-                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 text-xs sm:text-sm font-medium px-2 sm:px-3">
+                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 text-sm font-medium px-3 py-2">
                         Zaloguj
                     </a>
-                    <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-6 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap">
+                    <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
                         Rejestracja
                     </a>
                 @endauth
