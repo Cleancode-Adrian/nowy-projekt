@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; }
+        .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; margin-top: 20px; }
+        .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📨 Nowa oferta!</h1>
+        </div>
+        <div class="content">
+            <p>Witaj!</p>
+            <p><strong>{{ $proposal->freelancer->name }}</strong> wysłał ofertę do Twojego ogłoszenia:</p>
+            <h2>{{ $proposal->announcement->title }}</h2>
+            <p><strong>Cena:</strong> {{ number_format($proposal->price, 2) }} PLN</p>
+            <p><strong>Termin:</strong> {{ $proposal->delivery_days }} dni</p>
+            <p><strong>Opis:</strong><br>{{ $proposal->description }}</p>
+            <a href="{{ url('/announcements/' . $proposal->announcement->id . '/proposals') }}" class="button">
+                Zobacz ofertę
+            </a>
+        </div>
+        <div class="footer">
+            <p>&copy; {{ date('Y') }} WebFreelance. Wszystkie prawa zastrzeżone.</p>
+        </div>
+    </div>
+</body>
+</html>
+
