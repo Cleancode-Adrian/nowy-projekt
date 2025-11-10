@@ -17,8 +17,8 @@
 
             <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">1.1. Definicje</h3>
             <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-                <li><strong>Serwis</strong> - platforma Projekciarz.pl dostępna pod adresem Projekciarz.pl.pl</li>
-                <li><strong>Administrator</strong> - Projekciarz.pl Sp. z o.o., ul. Przykładowa 123, 00-001 Warszawa</li>
+                <li><strong>Serwis</strong> - platforma Projekciarz.pl dostępna pod adresem projekciarz.pl</li>
+                <li><strong>Administrator</strong> - CleanCode Adrian Sadowski, NIP: 9880303943</li>
                 <li><strong>Użytkownik</strong> - każda osoba korzystająca z Serwisu</li>
                 <li><strong>Konto</strong> - zarejestrowane konto użytkownika w Serwisie</li>
                 <li><strong>Ogłoszenie</strong> - treść publikowana przez Użytkownika w Serwisie</li>
@@ -146,14 +146,14 @@
                 Użytkownicy zostaną poinformowani o warunkach płatnych usług przed ich aktywacją.
             </p>
 
-            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">7. Reklamy i marketing</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">7. Analityka i statystyki</h2>
             <p class="text-gray-700 mb-4">
-                Serwis wyświetla reklamy dostarczane przez <strong>Google AdSense</strong> oraz może wysyłać newslettery marketingowe.
+                Serwis wykorzystuje Google Analytics i Google Tag Manager do analizy ruchu i optymalizacji doświadczenia użytkowników.
             </p>
             <ul class="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-                <li>Użytkownik może zrezygnować z newslettera w dowolnym momencie</li>
-                <li>Reklamy są personalizowane na podstawie zachowań użytkownika (cookies)</li>
-                <li>Użytkownik może zarządzać preferencjami reklam w ustawieniach konta</li>
+                <li>Dane analityczne są zbierane w formie zanonimizowanej</li>
+                <li>Użytkownik może zarządzać cookies w ustawieniach przeglądarki</li>
+                <li>Więcej informacji w <a href="{{ route('privacy-policy') }}" class="text-blue-600 hover:text-blue-700 underline">Polityce Prywatności</a></li>
             </ul>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">8. Własność intelektualna</h2>
@@ -171,7 +171,7 @@
             <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">9.1. Usunięcie na żądanie użytkownika</h3>
             <p class="text-gray-700 mb-4">
                 Użytkownik może w każdej chwili usunąć swoje konto wysyłając żądanie na adres:
-                <a href="mailto:kontakt@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">kontakt@Projekciarz.pl.pl</a>
+                <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 underline">biuro@cleancodeas.pl</a>
             </p>
 
             <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">9.2. Usunięcie przez Administratora</h3>
@@ -186,7 +186,7 @@
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">10. Reklamacje</h2>
             <p class="text-gray-700 mb-4">
                 Reklamacje dotyczące działania Serwisu należy składać na adres:
-                <a href="mailto:reklamacje@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">reklamacje@Projekciarz.pl.pl</a>
+                <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 underline">biuro@cleancodeas.pl</a>
             </p>
             <p class="text-gray-700 mb-4">
                 Reklamacja powinna zawierać:
@@ -226,7 +226,7 @@
 
             <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">12.2. Rozstrzyganie sporów</h3>
             <p class="text-gray-700 mb-4">
-                Wszelkie spory będą rozstrzygane przez sąd właściwy dla siedziby Administratora (Warszawa).
+                Wszelkie spory będą rozstrzygane przez sąd właściwy dla miejsca wykonywania działalności gospodarczej przez Administratora zgodnie z przepisami prawa polskiego.
             </p>
 
             <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">12.3. Klauzula salwatoryjna</h3>
@@ -236,15 +236,10 @@
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">13. Kontakt</h2>
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
-                <p class="text-gray-700 mb-2"><strong>Projekciarz.pl Sp. z o.o.</strong></p>
-                <p class="text-gray-700 mb-2">ul. Przykładowa 123</p>
-                <p class="text-gray-700 mb-2">00-001 Warszawa, Polska</p>
-                <p class="text-gray-700 mb-2">NIP: 1234567890</p>
-                <p class="text-gray-700 mb-2">REGON: 123456789</p>
-                <p class="text-gray-700 mb-2">KRS: 0000123456</p>
-                <p class="text-gray-700 mb-2">Email: <a href="mailto:kontakt@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">kontakt@Projekciarz.pl.pl</a></p>
-                <p class="text-gray-700 mb-2">Reklamacje: <a href="mailto:reklamacje@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">reklamacje@Projekciarz.pl.pl</a></p>
-                <p class="text-gray-700">Tel: +48 22 123 45 67</p>
+                <p class="text-gray-700 mb-2"><strong>CleanCode Adrian Sadowski</strong></p>
+                <p class="text-gray-700 mb-2">NIP: 9880303943</p>
+                <p class="text-gray-700 mb-2">Email: <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 underline">biuro@cleancodeas.pl</a></p>
+                <p class="text-gray-700">Reklamacje: <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 underline">biuro@cleancodeas.pl</a></p>
             </div>
 
         </div>

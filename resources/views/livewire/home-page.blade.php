@@ -183,15 +183,6 @@
                             <p class="text-gray-600 text-sm">System ocen i portfolio pomogą Ci wyróżnić się</p>
                         </div>
                     </li>
-                    <li class="flex items-start">
-                        <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                            <i class="fa-solid fa-check text-green-600 text-xs"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Bezpieczne płatności</h4>
-                            <p class="text-gray-600 text-sm">Twoje wynagrodzenie jest zabezpieczone</p>
-                        </div>
-                    </li>
                 </ul>
 
                 <a href="{{ route('register') }}" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors">
