@@ -55,7 +55,7 @@ class MyProposals extends Component
     public function render()
     {
         return view('livewire.my-proposals')->layout('layouts.app', [
-            'title' => 'Moje oferty - WebFreelance',
+            'title' => 'Moje oferty - Projekciarz.pl',
             'description' => 'Lista wszystkich wysłanych ofert',
         ]);
     }

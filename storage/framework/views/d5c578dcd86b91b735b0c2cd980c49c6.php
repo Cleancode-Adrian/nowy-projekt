@@ -5,13 +5,13 @@
             
             <div>
                 <div class="flex items-center mb-4">
-                    <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fa-solid fa-code text-white text-sm"></i>
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-helmet-safety text-white text-sm"></i>
                     </div>
-                    <span class="ml-2 text-xl font-bold">WebFreelance</span>
+                    <span class="ml-2 text-xl font-bold">Projekciarz.pl</span>
                 </div>
                 <p class="text-gray-400 text-sm">
-                    Platforma łącząca klientów z najlepszymi freelancerami.
+                    Platforma łącząca klientów z profesjonalnymi wykonawcami projektów.
                 </p>
             </div>
 
@@ -32,7 +32,7 @@
                 <ul class="space-y-2 text-sm text-gray-400">
                     <li><a href="<?php echo e(route('terms-of-service')); ?>" class="hover:text-white transition-colors">Regulamin</a></li>
                     <li><a href="<?php echo e(route('privacy-policy')); ?>" class="hover:text-white transition-colors">Polityka prywatności</a></li>
-                    <li><a href="mailto:kontakt@webfreelance.pl" class="hover:text-white transition-colors">Kontakt</a></li>
+                    <li><a href="mailto:kontakt@projekciarz.pl" class="hover:text-white transition-colors">Kontakt</a></li>
                 </ul>
             </div>
 
@@ -54,7 +54,7 @@
         </div>
 
         <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; <?php echo e(date('Y')); ?> WebFreelance. Wszelkie prawa zastrzeżone.</p>
+            <p>&copy; <?php echo e(date('Y')); ?> Projekciarz.pl. Wszelkie prawa zastrzeżone.</p>
         </div>
     </div>
 </footer>

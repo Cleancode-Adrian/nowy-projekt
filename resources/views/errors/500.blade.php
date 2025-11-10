@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>500 - Błąd serwera | WebFreelance</title>
+    <title>500 - Błąd serwera | Projekciarz.pl</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -43,7 +43,7 @@
                     <li>• Odśwież stronę (F5)</li>
                     <li>• Spróbuj ponownie za chwilę</li>
                     <li>• Wyczyść cache przeglądarki</li>
-                    <li>• Jeśli problem się powtarza, napisz do nas: <a href="mailto:kontakt@webfreelance.pl" class="underline font-semibold">kontakt@webfreelance.pl</a></li>
+                    <li>• Jeśli problem się powtarza, napisz do nas: <a href="mailto:kontakt@Projekciarz.pl.pl" class="underline font-semibold">kontakt@Projekciarz.pl.pl</a></li>
                 </ul>
             </div>
 

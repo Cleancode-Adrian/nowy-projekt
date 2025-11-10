@@ -92,7 +92,7 @@ class AnnouncementsList extends Component
             'categories' => $categories,
             'tags' => $tags,
         ])->layout('layouts.app', [
-            'title' => 'Przeglądaj ogłoszenia - WebFreelance',
+            'title' => 'Przeglądaj ogłoszenia - Projekciarz.pl',
             'description' => 'Znajdź idealne zlecenie dla siebie. Setki projektów czeka na freelancerów takich jak Ty.',
         ]);
     }

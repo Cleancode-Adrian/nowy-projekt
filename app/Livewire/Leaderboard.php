@@ -55,8 +55,8 @@ class Leaderboard extends Component
     public function render()
     {
         return view('livewire.leaderboard')->layout('layouts.app', [
-            'title' => 'Ranking Freelancerów - WebFreelance',
-            'description' => 'Najlepsi freelancerzy na platformie WebFreelance',
+            'title' => 'Ranking Freelancerów - Projekciarz.pl',
+            'description' => 'Najlepsi freelancerzy na platformie Projekciarz.pl',
         ]);
     }
 }

@@ -48,7 +48,7 @@ class Dashboard extends Component
     public function render()
     {
         return view('livewire.dashboard')->layout('layouts.app', [
-            'title' => 'Panel użytkownika - WebFreelance',
+            'title' => 'Panel użytkownika - Projekciarz.pl',
         ]);
     }
 }

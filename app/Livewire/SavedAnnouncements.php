@@ -31,7 +31,7 @@ class SavedAnnouncements extends Component
         return view('livewire.saved-announcements', [
             'savedAnnouncements' => $savedAnnouncements,
         ])->layout('layouts.app', [
-            'title' => 'Zapisane ogłoszenia - WebFreelance',
+            'title' => 'Zapisane ogłoszenia - Projekciarz.pl',
             'description' => 'Twoje zapisane projekty i zlecenia',
         ]);
     }

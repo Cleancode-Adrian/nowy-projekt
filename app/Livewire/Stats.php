@@ -62,7 +62,7 @@ class Stats extends Component
     public function render()
     {
         return view('livewire.stats')->layout('layouts.app', [
-            'title' => 'Statystyki - WebFreelance',
+            'title' => 'Statystyki - Projekciarz.pl',
         ]);
     }
 }

@@ -21,7 +21,11 @@ class BlogPostSeeder extends Seeder
         // Tagi do przypisania
         $phpTag = Tag::where('name', 'PHP')->first();
         $javascriptTag = Tag::where('name', 'JavaScript')->first();
-        $designTag = Tag::where('name', 'Projektowanie')->first();
+        $uiuxTag = Tag::where('name', 'UI/UX')->first();
+        $wordpressTag = Tag::where('name', 'WordPress')->first();
+        $seoTag = Tag::where('name', 'SEO')->first();
+        $laravelTag = Tag::where('name', 'Laravel')->first();
+        $tailwindTag = Tag::where('name', 'Tailwind CSS')->first();
 
         // Artykuł 1: Jak rozpocząć karierę freelancera
         $post1 = BlogPost::create([
@@ -55,13 +59,13 @@ class BlogPostSeeder extends Seeder
 <h2>3. Ustal konkurencyjne stawki</h2>
 <p>Ustalanie stawek to jeden z najtrudniejszych aspektów freelancingu. Na początku możesz:</p>
 <ul>
-    <li>Sprawdzić stawki konkurencji na platformach takich jak WebFreelance</li>
+    <li>Sprawdzić stawki konkurencji na platformach takich jak Projekciarz.pl</li>
     <li>Zacząć niżej, aby zdobyć pierwsze referencje</li>
     <li>Stopniowo podnosić ceny wraz z doświadczeniem</li>
 </ul>
 
 <h2>4. Zarejestruj się na platformach freelancerskich</h2>
-<p>Platformy takie jak <strong>WebFreelance</strong> to najlepsze miejsce na znalezienie pierwszych klientów. Pamiętaj o:</p>
+<p>Platformy takie jak <strong>Projekciarz.pl</strong> to najlepsze miejsce na znalezienie pierwszych klientów. Pamiętaj o:</p>
 <ul>
     <li>Wypełnieniu profilu w 100%</li>
     <li>Dodaniu profesjonalnego zdjęcia</li>
@@ -88,9 +92,10 @@ class BlogPostSeeder extends Seeder
 </ul>
 
 <h2>Podsumowanie</h2>
-<p>Rozpoczęcie kariery freelancera wymaga planowania, ale może być niezwykle satysfakcjonujące. Najważniejsze to zacząć, zdobywać doświadczenie i nieustannie się rozwijać. Platforma <strong>WebFreelance</strong> jest idealnym miejscem na pierwsze kroki w świecie freelancingu!</p>
+<p>Rozpoczęcie kariery freelancera wymaga planowania, ale może być niezwykle satysfakcjonujące. Najważniejsze to zacząć, zdobywać doświadczenie i nieustannie się rozwijać. Platforma <strong>Projekciarz.pl</strong> jest idealnym miejscem na pierwsze kroki w świecie freelancingu!</p>
 
 <p><strong>Gotowy na start? <a href="/rejestracja">Załóż bezpłatne konto</a> i zacznij zarabiać już dziś!</strong></p>',
+            'featured_image' => 'blog/freelancer-kariera.png',
             'meta_title' => 'Jak Zostać Freelancerem w 2025? Kompletny Przewodnik Krok po Kroku',
             'meta_description' => 'Dowiedz się, jak rozpocząć karierę freelancera w 2025. Ustalanie stawek, budowanie portfolio, znajdowanie klientów i więcej. Praktyczny przewodnik dla początkujących.',
             'meta_keywords' => ['freelancer', 'praca zdalna', 'kariera freelancera', 'jak zostać freelancerem', 'freelancing 2025', 'portfolio freelancera', 'stawki freelancera'],
@@ -99,7 +104,7 @@ class BlogPostSeeder extends Seeder
         ]);
 
         if ($phpTag) $post1->tags()->attach($phpTag);
-        if ($designTag) $post1->tags()->attach($designTag);
+        if ($uiuxTag) $post1->tags()->attach($uiuxTag);
 
         // Artykuł 2: Najlepsze praktyki w komunikacji z klientem
         $post2 = BlogPost::create([
@@ -184,13 +189,14 @@ class BlogPostSeeder extends Seeder
     <li><strong>Trello/Asana</strong> - zarządzanie zadaniami</li>
     <li><strong>Loom</strong> - nagrania wideo z ekranu</li>
     <li><strong>Google Meet/Zoom</strong> - videokonferencje</li>
-    <li><strong>WebFreelance</strong> - centralna platforma do komunikacji i płatności</li>
+    <li><strong>Projekciarz.pl</strong> - centralna platforma do komunikacji i płatności</li>
 </ul>
 
 <h2>Podsumowanie</h2>
 <p>Skuteczna komunikacja to fundament udanego freelancingu. Pamiętaj o tych 10 zasadach, a zobaczysz, jak poprawią się Twoje relacje z klientami i wzrośnie liczba powtarzających się zleceń.</p>
 
-<p><strong>Szukasz projektów, gdzie możesz wykorzystać te umiejętności? <a href="/ogloszenia">Przeglądaj aktualne ogłoszenia</a> na WebFreelance!</strong></p>',
+<p><strong>Szukasz projektów, gdzie możesz wykorzystać te umiejętności? <a href="/ogloszenia">Przeglądaj aktualne ogłoszenia</a> na Projekciarz.pl!</strong></p>',
+            'featured_image' => 'blog/komunikacja-klient.png',
             'meta_title' => 'Komunikacja z Klientem: 10 Zasad dla Freelancera',
             'meta_description' => 'Skuteczna komunikacja to klucz do sukcesu freelancera. Sprawdź 10 zasad, które pomogą Ci budować trwałe relacje z klientami i unikać konfliktów.',
             'meta_keywords' => ['komunikacja z klientem', 'freelancer', 'relacje z klientem', 'zarządzanie projektem', 'współpraca z klientem', 'profesjonalizm', 'freelancing'],
@@ -199,7 +205,7 @@ class BlogPostSeeder extends Seeder
         ]);
 
         if ($javascriptTag) $post2->tags()->attach($javascriptTag);
-        if ($designTag) $post2->tags()->attach($designTag);
+        if ($uiuxTag) $post2->tags()->attach($uiuxTag);
 
         $this->command->info('✅ Dodano 2 artykuły blogowe z pełnymi danymi SEO!');
     }

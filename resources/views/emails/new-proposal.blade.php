@@ -27,7 +27,7 @@
             </a>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} WebFreelance. Wszystkie prawa zastrzeżone.</p>
+            <p>&copy; {{ date('Y') }} Projekciarz.pl. Wszystkie prawa zastrzeżone.</p>
         </div>
     </div>
 </body>

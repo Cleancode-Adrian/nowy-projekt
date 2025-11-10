@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admina - WebFreelance</title>
+    <title>Panel Admina - Projekciarz.pl</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
                     <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                         <i class="fa-solid fa-code text-white"></i>
                     </div>
-                    <h1 class="text-xl font-bold">WebFreelance</h1>
+                    <h1 class="text-xl font-bold">Projekciarz.pl</h1>
                 </div>
                 <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2">
                     <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-sm font-bold">

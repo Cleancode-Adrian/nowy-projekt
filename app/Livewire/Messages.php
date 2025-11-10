@@ -63,7 +63,7 @@ class Messages extends Component
     public function render()
     {
         return view('livewire.messages')->layout('layouts.app', [
-            'title' => 'Wiadomości - WebFreelance',
+            'title' => 'Wiadomości - Projekciarz.pl',
             'description' => 'Twoje prywatne rozmowy',
         ]);
     }

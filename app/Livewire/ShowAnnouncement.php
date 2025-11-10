@@ -31,7 +31,7 @@ class ShowAnnouncement extends Component
         return view('livewire.show-announcement', [
             'relatedAnnouncements' => $relatedAnnouncements,
         ])->layout('layouts.app', [
-            'title' => $this->announcement->title . ' - WebFreelance',
+            'title' => $this->announcement->title . ' - Projekciarz.pl',
             'description' => Str::limit($this->announcement->description, 160),
             'og_title' => $this->announcement->title,
             'og_description' => Str::limit($this->announcement->description, 200),

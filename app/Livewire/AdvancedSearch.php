@@ -81,7 +81,7 @@ class AdvancedSearch extends Component
         $announcements = $query->paginate(12);
 
         return view('livewire.advanced-search', ['announcements' => $announcements])->layout('layouts.app', [
-            'title' => 'Szukaj projektów - WebFreelance',
+            'title' => 'Szukaj projektów - Projekciarz.pl',
         ]);
     }
 }

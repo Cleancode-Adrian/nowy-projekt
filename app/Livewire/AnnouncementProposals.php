@@ -93,7 +93,7 @@ class AnnouncementProposals extends Component
     public function render()
     {
         return view('livewire.announcement-proposals')->layout('layouts.app', [
-            'title' => 'Oferty do ogłoszenia: ' . $this->announcement->title . ' - WebFreelance',
+            'title' => 'Oferty do ogłoszenia: ' . $this->announcement->title . ' - Projekciarz.pl',
             'description' => 'Zarządzaj otrzymanymi ofertami od freelancerów',
         ]);
     }

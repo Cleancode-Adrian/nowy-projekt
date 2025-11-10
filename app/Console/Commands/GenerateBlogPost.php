@@ -112,7 +112,7 @@ Treść powinna być:
 - Z konkretnymi przykładami
 - Z listami punktowanymi
 - Profesjonalna, ale przystępna
-- Zakończona call-to-action do platformy WebFreelance
+- Zakończona call-to-action do platformy Projekciarz.pl
 
 Zwróć odpowiedź w formacie JSON:
 {

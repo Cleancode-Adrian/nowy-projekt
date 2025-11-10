@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Strona nie znaleziona | WebFreelance</title>
+    <title>404 - Strona nie znaleziona | Projekciarz.pl</title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -77,7 +77,7 @@
                     <li>• Sprawdź czy URL jest poprawny</li>
                     <li>• Użyj wyszukiwarki powyżej</li>
                     <li>• Zobacz <a href="<?php echo e(route('faq')); ?>" class="underline font-semibold hover:text-blue-600">FAQ</a> z najczęstszymi pytaniami</li>
-                    <li>• Skontaktuj się z nami: <a href="mailto:kontakt@webfreelance.pl" class="underline font-semibold hover:text-blue-600">kontakt@webfreelance.pl</a></li>
+                    <li>• Skontaktuj się z nami: <a href="mailto:kontakt@Projekciarz.pl.pl" class="underline font-semibold hover:text-blue-600">kontakt@Projekciarz.pl.pl</a></li>
                 </ul>
             </div>
 

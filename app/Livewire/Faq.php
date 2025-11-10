@@ -40,7 +40,7 @@ class Faq extends Component
     public function render()
     {
         return view('livewire.faq')->layout('layouts.app', [
-            'title' => 'FAQ - Najczęściej zadawane pytania - WebFreelance',
+            'title' => 'FAQ - Najczęściej zadawane pytania - Projekciarz.pl',
         ]);
     }
 }

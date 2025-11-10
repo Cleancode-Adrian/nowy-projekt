@@ -35,7 +35,7 @@ class BlogIndex extends Component
         $tags = Tag::select('id', 'name', 'slug')->orderBy('name')->get();
 
         return view('livewire.blog.blog-index', compact('posts', 'tags'))->layout('layouts.app', [
-            'title' => 'Blog - WebFreelance',
+            'title' => 'Blog - Projekciarz.pl',
             'description' => 'Porady, tutoriale i nowości ze świata freelancingu',
         ]);
     }

@@ -20,7 +20,7 @@ class NewUserRegisteredMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '👤 Nowa rejestracja użytkownika - WebFreelance',
+            subject: '👤 Nowa rejestracja użytkownika - Projekciarz.pl',
         );
     }
 

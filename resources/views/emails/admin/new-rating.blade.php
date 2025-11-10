@@ -52,7 +52,7 @@
             </center>
 
             <p style="color: #666; font-size: 14px; margin-top: 30px;">
-                Ten e-mail został wysłany automatycznie przez system WebFreelance.<br>
+                Ten e-mail został wysłany automatycznie przez system Projekciarz.pl.<br>
                 Zaloguj się do panelu admina, aby zatwierdzić lub odrzucić opinię.
             </p>
         </div>

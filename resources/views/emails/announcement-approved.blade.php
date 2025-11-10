@@ -39,10 +39,10 @@
             <p>Powodzenia w znalezieniu idealnego freelancera!</p>
 
             <p>Pozdrawiamy,<br>
-            Zespół WebFreelance</p>
+            Zespół Projekciarz.pl</p>
         </div>
         <div class="footer">
-            <p>© {{ date('Y') }} WebFreelance. Wszystkie prawa zastrzeżone.</p>
+            <p>© {{ date('Y') }} Projekciarz.pl. Wszystkie prawa zastrzeżone.</p>
         </div>
     </div>
 </body>

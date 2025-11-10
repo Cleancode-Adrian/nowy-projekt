@@ -6,29 +6,30 @@
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
     
-    <title><?php echo $__env->yieldContent('title', 'WebFreelance - Platforma ogłoszeń dla freelancerów'); ?></title>
-    <meta name="description" content="<?php echo $__env->yieldContent('description', 'Znajdź idealnego freelancera dla swojego projektu. Tysiące zweryfikowanych specjalistów czeka na Twoje zlecenie.'); ?>">
-    <meta name="keywords" content="<?php echo $__env->yieldContent('keywords', 'freelancer, zlecenia, ogłoszenia, programista, grafik, webdeveloper'); ?>">
-    <meta name="author" content="WebFreelance">
+    <title><?php echo $__env->yieldContent('title', 'Projekciarz.pl - Platforma ogłoszeń dla wykonawców projektów'); ?></title>
+    <meta name="description" content="<?php echo $__env->yieldContent('description', 'Znajdź idealnego wykonawcę dla swojego projektu. Tysiące zweryfikowanych specjalistów czeka na Twoje zlecenie.'); ?>">
+    <meta name="keywords" content="<?php echo $__env->yieldContent('keywords', 'projekty, zlecenia, ogłoszenia, wykonawcy, specjaliści, freelancer'); ?>">
+    <meta name="author" content="Projekciarz.pl">
     <link rel="canonical" href="<?php echo e(url()->current()); ?>">
 
     
     <meta property="og:title" content="<?php echo $__env->yieldContent('og_title', config('app.name')); ?>">
-    <meta property="og:description" content="<?php echo $__env->yieldContent('og_description', 'Platforma łącząca klientów z freelancerami'); ?>">
+    <meta property="og:description" content="<?php echo $__env->yieldContent('og_description', 'Platforma łącząca klientów z profesjonalnymi wykonawcami projektów'); ?>">
     <meta property="og:image" content="<?php echo $__env->yieldContent('og_image', asset('images/og-default.jpg')); ?>">
     <meta property="og:url" content="<?php echo e(url()->current()); ?>">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="WebFreelance">
+    <meta property="og:site_name" content="Projekciarz.pl">
     <meta property="og:locale" content="pl_PL">
 
     
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?php echo $__env->yieldContent('twitter_title', config('app.name')); ?>">
-    <meta name="twitter:description" content="<?php echo $__env->yieldContent('twitter_description', 'Platforma łącząca klientów z freelancerami'); ?>">
+    <meta name="twitter:description" content="<?php echo $__env->yieldContent('twitter_description', 'Platforma łącząca klientów z profesjonalnymi wykonawcami projektów'); ?>">
     <meta name="twitter:image" content="<?php echo $__env->yieldContent('twitter_image', asset('images/og-default.jpg')); ?>">
 
     
-    <link rel="icon" type="image/svg+xml" href="<?php echo e(asset('favicon.svg')); ?>">
+    <link rel="icon" type="image/x-icon" href="<?php echo e(asset('favicon.ico')); ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo e(asset('apple-touch-icon.png')); ?>">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />

@@ -87,7 +87,7 @@ class EditAnnouncement extends Component
     public function render()
     {
         return view('livewire.edit-announcement')->layout('layouts.app', [
-            'title' => 'Edytuj ogłoszenie - WebFreelance',
+            'title' => 'Edytuj ogłoszenie - Projekciarz.pl',
         ]);
     }
 }

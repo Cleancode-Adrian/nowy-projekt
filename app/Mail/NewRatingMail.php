@@ -20,7 +20,7 @@ class NewRatingMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '⭐ Nowa opinia do moderacji - WebFreelance',
+            subject: '⭐ Nowa opinia do moderacji - Projekciarz.pl',
         );
     }
 

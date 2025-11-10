@@ -28,7 +28,7 @@ class BlogShow extends Component
             ->get();
 
         return view('livewire.blog.blog-show', compact('relatedPosts'))->layout('layouts.app', [
-            'title' => $this->post->meta_title ?: ($this->post->title . ' - Blog - WebFreelance'),
+            'title' => $this->post->meta_title ?: ($this->post->title . ' - Blog - Projekciarz.pl'),
             'description' => $this->post->meta_description ?: $this->post->excerpt,
             'keywords' => $this->post->meta_keywords ? implode(', ', $this->post->meta_keywords) : '',
             'og_title' => $this->post->meta_title ?: $this->post->title,

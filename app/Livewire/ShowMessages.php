@@ -88,7 +88,7 @@ class ShowMessages extends Component
     public function render()
     {
         return view('livewire.show-messages')->layout('layouts.app', [
-            'title' => 'Chat z ' . $this->otherUser->name . ' - WebFreelance',
+            'title' => 'Chat z ' . $this->otherUser->name . ' - Projekciarz.pl',
         ]);
     }
 }

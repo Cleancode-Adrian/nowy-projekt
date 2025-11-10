@@ -6,29 +6,30 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- SEO Meta Tags --}}
-    <title>@yield('title', 'WebFreelance - Platforma ogłoszeń dla freelancerów')</title>
-    <meta name="description" content="@yield('description', 'Znajdź idealnego freelancera dla swojego projektu. Tysiące zweryfikowanych specjalistów czeka na Twoje zlecenie.')">
-    <meta name="keywords" content="@yield('keywords', 'freelancer, zlecenia, ogłoszenia, programista, grafik, webdeveloper')">
-    <meta name="author" content="WebFreelance">
+    <title>@yield('title', 'Projekciarz.pl - Platforma ogłoszeń dla wykonawców projektów')</title>
+    <meta name="description" content="@yield('description', 'Znajdź idealnego wykonawcę dla swojego projektu. Tysiące zweryfikowanych specjalistów czeka na Twoje zlecenie.')">
+    <meta name="keywords" content="@yield('keywords', 'projekty, zlecenia, ogłoszenia, wykonawcy, specjaliści, freelancer')">
+    <meta name="author" content="Projekciarz.pl">
     <link rel="canonical" href="{{ url()->current() }}">
 
     {{-- Open Graph (Facebook, LinkedIn) --}}
     <meta property="og:title" content="@yield('og_title', config('app.name'))">
-    <meta property="og:description" content="@yield('og_description', 'Platforma łącząca klientów z freelancerami')">
+    <meta property="og:description" content="@yield('og_description', 'Platforma łącząca klientów z profesjonalnymi wykonawcami projektów')">
     <meta property="og:image" content="@yield('og_image', asset('images/og-default.jpg'))">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="WebFreelance">
+    <meta property="og:site_name" content="Projekciarz.pl">
     <meta property="og:locale" content="pl_PL">
 
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('twitter_title', config('app.name'))">
-    <meta name="twitter:description" content="@yield('twitter_description', 'Platforma łącząca klientów z freelancerami')">
+    <meta name="twitter:description" content="@yield('twitter_description', 'Platforma łącząca klientów z profesjonalnymi wykonawcami projektów')">
     <meta name="twitter:image" content="@yield('twitter_image', asset('images/og-default.jpg'))">
 
     {{-- Favicon --}}
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
 
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />

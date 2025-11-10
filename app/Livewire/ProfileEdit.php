@@ -168,7 +168,7 @@ class ProfileEdit extends Component
     {
         return view('livewire.profile-edit')
             ->layout('layouts.app', [
-                'title' => 'Edycja profilu - WebFreelance',
+                'title' => 'Edycja profilu - Projekciarz.pl',
             ]);
     }
 }

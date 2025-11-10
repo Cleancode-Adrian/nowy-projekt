@@ -26,8 +26,8 @@
         <div class="card bg-blue-50 border-blue-200 mt-12">
             <h3 class="text-xl font-bold text-gray-900 mb-3">💬 Nie znalazłeś odpowiedzi?</h3>
             <p class="text-gray-700 mb-4">Skontaktuj się z nami:</p>
-            <a href="mailto:kontakt@webfreelance.pl" class="text-blue-600 hover:text-blue-700 font-semibold">
-                kontakt@webfreelance.pl
+            <a href="mailto:kontakt@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 font-semibold">
+                kontakt@Projekciarz.pl.pl
             </a>
         </div>
     </div>

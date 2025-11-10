@@ -53,7 +53,7 @@ class HomePage extends Component
             'featuredAnnouncements' => $featuredAnnouncements,
             'stats' => $stats,
         ])->layout('layouts.app', [
-            'title' => 'WebFreelance - Znajdź najlepszego freelancera dla swojego projektu',
+            'title' => 'Projekciarz.pl - Znajdź najlepszego freelancera dla swojego projektu',
             'description' => 'Platforma łącząca klientów z zweryfikowanymi freelancerami. Publikuj zlecenia i otrzymuj oferty od najlepszych specjalistów w branży.',
         ]);
     }

@@ -20,7 +20,7 @@ class NewAnnouncementMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '🆕 Nowe ogłoszenie do zatwierdzenia - WebFreelance',
+            subject: '🆕 Nowe ogłoszenie do zatwierdzenia - Projekciarz.pl',
         );
     }
 

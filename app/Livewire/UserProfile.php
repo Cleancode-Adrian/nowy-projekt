@@ -60,7 +60,7 @@ class UserProfile extends Component
     public function render()
     {
         return view('livewire.user-profile')->layout('layouts.app', [
-            'title' => $this->user->name . ' - ' . ($this->user->isFreelancer() ? 'Freelancer' : 'Klient') . ' - WebFreelance',
+            'title' => $this->user->name . ' - ' . ($this->user->isFreelancer() ? 'Freelancer' : 'Klient') . ' - Projekciarz.pl',
             'description' => $this->user->bio ?? 'Profil użytkownika ' . $this->user->name,
         ]);
     }

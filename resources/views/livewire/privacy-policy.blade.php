@@ -15,10 +15,10 @@
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">1. Informacje ogólne</h2>
             <p class="text-gray-700 mb-4">
-                Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem z serwisu <strong>WebFreelance</strong> dostępnego pod adresem <strong>webfreelance.pl</strong>.
+                Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem z serwisu <strong>Projekciarz.pl</strong> dostępnego pod adresem <strong>Projekciarz.pl.pl</strong>.
             </p>
             <p class="text-gray-700 mb-4">
-                Administratorem danych osobowych jest <strong>WebFreelance Sp. z o.o.</strong> z siedzibą w Warszawie, ul. Przykładowa 123, 00-001 Warszawa, NIP: 1234567890, REGON: 123456789.
+                Administratorem danych osobowych jest <strong>Projekciarz.pl Sp. z o.o.</strong> z siedzibą w Warszawie, ul. Przykładowa 123, 00-001 Warszawa, NIP: 1234567890, REGON: 123456789.
             </p>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">2. Rodzaje zbieranych danych</h2>
@@ -114,7 +114,7 @@
                 <li><strong>Prawo do cofnięcia zgody</strong> - w dowolnym momencie</li>
             </ul>
             <p class="text-gray-700 mb-4">
-                <strong>Aby skorzystać z praw, skontaktuj się:</strong> <a href="mailto:kontakt@webfreelance.pl" class="text-blue-600 hover:text-blue-700 underline">kontakt@webfreelance.pl</a>
+                <strong>Aby skorzystać z praw, skontaktuj się:</strong> <a href="mailto:kontakt@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">kontakt@Projekciarz.pl.pl</a>
             </p>
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">9. Okres przechowywania danych</h2>
@@ -133,11 +133,11 @@
 
             <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">11. Kontakt</h2>
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
-                <p class="text-gray-700 mb-2"><strong>WebFreelance Sp. z o.o.</strong></p>
+                <p class="text-gray-700 mb-2"><strong>Projekciarz.pl Sp. z o.o.</strong></p>
                 <p class="text-gray-700 mb-2">ul. Przykładowa 123</p>
                 <p class="text-gray-700 mb-2">00-001 Warszawa, Polska</p>
-                <p class="text-gray-700 mb-2">Email: <a href="mailto:kontakt@webfreelance.pl" class="text-blue-600 hover:text-blue-700 underline">kontakt@webfreelance.pl</a></p>
-                <p class="text-gray-700 mb-2">Email (RODO): <a href="mailto:iodo@webfreelance.pl" class="text-blue-600 hover:text-blue-700 underline">iodo@webfreelance.pl</a></p>
+                <p class="text-gray-700 mb-2">Email: <a href="mailto:kontakt@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">kontakt@Projekciarz.pl.pl</a></p>
+                <p class="text-gray-700 mb-2">Email (RODO): <a href="mailto:iodo@Projekciarz.pl.pl" class="text-blue-600 hover:text-blue-700 underline">iodo@Projekciarz.pl.pl</a></p>
                 <p class="text-gray-700">Tel: +48 22 123 45 67</p>
             </div>
 

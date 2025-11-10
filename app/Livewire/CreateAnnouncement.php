@@ -130,7 +130,7 @@ class CreateAnnouncement extends Component
     public function render()
     {
         return view('livewire.create-announcement')->layout('layouts.app', [
-            'title' => 'Dodaj ogłoszenie - WebFreelance',
+            'title' => 'Dodaj ogłoszenie - Projekciarz.pl',
             'description' => 'Utwórz nowe ogłoszenie i znajdź idealnego freelancera',
         ]);
     }

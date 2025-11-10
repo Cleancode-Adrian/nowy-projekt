@@ -45,7 +45,7 @@ class UserRatings extends Component
     public function render()
     {
         return view('livewire.user-ratings')->layout('layouts.app', [
-            'title' => 'Opinie o ' . $this->user->name . ' - WebFreelance',
+            'title' => 'Opinie o ' . $this->user->name . ' - Projekciarz.pl',
         ]);
     }
 }

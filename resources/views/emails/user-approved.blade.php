@@ -16,7 +16,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 Witamy w WebFreelance!</h1>
+            <h1>🎉 Witamy w Projekciarz.pl!</h1>
         </div>
         <div class="content">
             <p>Cześć {{ $user->name }},</p>
@@ -37,10 +37,10 @@
             <p>Jeśli masz jakiekolwiek pytania, skontaktuj się z nami.</p>
 
             <p>Pozdrawiamy,<br>
-            Zespół WebFreelance</p>
+            Zespół Projekciarz.pl</p>
         </div>
         <div class="footer">
-            <p>© {{ date('Y') }} WebFreelance. Wszystkie prawa zastrzeżone.</p>
+            <p>© {{ date('Y') }} Projekciarz.pl. Wszystkie prawa zastrzeżone.</p>
         </div>
     </div>
 </body>

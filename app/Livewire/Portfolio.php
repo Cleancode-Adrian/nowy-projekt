@@ -135,7 +135,7 @@ class Portfolio extends Component
     public function render()
     {
         return view('livewire.portfolio')->layout('layouts.app', [
-            'title' => 'Moje Portfolio - WebFreelance',
+            'title' => 'Moje Portfolio - Projekciarz.pl',
             'description' => 'Zarządzaj swoim portfolio projektów',
         ]);
     }

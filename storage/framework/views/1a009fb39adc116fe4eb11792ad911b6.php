@@ -6,10 +6,10 @@
             <div class="flex items-center">
                 <div class="flex-shrink-0">
                     <a href="<?php echo e(route('home')); ?>" class="flex items-center">
-                        <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                            <i class="fa-solid fa-code text-white text-sm"></i>
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-helmet-safety text-white text-sm"></i>
                         </div>
-                        <span class="ml-2 text-xl font-bold text-gray-900">WebFreelance</span>
+                        <span class="ml-2 text-lg sm:text-xl font-bold text-gray-900">Projekciarz.pl</span>
                     </a>
                 </div>
 
@@ -31,7 +31,7 @@
             </div>
 
             
-            <div class="flex items-center space-x-2 sm:space-x-4">
+            <div class="flex items-center space-x-1 sm:space-x-2 md:space-x-4">
                 <?php if(auth()->guard()->check()): ?>
                     
                     <?php if(auth()->user()->isClient()): ?>
@@ -49,8 +49,8 @@
                     <?php endif; ?>
 
                     
-                    <a href="<?php echo e(route('messages.index')); ?>" class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <i class="fa-solid fa-envelope text-xl"></i>
+                    <a href="<?php echo e(route('messages.index')); ?>" class="relative p-1 sm:p-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="fa-solid fa-envelope text-lg sm:text-xl"></i>
                         <?php
                             $unreadMessages = \App\Models\Message::where('receiver_id', auth()->id())->where('is_read', false)->count();
                         ?>
@@ -63,8 +63,8 @@
                     </a>
 
                     
-                    <a href="<?php echo e(route('notifications')); ?>" class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <i class="fa-solid fa-bell text-xl"></i>
+                    <a href="<?php echo e(route('notifications')); ?>" class="relative p-1 sm:p-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="fa-solid fa-bell text-lg sm:text-xl"></i>
                         <?php
                             $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count();
                         ?>
@@ -166,11 +166,11 @@
                     </div>
 
                 <?php else: ?>
-                    <a href="<?php echo e(route('login')); ?>" class="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                        Zaloguj się
+                    <a href="<?php echo e(route('login')); ?>" class="text-gray-600 hover:text-gray-900 text-xs sm:text-sm font-medium px-2 sm:px-3">
+                        Zaloguj
                     </a>
-                    <a href="<?php echo e(route('register')); ?>" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Zarejestruj się
+                    <a href="<?php echo e(route('register')); ?>" class="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-6 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap">
+                        Rejestracja
                     </a>
                 <?php endif; ?>
             </div>

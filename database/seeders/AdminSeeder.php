@@ -13,8 +13,8 @@ class AdminSeeder extends Seeder
         // Admin user
         User::create([
             'name' => 'Administrator',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
+            'email' => 'biuro@cleancodeas.pl',
+            'password' => Hash::make('Projekciarz_123!!!'),
             'role' => 'admin',
             'is_approved' => true,
             'email_verified_at' => now(),

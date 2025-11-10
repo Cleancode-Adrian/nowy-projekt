@@ -37,7 +37,7 @@ class Notifications extends Component
     public function render()
     {
         return view('livewire.notifications')->layout('layouts.app', [
-            'title' => 'Powiadomienia - WebFreelance',
+            'title' => 'Powiadomienia - Projekciarz.pl',
         ]);
     }
 }

@@ -231,7 +231,7 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-3xl font-bold text-white mb-4">Gotowy na start?</h2>
         <p class="text-xl text-blue-100 mb-8">
-            Dołącz do tysięcy użytkowników którzy realizują swoje projekty przez WebFreelance
+            Dołącz do tysięcy użytkowników którzy realizują swoje projekty przez Projekciarz.pl
         </p>
         <a href="{{ route('register') }}" class="inline-flex items-center bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-bold text-lg transition-colors">
             Zarejestruj się za darmo
@@ -245,7 +245,7 @@
 {
     "@@context": "https://schema.org",
     "@@type": "WebSite",
-    "name": "WebFreelance",
+    "name": "Projekciarz.pl",
     "description": "Platforma łącząca klientów z freelancerami",
     "url": "{{ url('/') }}",
     "potentialAction": {
