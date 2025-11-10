@@ -6,8 +6,8 @@
             <div class="flex items-center">
                 <div class="flex-shrink-0">
                     <a href="{{ route('home') }}" class="flex items-center">
-                        <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                            <i class="fa-solid fa-helmet-safety text-white text-sm"></i>
+                        <div class="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-sm">
+                            <i class="fa-solid fa-code text-white text-base"></i>
                         </div>
                         <span class="ml-2 text-lg sm:text-xl font-bold text-gray-900">Projekciarz.pl</span>
                     </a>

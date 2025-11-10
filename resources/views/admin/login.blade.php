@@ -14,8 +14,8 @@
     <div class="w-full max-w-md">
         <div class="bg-white rounded-2xl shadow-xl p-8">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <i class="fa-solid fa-helmet-safety text-white text-3xl"></i>
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fa-solid fa-code text-white text-3xl"></i>
                 </div>
                 <h2 class="text-3xl font-bold text-gray-900 mb-2">Panel Admina</h2>
                 <p class="text-gray-600">Zaloguj się aby zarządzać platformą</p>

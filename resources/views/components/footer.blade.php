@@ -5,8 +5,8 @@
             {{-- Brand --}}
             <div>
                 <a href="{{ route('home') }}" class="flex items-center mb-4 hover:opacity-80 transition-opacity">
-                    <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fa-solid fa-helmet-safety text-white text-xl"></i>
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fa-solid fa-code text-white text-2xl"></i>
                     </div>
                     <span class="ml-3 text-2xl font-bold">Projekciarz.pl</span>
                 </a>
