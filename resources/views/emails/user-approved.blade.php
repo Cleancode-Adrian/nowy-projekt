@@ -31,7 +31,7 @@
             </ul>
 
             <div style="text-align: center;">
-                <a href="{{ config('app.frontend_url') }}/login" class="button">Zaloguj się teraz</a>
+                <a href="{{ route('login') }}" class="button">Zaloguj się teraz</a>
             </div>
 
             <p>Jeśli masz jakiekolwiek pytania, skontaktuj się z nami.</p>
