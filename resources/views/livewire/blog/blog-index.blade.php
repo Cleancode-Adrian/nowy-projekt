@@ -23,33 +23,37 @@
         {{-- Posts Grid --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             @forelse($posts as $post)
-                <a href="{{ route('blog.show', $post->slug) }}" class="block">
-                    <article class="card hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer h-full">
-                        @if($post->featured_image)
-                            <img src="{{ asset('storage/' . $post->featured_image) }}"
-                                 alt="{{ $post->title }}"
-                                 class="w-full h-48 object-cover rounded-t-xl -mt-6 -mx-6 mb-4">
-                        @else
-                            <div class="w-full h-48 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-xl -mt-6 -mx-6 mb-4 flex items-center justify-center">
-                                <i class="fa-solid fa-blog text-white text-6xl opacity-20"></i>
-                            </div>
-                        @endif
-
-                        <div class="flex items-center gap-2 mb-3">
-                            @foreach($post->tags as $tag)
-                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">{{ $tag->name }}</span>
-                            @endforeach
+                <a href="{{ route('blog.show', $post->slug) }}" class="block h-full">
+                    <article class="card hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer h-full flex flex-col overflow-hidden">
+                        <div class="w-full h-48 bg-gray-100 rounded-xl overflow-hidden mb-4">
+                            @if($post->featured_image)
+                                <img src="{{ asset('storage/' . $post->featured_image) }}"
+                                     alt="{{ $post->title }}"
+                                     class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-blog text-white text-6xl opacity-20"></i>
+                                </div>
+                            @endif
                         </div>
 
-                        <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors">
-                            {{ $post->title }}
-                        </h2>
+                        <div class="flex flex-col flex-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-3">
+                                @foreach($post->tags as $tag)
+                                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">{{ $tag->name }}</span>
+                                @endforeach
+                            </div>
 
-                        @if($post->excerpt)
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ $post->excerpt }}</p>
-                        @endif
+                            <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors">
+                                {{ $post->title }}
+                            </h2>
 
-                        <div class="flex items-center justify-between pt-4 border-t border-gray-100 text-sm text-gray-500 mt-auto">
+                            @if($post->excerpt)
+                                <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ $post->excerpt }}</p>
+                            @endif
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-100 text-sm text-gray-500">
                             <div class="flex items-center gap-2">
                                 @if($post->author->avatar)
                                     <img src="{{ asset('storage/' . $post->author->avatar) }}"
