@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#grad2)"/>
+  <rect x="120" y="130" width="560" height="240" rx="40" fill="rgba(255,255,255,0.15)"/>
+  <path d="M200 200h320v20H200zm0 60h240v20H200zm0 60h280v20H200z" fill="#FFFFFF" opacity="0.55"/>
+  <circle cx="630" cy="250" r="55" fill="#FBBF24" opacity="0.45"/>
+  <text x="50%" y="80%" dominant-baseline="middle" text-anchor="middle" font-family="Montserrat, Arial" font-size="36" fill="#FFFFFF" opacity="0.9">
+    Komunikacja z klientem
+  </text>
+</svg>
+
+
