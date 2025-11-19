@@ -73,8 +73,8 @@
 
             <div class="mt-6 text-center">
                 <p class="text-gray-600">
-                    Nie masz konta?{' '}
-                    <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-700 font-semibold">
+                    Nie masz konta?
+                    <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-700 font-semibold ml-1">
                         Zarejestruj się
                     </a>
                 </p>

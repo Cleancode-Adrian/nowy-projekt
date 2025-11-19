@@ -241,7 +241,7 @@
     "url": "{{ url('/') }}",
     "potentialAction": {
         "@@type": "SearchAction",
-        "target": "{{ route('announcements.index') }}?search={search_term_string}",
+        "target": "{{ route('announcements.index') }}?q={search_term_string}",
         "query-input": "required name=search_term_string"
     }
 }

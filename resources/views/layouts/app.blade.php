@@ -18,17 +18,26 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- SEO Meta Tags --}}
+    @php
+        $allowedCanonicalParams = ['category', 'q', 'minBudget', 'maxBudget', 'page'];
+        $canonicalQuery = array_filter(
+            request()->only($allowedCanonicalParams),
+            fn ($value) => $value !== null && $value !== ''
+        );
+        ksort($canonicalQuery);
+        $canonicalUrl = url()->current() . (empty($canonicalQuery) ? '' : '?' . http_build_query($canonicalQuery));
+    @endphp
     <title>@yield('title', 'Projekciarz.pl - Platforma ogłoszeń dla wykonawców projektów')</title>
     <meta name="description" content="@yield('description', 'Znajdź idealnego wykonawcę dla swojego projektu. Tysiące zweryfikowanych specjalistów czeka na Twoje zlecenie.')">
     <meta name="keywords" content="@yield('keywords', 'projekty, zlecenia, ogłoszenia, wykonawcy, specjaliści, freelancer')">
     <meta name="author" content="Projekciarz.pl">
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
 
     {{-- Open Graph (Facebook, LinkedIn) --}}
     <meta property="og:title" content="@yield('og_title', 'Projekciarz.pl')">
     <meta property="og:description" content="@yield('og_description', 'Platforma łącząca klientów z profesjonalnymi wykonawcami projektów')">
     <meta property="og:image" content="@yield('og_image', asset('images/og-default.jpg'))">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Projekciarz.pl">
     <meta property="og:locale" content="pl_PL">
