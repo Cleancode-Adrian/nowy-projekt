@@ -29,10 +29,11 @@ class BlogPostSeeder extends Seeder
         $responsiveTag = Tag::where('name', 'Responsive Design')->first();
 
         // Artykuł 1: Jak rozpocząć karierę freelancera
-        $post1 = BlogPost::create([
+        $post1 = BlogPost::updateOrCreate(
+            ['slug' => 'jak-rozpoczac-kariere-freelancera-2025'],
+            [
             'author_id' => $admin->id,
             'title' => 'Jak rozpocząć karierę freelancera w 2025 roku?',
-            'slug' => 'jak-rozpoczac-kariere-freelancera-2025',
             'excerpt' => 'Kompletny przewodnik dla osób, które chcą rozpocząć pracę jako freelancer. Dowiedz się, jak znaleźć pierwszych klientów, ustalić stawki i zbudować portfolio.',
             'content' => '<h2>Wprowadzenie</h2>
 <p>Freelancing to jeden z najbardziej dynamicznie rozwijających się modeli pracy w 2025 roku. Coraz więcej osób decyduje się na niezależność zawodową, elastyczne godziny pracy i możliwość wyboru projektów. W tym artykule pokażemy Ci, jak rozpocząć karierę freelancera krok po kroku.</p>
@@ -102,16 +103,18 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['freelancer', 'praca zdalna', 'kariera freelancera', 'jak zostać freelancerem', 'freelancing 2025', 'portfolio freelancera', 'stawki freelancera'],
             'status' => 'published',
             'published_at' => now()->subDays(7),
-        ]);
+            ]
+        );
 
         if ($phpTag) $post1->tags()->attach($phpTag);
         if ($uiuxTag) $post1->tags()->attach($uiuxTag);
 
         // Artykuł 2: Najlepsze praktyki w komunikacji z klientem
-        $post2 = BlogPost::create([
+        $post2 = BlogPost::updateOrCreate(
+            ['slug' => '10-zasad-komunikacji-z-klientem-freelancer'],
+            [
             'author_id' => $admin->id,
             'title' => '10 zasad skutecznej komunikacji z klientem jako freelancer',
-            'slug' => '10-zasad-komunikacji-z-klientem-freelancer',
             'excerpt' => 'Dobra komunikacja to klucz do sukcesu w freelancingu. Poznaj 10 sprawdzonych zasad, które pomogą Ci budować trwałe relacje z klientami i unikać nieporozumień.',
             'content' => '<h2>Dlaczego komunikacja jest tak ważna?</h2>
 <p>W świecie freelancingu umiejętność komunikacji jest równie ważna jak kompetencje techniczne. Dobra komunikacja buduje zaufanie, zapobiega konfliktom i prowadzi do długoterminowej współpracy. Oto 10 zasad, które zmienią sposób, w jaki rozmawiasz z klientami.</p>
@@ -203,16 +206,18 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['komunikacja z klientem', 'freelancer', 'relacje z klientem', 'zarządzanie projektem', 'współpraca z klientem', 'profesjonalizm', 'freelancing'],
             'status' => 'published',
             'published_at' => now()->subDays(3),
-        ]);
+            ]
+        );
 
         if ($javascriptTag) $post2->tags()->attach($javascriptTag);
         if ($uiuxTag) $post2->tags()->attach($uiuxTag);
 
         // Artykuł 3: Portfolio, które sprzedaje
-        $post3 = BlogPost::create([
+        $post3 = BlogPost::updateOrCreate(
+            ['slug' => 'portfolio-freelancera-ktore-sprzedaje'],
+            [
             'author_id' => $admin->id,
             'title' => 'Jak zbudować portfolio freelancera, które sprzedaje Twoje usługi',
-            'slug' => 'portfolio-freelancera-ktore-sprzedaje',
             'excerpt' => 'Dowiedz się, jakie sekcje powinno zawierać portfolio freelancera i jak zaprezentować projekty, aby zamieniać odwiedzających w klientów.',
             'content' => '<h2>Dlaczego portfolio jest tak ważne?</h2>
 <p>Dobre portfolio działa jak najlepszy handlowiec. Pokazuje jakość Twojej pracy i prowadzi klienta przez historię projektu. To pierwsze miejsce, w które zagląda większość osób zanim zaprosi Cię do współpracy.</p>
@@ -239,17 +244,19 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['portfolio freelancera', 'case study', 'jak przygotować portfolio', 'Landing Page portfolio'],
             'status' => 'published',
             'published_at' => now()->subDays(12),
-        ]);
+            ]
+        );
 
         if ($uiuxTag) $post3->tags()->attach($uiuxTag);
         if ($tailwindTag) $post3->tags()->attach($tailwindTag);
         if ($responsiveTag) $post3->tags()->attach($responsiveTag);
 
         // Artykuł 4: SEO dla freelancerów
-        $post4 = BlogPost::create([
+        $post4 = BlogPost::updateOrCreate(
+            ['slug' => 'seo-dla-freelancerow-klienci-z-google'],
+            [
             'author_id' => $admin->id,
             'title' => 'SEO dla freelancerów: Jak zdobywać klientów z Google',
-            'slug' => 'seo-dla-freelancerow-klienci-z-google',
             'excerpt' => 'Praktyczny przewodnik po SEO dla freelancerów: od słów kluczowych, przez content, po wizytówkę Google. Zwiększ widoczność i zdobywaj wartościowe leady.',
             'content' => '<h2>1. Zdefiniuj słowa kluczowe</h2>
 <p>Wybierz frazy long-tail, które opisują Twoje usługi (np. "projektant UX Kraków"). Dodaj je do opisów ofert i bloga.</p>
@@ -277,17 +284,19 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['SEO freelancer', 'pozyskiwanie klientów', 'Google dla freelancerów', 'marketing freelancera'],
             'status' => 'published',
             'published_at' => now()->subDay(),
-        ]);
+            ]
+        );
 
         if ($seoTag) $post4->tags()->attach($seoTag);
         if ($wordpressTag) $post4->tags()->attach($wordpressTag);
         if ($laravelTag) $post4->tags()->attach($laravelTag);
 
         // Artykuł 5: Brief projektowy
-        $post5 = BlogPost::create([
+        $post5 = BlogPost::updateOrCreate(
+            ['slug' => 'jak-przygotowac-brief-projektowy-freelancer'],
+            [
             'author_id' => $admin->id,
             'title' => 'Jak przygotować brief projektowy, który pokochają freelancerzy',
-            'slug' => 'jak-przygotowac-brief-projektowy-freelancer',
             'excerpt' => 'Uniknij nieporozumień i przyspiesz start projektu. Zobacz, jakie elementy powinien zawierać idealny brief przekazywany wykonawcom na Projekciarz.pl.',
             'content' => '<h2>Brief to kontrakt w pigułce</h2>
 <p>Dobrze przygotowany brief oszczędza dziesiątki wiadomości i dni opóźnień. Zawiera wszystkie informacje potrzebne freelancerowi, aby mógł skupić się na pracy, a nie na dopytywaniu o detale.</p>
@@ -321,17 +330,19 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['brief projektowy', 'współpraca z freelancerem', 'zarządzanie projektem', 'jak napisać brief'],
             'status' => 'published',
             'published_at' => now(),
-        ]);
+            ]
+        );
 
         if ($uiuxTag) $post5->tags()->attach($uiuxTag);
         if ($responsiveTag) $post5->tags()->attach($responsiveTag);
         if ($tailwindTag) $post5->tags()->attach($tailwindTag);
 
         // Artykuł 6: Automatyzacja i AI
-        $post6 = BlogPost::create([
+        $post6 = BlogPost::updateOrCreate(
+            ['slug' => 'automatyzacja-pracy-freelancera-ai-no-code'],
+            [
             'author_id' => $admin->id,
             'title' => 'Automatyzacja pracy freelancera: AI i narzędzia no-code w praktyce',
-            'slug' => 'automatyzacja-pracy-freelancera-ai-no-code',
             'excerpt' => 'Poznaj workflow, dzięki któremu skrócisz czas przygotowania ofert, wycen i raportów nawet o 40%. Wykorzystaj AI jako asystenta, a nie zagrożenie.',
             'content' => '<h2>Dlaczego warto automatyzować?</h2>
 <p>Najwięcej czasu tracimy na powtarzalne zadania: odpowiadanie na podobne pytania, przygotowanie wycen, aktualizacje statusów. Automatyzacja pozwala odzyskać godziny tygodniowo i skupić się na projektach o największej wartości.</p>
@@ -358,7 +369,8 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['automatyzacja freelancera', 'AI dla freelancera', 'no-code', 'Zapier', 'Notion', 'ChatGPT w pracy'],
             'status' => 'published',
             'published_at' => now()->addHours(2),
-        ]);
+            ]
+        );
 
         if ($laravelTag) $post6->tags()->attach($laravelTag);
         if ($javascriptTag) $post6->tags()->attach($javascriptTag);
@@ -366,10 +378,11 @@ class BlogPostSeeder extends Seeder
         if ($seoTag) $post6->tags()->attach($seoTag);
 
         // Artykuł 7: Jak ustalić stawki jako freelancer
-        $post7 = BlogPost::create([
+        $post7 = BlogPost::updateOrCreate(
+            ['slug' => 'jak-ustalic-stawki-freelancer-wycena-projektow'],
+            [
             'author_id' => $admin->id,
             'title' => 'Jak ustalić stawki jako freelancer: kompletny przewodnik wyceny projektów',
-            'slug' => 'jak-ustalic-stawki-freelancer-wycena-projektow',
             'excerpt' => 'Poznaj sprawdzone metody wyceny projektów freelancerskich. Dowiedz się, jak obliczyć stawkę godzinową, wycenić projekt ryczałtowo i kiedy podnieść ceny. Praktyczne przykłady i kalkulatory.',
             'content' => '<h2>Dlaczego wycena jest tak ważna?</h2>
 <p>Ustalanie stawek to jeden z najtrudniejszych aspektów freelancingu. Zbyt niskie ceny oznaczają przepracowanie i wypalenie, a zbyt wysokie mogą odstraszyć klientów. W tym przewodniku pokażemy Ci, jak znaleźć złoty środek i wycenić projekty profesjonalnie.</p>
@@ -491,17 +504,19 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['stawki freelancera', 'wycena projektów', 'jak wycenić projekt', 'stawka godzinowa freelancera', 'freelancer cennik', 'wycena usług IT', 'jak ustalić stawki'],
             'status' => 'published',
             'published_at' => now()->subDays(2),
-        ]);
+            ]
+        );
 
         if ($phpTag) $post7->tags()->attach($phpTag);
         if ($uiuxTag) $post7->tags()->attach($uiuxTag);
         if ($seoTag) $post7->tags()->attach($seoTag);
 
         // Artykuł 8: Jak znaleźć pierwszych klientów
-        $post8 = BlogPost::create([
+        $post8 = BlogPost::updateOrCreate(
+            ['slug' => 'jak-znalezc-pierwszych-klientow-freelancer-strategie'],
+            [
             'author_id' => $admin->id,
             'title' => 'Jak znaleźć pierwszych klientów jako freelancer: 7 sprawdzonych strategii',
-            'slug' => 'jak-znalezc-pierwszych-klientow-freelancer-strategie',
             'excerpt' => 'Praktyczny przewodnik po pozyskiwaniu pierwszych klientów jako freelancer. Poznaj 7 sprawdzonych strategii: od platform freelancerskich, przez networking, po content marketing. Działaj już dziś!',
             'content' => '<h2>Dlaczego pierwszy klient jest tak ważny?</h2>
 <p>Znalezienie pierwszego klienta to największe wyzwanie dla początkujących freelancerów. Bez portfolio i referencji trudno przekonać kogoś do współpracy. W tym artykule pokażemy Ci 7 sprawdzonych strategii, które pomogą Ci zdobyć pierwszych klientów i zbudować fundament udanej kariery freelancera.</p>
@@ -657,17 +672,19 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['jak znaleźć klientów', 'pierwsi klienci freelancera', 'pozyskiwanie klientów', 'freelancer marketing', 'jak zdobyć klientów', 'strategie freelancera', 'platformy freelancerskie'],
             'status' => 'published',
             'published_at' => now()->subDays(1),
-        ]);
+            ]
+        );
 
         if ($seoTag) $post8->tags()->attach($seoTag);
         if ($uiuxTag) $post8->tags()->attach($uiuxTag);
         if ($phpTag) $post8->tags()->attach($phpTag);
 
         // Artykuł 9: Jak napisać skuteczną ofertę
-        $post9 = BlogPost::create([
+        $post9 = BlogPost::updateOrCreate(
+            ['slug' => 'jak-napisac-skuteczna-oferte-projekciarz'],
+            [
             'author_id' => $admin->id,
             'title' => 'Jak napisać skuteczną ofertę na Projekciarz.pl: szablon i przykłady',
-            'slug' => 'jak-napisac-skuteczna-oferte-projekciarz',
             'excerpt' => 'Dowiedz się, jak napisać ofertę, która wyróżni się spośród setek innych. Poznaj sprawdzony szablon, unikaj błędów i zwiększ szansę na wybór Twojej oferty przez klienta.',
             'content' => '<h2>Dlaczego dobra oferta jest kluczowa?</h2>
 <p>Na platformach freelancerskich takich jak Projekciarz.pl klienci otrzymują dziesiątki, a czasem setki ofert. Twoja wiadomość ma tylko kilka sekund, aby przyciągnąć uwagę i przekonać klienta do wyboru właśnie Ciebie. W tym artykule pokażemy Ci, jak napisać ofertę, która konwertuje.</p>
@@ -751,16 +768,18 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['jak napisać ofertę', 'oferta freelancera', 'szablon oferty', 'jak aplikować na projekt', 'skuteczna oferta', 'freelancer oferta'],
             'status' => 'published',
             'published_at' => now()->subDays(5),
-        ]);
+            ]
+        );
 
         if ($uiuxTag) $post9->tags()->attach($uiuxTag);
         if ($seoTag) $post9->tags()->attach($seoTag);
 
         // Artykuł 10: Zarządzanie czasem
-        $post10 = BlogPost::create([
+        $post10 = BlogPost::updateOrCreate(
+            ['slug' => 'zarzadzanie-czasem-freelancer-produktywnosc'],
+            [
             'author_id' => $admin->id,
             'title' => 'Zarządzanie czasem dla freelancerów: jak pracować efektywnie i unikać wypalenia',
-            'slug' => 'zarzadzanie-czasem-freelancer-produktywnosc',
             'excerpt' => 'Poznaj sprawdzone metody zarządzania czasem dla freelancerów. Dowiedz się, jak planować dzień, unikać prokrastynacji i utrzymać work-life balance. Praktyczne narzędzia i techniki.',
             'content' => '<h2>Dlaczego zarządzanie czasem jest wyzwaniem dla freelancerów?</h2>
 <p>Jako freelancer sam odpowiadasz za swój czas. Brak struktury, wielozadaniowość i presja terminów mogą prowadzić do przepracowania lub prokrastynacji. W tym artykule pokażemy Ci sprawdzone metody zarządzania czasem, które pomogą Ci pracować efektywnie i zachować równowagę.</p>
@@ -858,16 +877,18 @@ class BlogPostSeeder extends Seeder
             'meta_keywords' => ['zarządzanie czasem', 'produktywność freelancera', 'time management', 'work life balance', 'efektywna praca', 'technika pomodoro'],
             'status' => 'published',
             'published_at' => now()->subDays(4),
-        ]);
+            ]
+        );
 
         if ($phpTag) $post10->tags()->attach($phpTag);
         if ($uiuxTag) $post10->tags()->attach($uiuxTag);
 
         // Artykuł 11: Podatki dla freelancerów
-        $post11 = BlogPost::create([
+        $post11 = BlogPost::updateOrCreate(
+            ['slug' => 'podatki-freelancer-polska-2025-jdg-b2b'],
+            [
             'author_id' => $admin->id,
             'title' => 'Podatki dla freelancerów w Polsce 2025: JDG, B2B, ryczałt - kompletny przewodnik',
-            'slug' => 'podatki-freelancer-polska-2025-jdg-b2b',
             'excerpt' => 'Kompletny przewodnik po podatkach dla freelancerów w Polsce. JDG, B2B, ryczałt, skala podatkowa - porównanie form opodatkowania, koszty, zalety i wady. Aktualne stawki 2025.',
             'content' => '<h2>Wybór formy opodatkowania - najważniejsza decyzja</h2>
 <p>Jako freelancer w Polsce masz kilka opcji opodatkowania. Wybór odpowiedniej formy może oznaczać oszczędności tysięcy złotych rocznie. W tym przewodniku porównamy wszystkie opcje i pomożemy Ci wybrać najlepszą dla Twojej sytuacji.</p>
@@ -1038,16 +1059,18 @@ Podatek (17%): 13 600 PLN</p>
             'meta_keywords' => ['podatki freelancera', 'JDG podatki', 'ryczałt freelancer', 'B2B podatki', 'ZUS freelancer', 'podatki w Polsce 2025', 'freelancer podatki'],
             'status' => 'published',
             'published_at' => now()->subDays(6),
-        ]);
+            ]
+        );
 
         if ($phpTag) $post11->tags()->attach($phpTag);
         if ($seoTag) $post11->tags()->attach($seoTag);
 
         // Artykuł 12: Freelancing vs etat
-        $post12 = BlogPost::create([
+        $post12 = BlogPost::updateOrCreate(
+            ['slug' => 'freelancing-vs-etat-porownanie-programisci-designerzy'],
+            [
             'author_id' => $admin->id,
             'title' => 'Freelancing vs. etat: porównanie dla programistów i designerów 2025',
-            'slug' => 'freelancing-vs-etat-porownanie-programisci-designerzy',
             'excerpt' => 'Kompleksowe porównanie freelancingu i pracy etatowej dla programistów i designerów. Zarobki, elastyczność, bezpieczeństwo, rozwój - wszystkie aspekty w jednym miejscu. Która opcja jest lepsza?',
             'content' => '<h2>Freelancing czy etat - które wybrać?</h2>
 <p>To jedno z najczęstszych pytań w branży IT i designu. Obie opcje mają swoje zalety i wady. W tym artykule porównamy freelancing i etat pod kątem zarobków, elastyczności, bezpieczeństwa i rozwoju kariery, aby pomóc Ci podjąć świadomą decyzję.</p>
@@ -1204,17 +1227,19 @@ Podatek (17%): 13 600 PLN</p>
             'meta_keywords' => ['freelancing vs etat', 'praca zdalna', 'freelancer czy etat', 'zarobki programisty', 'freelancing zarobki', 'praca IT'],
             'status' => 'published',
             'published_at' => now()->subDays(8),
-        ]);
+            ]
+        );
 
         if ($phpTag) $post12->tags()->attach($phpTag);
         if ($javascriptTag) $post12->tags()->attach($javascriptTag);
         if ($uiuxTag) $post12->tags()->attach($uiuxTag);
 
         // Artykuł 13: Najlepsze narzędzia
-        $post13 = BlogPost::create([
+        $post13 = BlogPost::updateOrCreate(
+            ['slug' => 'najlepsze-narzedzia-freelancer-2025'],
+            [
             'author_id' => $admin->id,
             'title' => 'Najlepsze narzędzia dla freelancerów w 2025: programy, aplikacje i serwisy',
-            'slug' => 'najlepsze-narzedzia-freelancer-2025',
             'excerpt' => 'Kompletna lista najlepszych narzędzi dla freelancerów w 2025. Zarządzanie projektami, śledzenie czasu, faktury, komunikacja, design, programowanie - wszystko w jednym miejscu.',
             'content' => '<h2>Narzędzia, które zmieniają sposób pracy freelancera</h2>
 <p>Dobrze dobrane narzędzia mogą zwiększyć Twoją produktywność o 30-40% i zaoszczędzić godziny tygodniowo. W tym artykule przedstawiamy kompletną listę najlepszych narzędzi dla freelancerów w 2025 roku, podzieloną na kategorie.</p>
@@ -1428,17 +1453,19 @@ Podatek (17%): 13 600 PLN</p>
             'meta_keywords' => ['narzędzia freelancera', 'programy dla freelancera', 'aplikacje freelancer', 'narzędzia IT', 'oprogramowanie freelancer', 'narzędzia produktywności'],
             'status' => 'published',
             'published_at' => now()->subDays(9),
-        ]);
+            ]
+        );
 
         if ($phpTag) $post13->tags()->attach($phpTag);
         if ($javascriptTag) $post13->tags()->attach($javascriptTag);
         if ($uiuxTag) $post13->tags()->attach($uiuxTag);
 
         // Artykuł 14: Jak radzić sobie z trudnymi klientami
-        $post14 = BlogPost::create([
+        $post14 = BlogPost::updateOrCreate(
+            ['slug' => 'jak-radzic-sobie-trudnymi-klientami-freelancer'],
+            [
             'author_id' => $admin->id,
             'title' => 'Jak radzić sobie z trudnymi klientami: przewodnik dla freelancerów',
-            'slug' => 'jak-radzic-sobie-trudnymi-klientami-freelancer',
             'excerpt' => 'Praktyczny przewodnik po radzeniu sobie z trudnymi klientami. Poznaj typy problematycznych klientów, strategie komunikacji i kiedy warto zakończyć współpracę. Ochrona siebie i swojego biznesu.',
             'content' => '<h2>Trudny klient - każdy freelancer go spotka</h2>
 <p>Nawet najlepsi freelancerzy mają do czynienia z trudnymi klientami. Niektóre sytuacje można rozwiązać komunikacją, inne wymagają twardej postawy, a czasem najlepszym rozwiązaniem jest zakończenie współpracy. W tym artykule pokażemy Ci, jak rozpoznać problematycznych klientów i jak sobie z nimi radzić.</p>
@@ -1581,16 +1608,18 @@ Podatek (17%): 13 600 PLN</p>
             'meta_keywords' => ['trudni klienci', 'problematyczni klienci', 'komunikacja z klientem', 'zarządzanie klientami', 'freelancer klienci', 'jak radzić sobie z klientami'],
             'status' => 'published',
             'published_at' => now()->subDays(10),
-        ]);
+            ]
+        );
 
         if ($uiuxTag) $post14->tags()->attach($uiuxTag);
         if ($seoTag) $post14->tags()->attach($seoTag);
 
         // Artykuł 15: Case study portfolio
-        $post15 = BlogPost::create([
+        $post15 = BlogPost::updateOrCreate(
+            ['slug' => 'case-study-portfolio-freelancera-klienci'],
+            [
             'author_id' => $admin->id,
             'title' => 'Case study freelancera: jak zbudowałem portfolio, które przyciąga klientów',
-            'slug' => 'case-study-portfolio-freelancera-klienci',
             'excerpt' => 'Praktyczny case study budowania portfolio freelancera. Od pierwszych projektów do portfolio, które generuje zapytania. Konkretne przykłady, liczby i strategie, które działają.',
             'content' => '<h2>Zaczynałem od zera - jak zbudowałem portfolio, które sprzedaje</h2>
 <p>3 lata temu byłem początkującym freelancerem bez portfolio i doświadczenia. Dziś moje portfolio generuje 5-10 zapytań miesięcznie, a 70% klientów przychodzi z polecenia lub przez moją stronę. W tym case study pokażę Ci dokładnie, jak to zrobiłem.</p>
@@ -1751,7 +1780,8 @@ Podatek (17%): 13 600 PLN</p>
             'meta_keywords' => ['case study portfolio', 'portfolio freelancera', 'jak zbudować portfolio', 'portfolio case study', 'freelancer portfolio', 'portfolio IT'],
             'status' => 'published',
             'published_at' => now()->subDays(11),
-        ]);
+            ]
+        );
 
         if ($uiuxTag) $post15->tags()->attach($uiuxTag);
         if ($seoTag) $post15->tags()->attach($seoTag);
