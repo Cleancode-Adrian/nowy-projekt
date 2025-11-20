@@ -97,7 +97,7 @@ class BlogPostSeeder extends Seeder
 <p>Rozpoczęcie kariery freelancera wymaga planowania, ale może być niezwykle satysfakcjonujące. Najważniejsze to zacząć, zdobywać doświadczenie i nieustannie się rozwijać. Platforma <strong>Projekciarz.pl</strong> jest idealnym miejscem na pierwsze kroki w świecie freelancingu!</p>
 
 <p><strong>Gotowy na start? <a href="/rejestracja">Załóż bezpłatne konto</a> i zacznij zarabiać już dziś!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?freelancer,work,career',
+            'featured_image' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=600&fit=crop',
             'meta_title' => 'Jak Zostać Freelancerem w 2025? Kompletny Przewodnik Krok po Kroku',
             'meta_description' => 'Dowiedz się, jak rozpocząć karierę freelancera w 2025. Ustalanie stawek, budowanie portfolio, znajdowanie klientów i więcej. Praktyczny przewodnik dla początkujących.',
             'meta_keywords' => ['freelancer', 'praca zdalna', 'kariera freelancera', 'jak zostać freelancerem', 'freelancing 2025', 'portfolio freelancera', 'stawki freelancera'],
@@ -200,7 +200,7 @@ class BlogPostSeeder extends Seeder
 <p>Skuteczna komunikacja to fundament udanego freelancingu. Pamiętaj o tych 10 zasadach, a zobaczysz, jak poprawią się Twoje relacje z klientami i wzrośnie liczba powtarzających się zleceń.</p>
 
 <p><strong>Szukasz projektów, gdzie możesz wykorzystać te umiejętności? <a href="/ogloszenia">Przeglądaj aktualne ogłoszenia</a> na Projekciarz.pl!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?communication,meeting,business',
+            'featured_image' => 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop',
             'meta_title' => 'Komunikacja z Klientem: 10 Zasad dla Freelancera',
             'meta_description' => 'Skuteczna komunikacja to klucz do sukcesu freelancera. Sprawdź 10 zasad, które pomogą Ci budować trwałe relacje z klientami i unikać konfliktów.',
             'meta_keywords' => ['komunikacja z klientem', 'freelancer', 'relacje z klientem', 'zarządzanie projektem', 'współpraca z klientem', 'profesjonalizm', 'freelancing'],
@@ -238,7 +238,7 @@ class BlogPostSeeder extends Seeder
 <p>Zakończ każdy projekt krótkim zaproszeniem: <em>"Masz podobne wyzwanie? Kliknij i porozmawiajmy."</em> Dodaj link do Twojego profilu na Projekciarz.pl.</p>
 
 <p><strong>Przygotuj portfolio już dziś i zgłaszaj się do nowych ogłoszeń – klienci oceniają Cię w kilka sekund!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?portfolio,design,creative',
+            'featured_image' => 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&h=600&fit=crop',
             'meta_title' => 'Portfolio Freelancera: Struktura, Case Study, CTA',
             'meta_description' => 'Instrukcja krok po kroku jak stworzyć portfolio freelancera, które zwiększa liczbę zapytań. Sekcje, case studies i przykłady CTA.',
             'meta_keywords' => ['portfolio freelancera', 'case study', 'jak przygotować portfolio', 'Landing Page portfolio'],
@@ -278,7 +278,7 @@ class BlogPostSeeder extends Seeder
 <p>Publikuj case study na portalach branżowych i linkuj do swojego profilu. Występuj w podcastach, gościnnych artykułach czy newsletterach.</p>
 
 <p><strong>Wykorzystaj SEO jako pasywny kanał pozyskiwania leadów, a Projekciarz.pl jako aktywne źródło ciekawych zleceń.</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?seo,search,marketing',
+            'featured_image' => 'https://images.unsplash.com/photo-1432888622747-4eb9a8f2d1a6?w=800&h=600&fit=crop',
             'meta_title' => 'SEO dla Freelancerów – przewodnik 2025',
             'meta_description' => 'Dowiedz się, jak freelancer może zwiększyć widoczność w Google i zdobywać klientów dzięki prostym działaniom SEO.',
             'meta_keywords' => ['SEO freelancer', 'pozyskiwanie klientów', 'Google dla freelancerów', 'marketing freelancera'],
@@ -324,7 +324,7 @@ class BlogPostSeeder extends Seeder
 <p>Z góry ustal, gdzie toczy się dyskusja: Projekciarz.pl, Slack, e-mail, Figma. Zdefiniuj osoby decyzyjne i maksymalny czas odpowiedzi.</p>
 
 <p><strong>Gotowy brief = lepsze oferty.</strong> Do nowego ogłoszenia dodaj szablon z powyższymi sekcjami, a oszczędzisz sobie poprawek i domysłów.</p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?brief,planning,project',
+            'featured_image' => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop',
             'meta_title' => 'Brief projektowy dla freelancera – kompletna checklista',
             'meta_description' => 'Dowiedz się, jakie informacje umieścić w briefie, aby freelancerzy z Projekciarz.pl szybciej wycenili i dostarczyli projekt.',
             'meta_keywords' => ['brief projektowy', 'współpraca z freelancerem', 'zarządzanie projektem', 'jak napisać brief'],
@@ -363,7 +363,7 @@ class BlogPostSeeder extends Seeder
 <p>Jeśli pracujesz z Laravel lub Tailwind CSS, zbieraj gotowe komponenty w prywatnym pakiecie Composer/NPM. Każdy kolejny projekt startuje szybciej, a Ty utrzymujesz spójny standard.</p>
 
 <p><strong>Automatyzacja = przewaga konkurencyjna.</strong> Poświęć jedno popołudnie na uporządkowanie procesów, a klienci zauważą, że dostarczasz szybciej i bardziej przewidywalnie.</p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?automation,technology,ai',
+            'featured_image' => 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=600&fit=crop',
             'meta_title' => 'Automatyzacja pracy freelancera – AI i no-code krok po kroku',
             'meta_description' => 'Sprawdź, jak freelancerzy mogą wykorzystać AI, Notion i Zapier do automatyzacji ofert, raportów i leadów. Praktyczne przykłady.',
             'meta_keywords' => ['automatyzacja freelancera', 'AI dla freelancera', 'no-code', 'Zapier', 'Notion', 'ChatGPT w pracy'],
@@ -498,7 +498,7 @@ class BlogPostSeeder extends Seeder
 <p>Prawidłowa wycena to fundament udanego freelancingu. Pamiętaj, że Twoja stawka powinna odzwierciedlać wartość, którą dostarczasz, a nie tylko czas spędzony przy komputerze. Regularnie przeglądaj i aktualizuj swoje ceny, a zobaczysz, jak rośnie jakość projektów i satysfakcja z pracy.</p>
 
 <p><strong>Szukasz projektów do wyceny? <a href="/announcements">Przeglądaj aktualne ogłoszenia</a> na Projekciarz.pl i składasz profesjonalne oferty!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?money,finance,budget',
+            'featured_image' => 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=600&fit=crop',
             'meta_title' => 'Jak Ustalić Stawki jako Freelancer? Przewodnik Wyceny Projektów 2025',
             'meta_description' => 'Kompletny przewodnik wyceny projektów freelancerskich. Dowiedz się, jak obliczyć stawkę godzinową, wycenić projekt ryczałtowo i kiedy podnieść ceny. Praktyczne przykłady i kalkulatory.',
             'meta_keywords' => ['stawki freelancera', 'wycena projektów', 'jak wycenić projekt', 'stawka godzinowa freelancera', 'freelancer cennik', 'wycena usług IT', 'jak ustalić stawki'],
@@ -666,7 +666,7 @@ class BlogPostSeeder extends Seeder
 <p>Znalezienie pierwszych klientów wymaga cierpliwości i systematyczności. Nie zniechęcaj się, jeśli początkowo nie przychodzą odpowiedzi. Kombinuj różne strategie, testuj i dostosowuj podejście. Pamiętaj - każdy freelancer zaczynał od zera. Najważniejsze to zacząć działać już dziś!</p>
 
 <p><strong>Gotowy na pierwszy projekt? <a href="/announcements">Przeglądaj ogłoszenia</a> na Projekciarz.pl i składaj oferty już dziś!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?client,handshake,business',
+            'featured_image' => 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=600&fit=crop',
             'meta_title' => 'Jak Znaleźć Pierwszych Klientów jako Freelancer? 7 Strategii 2025',
             'meta_description' => 'Praktyczny przewodnik po pozyskiwaniu pierwszych klientów jako freelancer. Poznaj 7 sprawdzonych strategii: platformy freelancerskie, networking, content marketing i więcej. Działaj już dziś!',
             'meta_keywords' => ['jak znaleźć klientów', 'pierwsi klienci freelancera', 'pozyskiwanie klientów', 'freelancer marketing', 'jak zdobyć klientów', 'strategie freelancera', 'platformy freelancerskie'],
@@ -762,7 +762,7 @@ class BlogPostSeeder extends Seeder
 <p>Skuteczna oferta to połączenie zrozumienia potrzeb klienta, pokazania doświadczenia i zaproponowania wartości. Pamiętaj - każda oferta powinna być spersonalizowana i pokazywać, że zależy Ci na sukcesie projektu klienta, a nie tylko na zarobku.</p>
 
 <p><strong>Gotowy napisać ofertę, która wyróżni się z tłumu? <a href="/announcements">Przeglądaj ogłoszenia</a> na Projekciarz.pl i aplikuj już dziś!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?proposal,offer,contract',
+            'featured_image' => 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=600&fit=crop',
             'meta_title' => 'Jak Napisać Skuteczną Ofertę na Projekciarz.pl? Szablon i Przykłady 2025',
             'meta_description' => 'Dowiedz się, jak napisać ofertę freelancerską, która wyróżni się spośród setek innych. Sprawdź sprawdzony szablon, unikaj błędów i zwiększ szansę na wybór Twojej oferty.',
             'meta_keywords' => ['jak napisać ofertę', 'oferta freelancera', 'szablon oferty', 'jak aplikować na projekt', 'skuteczna oferta', 'freelancer oferta'],
@@ -871,7 +871,7 @@ class BlogPostSeeder extends Seeder
 <p>Efektywne zarządzanie czasem to fundament udanego freelancingu. Eksperymentuj z różnymi metodami i znajdź system, który działa dla Ciebie. Pamiętaj - produktywność to nie praca 24/7, ale mądre wykorzystanie czasu, który masz.</p>
 
 <p><strong>Chcesz więcej czasu na projekty? <a href="/announcements">Znajdź zlecenia</a> na Projekciarz.pl i zarabiaj efektywnie!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?time,productivity,clock',
+            'featured_image' => 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=600&fit=crop',
             'meta_title' => 'Zarządzanie Czasem dla Freelancerów: Metody i Narzędzia 2025',
             'meta_description' => 'Poznaj sprawdzone metody zarządzania czasem dla freelancerów. Technika Pomodoro, time blocking, eliminacja rozpraszaczy i więcej. Zwiększ produktywność i unikaj wypalenia.',
             'meta_keywords' => ['zarządzanie czasem', 'produktywność freelancera', 'time management', 'work life balance', 'efektywna praca', 'technika pomodoro'],
@@ -1053,7 +1053,7 @@ Podatek (17%): 13 600 PLN</p>
 <p><strong>Ważne:</strong> Informacje w tym artykule mają charakter ogólny. Zawsze konsultuj swoją sytuację z wykwalifikowanym księgowym lub doradcą podatkowym.</p>
 
 <p><strong>Chcesz zarabiać więcej jako freelancer? <a href="/announcements">Znajdź lepiej płatne projekty</a> na Projekciarz.pl!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?tax,accounting,calculator',
+            'featured_image' => 'https://images.unsplash.com/photo-1554224154-26032c9c9d8b?w=800&h=600&fit=crop',
             'meta_title' => 'Podatki dla Freelancerów w Polsce 2025: JDG, B2B, Ryczałt - Przewodnik',
             'meta_description' => 'Kompletny przewodnik po podatkach dla freelancerów w Polsce. Porównanie JDG, B2B, ryczałtu i skali podatkowej. Aktualne stawki, koszty ZUS, VAT i co można odliczyć w 2025.',
             'meta_keywords' => ['podatki freelancera', 'JDG podatki', 'ryczałt freelancer', 'B2B podatki', 'ZUS freelancer', 'podatki w Polsce 2025', 'freelancer podatki'],
@@ -1221,7 +1221,7 @@ Podatek (17%): 13 600 PLN</p>
 <p>Nie ma uniwersalnej odpowiedzi. Freelancing oferuje więcej swobody i potencjału zarobkowego, ale wymaga większej odpowiedzialności i zarządzania ryzykiem. Etat daje stabilność i bezpieczeństwo, ale mniej kontroli. Najlepszym rozwiązaniem może być rozpoczęcie od etatu, zdobycie doświadczenia, a następnie przejście na freelancing lub hybrydę.</p>
 
 <p><strong>Gotowy spróbować freelancingu? <a href="/register">Załóż konto</a> na Projekciarz.pl i znajdź pierwszy projekt!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?freelance,office,workplace',
+            'featured_image' => 'https://images.unsplash.com/photo-1497215842964-222b430dc094?w=800&h=600&fit=crop',
             'meta_title' => 'Freelancing vs. Etat: Porównanie dla Programistów i Designerów 2025',
             'meta_description' => 'Kompleksowe porównanie freelancingu i pracy etatowej. Zarobki, elastyczność, bezpieczeństwo, rozwój kariery - wszystkie aspekty. Która opcja jest lepsza dla programistów i designerów?',
             'meta_keywords' => ['freelancing vs etat', 'praca zdalna', 'freelancer czy etat', 'zarobki programisty', 'freelancing zarobki', 'praca IT'],
@@ -1447,7 +1447,7 @@ Podatek (17%): 13 600 PLN</p>
 <p>Dobrze dobrane narzędzia to inwestycja w Twoją produktywność i profesjonalizm. Zacznij od darmowych wersji, testuj i stopniowo dodawaj płatne narzędzia, które rzeczywiście przynoszą wartość. Pamiętaj - narzędzie to tylko pomocnik, najważniejsza jest Twoja wiedza i umiejętności.</p>
 
 <p><strong>Chcesz znaleźć projekty, gdzie wykorzystasz te narzędzia? <a href="/announcements">Przeglądaj ogłoszenia</a> na Projekciarz.pl!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?tools,software,technology',
+            'featured_image' => 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=600&fit=crop',
             'meta_title' => 'Najlepsze Narzędzia dla Freelancerów 2025: Programy i Aplikacje',
             'meta_description' => 'Kompletna lista najlepszych narzędzi dla freelancerów w 2025. Zarządzanie projektami, śledzenie czasu, faktury, komunikacja, design, programowanie - wszystko w jednym miejscu.',
             'meta_keywords' => ['narzędzia freelancera', 'programy dla freelancera', 'aplikacje freelancer', 'narzędzia IT', 'oprogramowanie freelancer', 'narzędzia produktywności'],
@@ -1602,7 +1602,7 @@ Podatek (17%): 13 600 PLN</p>
 <p>Trudni klienci to część freelancingu. Najważniejsze to rozpoznać problemy wcześnie, komunikować się profesjonalnie i asertywnie, oraz wiedzieć, kiedy zakończyć współpracę. Pamiętaj - Twoje zdrowie i dobrobyt są ważniejsze niż jeden problematyczny projekt.</p>
 
 <p><strong>Szukasz lepszych klientów? <a href="/announcements">Przeglądaj ogłoszenia</a> na Projekciarz.pl i wybieraj projekty z dobrymi opiniami!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?conflict,negotiation,problem',
+            'featured_image' => 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&h=600&fit=crop',
             'meta_title' => 'Jak Radzić Sobie z Trudnymi Klientami? Przewodnik dla Freelancerów',
             'meta_description' => 'Praktyczny przewodnik po radzeniu sobie z trudnymi klientami. Typy problematycznych klientów, strategie komunikacji i kiedy zakończyć współpracę. Ochrona siebie i biznesu.',
             'meta_keywords' => ['trudni klienci', 'problematyczni klienci', 'komunikacja z klientem', 'zarządzanie klientami', 'freelancer klienci', 'jak radzić sobie z klientami'],
@@ -1774,7 +1774,7 @@ Podatek (17%): 13 600 PLN</p>
 <p>Budowanie portfolio, które sprzedaje, to proces, nie jednorazowe działanie. Zacznij od małych projektów, dokumentuj wszystko, specjalizuj się i nieustannie aktualizuj. Najważniejsze to zacząć - nawet proste portfolio jest lepsze niż żadne.</p>
 
 <p><strong>Gotowy zbudować swoje portfolio? <a href="/announcements">Znajdź pierwsze projekty</a> na Projekciarz.pl i zacznij już dziś!</strong></p>',
-            'featured_image' => 'https://source.unsplash.com/800x600/?success,achievement,chart',
+            'featured_image' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
             'meta_title' => 'Case Study: Jak Zbudować Portfolio Freelancera, Które Przyciąga Klientów',
             'meta_description' => 'Praktyczny case study budowania portfolio freelancera. Od pierwszych projektów do portfolio generującego zapytania. Konkretne przykłady, liczby i strategie, które działają.',
             'meta_keywords' => ['case study portfolio', 'portfolio freelancera', 'jak zbudować portfolio', 'portfolio case study', 'freelancer portfolio', 'portfolio IT'],
