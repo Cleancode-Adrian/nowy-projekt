@@ -9,22 +9,23 @@
 
                 <div class="space-y-4">
                     @foreach($section['questions'] as $faq)
-                        <div class="card" x-data="{ open: false }">
-                            <button type="button" @click="open = !open" class="w-full text-left flex items-center justify-between focus:outline-none">
-                                <h3 class="text-lg font-semibold text-gray-900">{{ $faq['q'] }}</h3>
-                                <i class="fa-solid fa-chevron-down transition-transform" :class="{ 'rotate-180': open }"></i>
+                        <div class="card" x-data="{ open: false }" x-cloak>
+                            <button type="button" @click="open = !open" class="w-full text-left flex items-center justify-between focus:outline-none hover:bg-gray-50 p-2 -m-2 rounded transition-colors">
+                                <h3 class="text-lg font-semibold text-gray-900 pr-4">{{ $faq['q'] }}</h3>
+                                <i class="fa-solid fa-chevron-down transition-transform duration-300 flex-shrink-0" :class="{ 'rotate-180': open }"></i>
                             </button>
                             <div
                                 x-show="open"
-                                x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 -translate-y-1"
-                                x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-150"
-                                x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 -translate-y-1"
-                                x-cloak
-                                class="mt-4 text-gray-700">
-                                {{ $faq['a'] }}
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 max-h-0"
+                                x-transition:enter-end="opacity-100 max-h-[500px]"
+                                x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100 max-h-[500px]"
+                                x-transition:leave-end="opacity-0 max-h-0"
+                                class="mt-4 text-gray-700 overflow-hidden">
+                                <div class="pb-2">
+                                    {{ $faq['a'] }}
+                                </div>
                             </div>
                         </div>
                     @endforeach
