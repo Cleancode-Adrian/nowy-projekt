@@ -66,7 +66,7 @@
 
         {{-- Message Input --}}
         <div class="bg-white rounded-b-xl shadow-sm border-t border-gray-200 p-4">
-            <form wire:submit="sendMessage" class="flex items-end gap-3">
+            <form wire:submit="sendMessage" class="flex gap-3">
                 <div class="flex-1">
                     <textarea
                         wire:model="content"
@@ -81,7 +81,7 @@
                 </div>
                 <button
                     type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 self-end h-fit"
                     wire:loading.attr="disabled">
                     <span wire:loading.remove>
                         <i class="fa-solid fa-paper-plane"></i>

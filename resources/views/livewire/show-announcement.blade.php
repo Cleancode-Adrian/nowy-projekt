@@ -179,7 +179,7 @@
                     @if($announcement->user->phone)
                         <div class="flex items-center justify-between">
                             <span class="text-gray-600">Telefon:</span>
-                            <span class="font-medium">{{ $announcement->user->phone }}</span>
+                            <span class="font-medium">{{ $announcement->user->masked_phone }}</span>
                         </div>
                     @endif
                 </div>

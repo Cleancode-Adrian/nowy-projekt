@@ -32,7 +32,7 @@
 
                 {{-- Clear Filters --}}
                 <div>
-                    <button wire:click="clearFilters" class="w-full btn btn-secondary">
+                    <button wire:click="clearFilters" type="button" class="w-full input text-center cursor-pointer hover:bg-gray-50">
                         ✖ Wyczyść filtry
                     </button>
                 </div>

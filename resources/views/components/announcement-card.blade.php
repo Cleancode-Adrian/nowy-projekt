@@ -67,13 +67,13 @@
                 <span class="text-sm text-gray-600">{{ $announcement->user->name }}</span>
             </div>
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-shrink-0">
                 @auth
                     <livewire:save-button :announcementId="$announcement->id" :key="'save-'.$announcement->id" />
                 @endauth
 
                 <a href="{{ route('announcements.show', $announcement) }}"
-                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0">
                     Zobacz szczegóły
                 </a>
             </div>
