@@ -7,18 +7,89 @@ use App\Models\Category;
 use App\Models\User;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class AnnouncementSeeder extends Seeder
 {
     public function run(): void
     {
-        // Znajdź użytkownika (admin lub pierwszego użytkownika)
-        $user = User::where('role', 'admin')->first() ?? User::first();
+        // Utwórz przykładowych użytkowników (klientów) jeśli nie istnieją
+        $users = [];
         
-        if (!$user) {
-            $this->command->warn('Brak użytkowników - pomijam seeder ogłoszeń');
-            return;
-        }
+        // Użytkownik 1
+        $user1 = User::firstOrCreate(
+            ['email' => 'anna.kowalska@example.com'],
+            [
+                'name' => 'Anna Kowalska',
+                'password' => Hash::make('password'),
+                'role' => 'client',
+                'is_approved' => true,
+                'phone' => '+48 501 234 567',
+                'company' => 'Kancelaria Prawna Kowalska',
+                'email_verified_at' => now()->subDays(30),
+            ]
+        );
+        $users[] = $user1;
+
+        // Użytkownik 2
+        $user2 = User::firstOrCreate(
+            ['email' => 'piotr.nowak@example.com'],
+            [
+                'name' => 'Piotr Nowak',
+                'password' => Hash::make('password'),
+                'role' => 'client',
+                'is_approved' => true,
+                'phone' => '+48 502 345 678',
+                'company' => 'Nowak Sp. z o.o.',
+                'email_verified_at' => now()->subDays(20),
+            ]
+        );
+        $users[] = $user2;
+
+        // Użytkownik 3
+        $user3 = User::firstOrCreate(
+            ['email' => 'magdalena.wisniewska@example.com'],
+            [
+                'name' => 'Magdalena Wiśniewska',
+                'password' => Hash::make('password'),
+                'role' => 'client',
+                'is_approved' => true,
+                'phone' => '+48 503 456 789',
+                'company' => 'Wisniewska Design Studio',
+                'email_verified_at' => now()->subDays(15),
+            ]
+        );
+        $users[] = $user3;
+
+        // Użytkownik 4
+        $user4 = User::firstOrCreate(
+            ['email' => 'tomasz.wojcik@example.com'],
+            [
+                'name' => 'Tomasz Wójcik',
+                'password' => Hash::make('password'),
+                'role' => 'client',
+                'is_approved' => true,
+                'phone' => '+48 504 567 890',
+                'company' => 'Wójcik Tech Solutions',
+                'email_verified_at' => now()->subDays(10),
+            ]
+        );
+        $users[] = $user4;
+
+        // Użytkownik 5
+        $user5 = User::firstOrCreate(
+            ['email' => 'katarzyna.lewandowska@example.com'],
+            [
+                'name' => 'Katarzyna Lewandowska',
+                'password' => Hash::make('password'),
+                'role' => 'client',
+                'is_approved' => true,
+                'phone' => '+48 505 678 901',
+                'company' => 'Lewandowska Marketing',
+                'email_verified_at' => now()->subDays(5),
+            ]
+        );
+        $users[] = $user5;
 
         // Pobierz kategorie
         $ecommerceCategory = Category::where('slug', 'e-commerce')->first();
@@ -39,7 +110,7 @@ class AnnouncementSeeder extends Seeder
         $announcement1 = Announcement::updateOrCreate(
             ['title' => 'Sklep internetowy WooCommerce - integracja płatności'],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'category_id' => $ecommerceCategory?->id,
                 'title' => 'Sklep internetowy WooCommerce - integracja płatności',
                 'description' => 'Szukam doświadczonego developera do stworzenia sklepu internetowego na WooCommerce. Projekt obejmuje:
@@ -79,7 +150,7 @@ Projekt do realizacji w ciągu 4-6 tygodni. Oferuję elastyczne terminy i możli
         $announcement2 = Announcement::updateOrCreate(
             ['title' => 'Strona firmowa WordPress - redesign istniejącej strony'],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[1]->id,
                 'category_id' => $wordpressCategory?->id,
                 'title' => 'Strona firmowa WordPress - redesign istniejącej strony',
                 'description' => 'Potrzebuję kompleksowego redesignu mojej strony firmowej na WordPress. Obecna strona jest przestarzała i nie działa dobrze na mobile.
@@ -122,7 +193,7 @@ Budżet: 3000-5000 PLN. Termin: 3-4 tygodnie.',
         $announcement3 = Announcement::updateOrCreate(
             ['title' => 'Aplikacja web Laravel - system zarządzania projektami'],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[2]->id,
                 'category_id' => $webAppCategory?->id,
                 'title' => 'Aplikacja web Laravel - system zarządzania projektami',
                 'description' => 'Szukam doświadczonego developera Laravel do stworzenia systemu zarządzania projektami dla małej agencji.
@@ -166,7 +237,7 @@ Budżet: 15000-25000 PLN. Projekt podzielony na etapy. Szukam długoterminowej w
         $announcement4 = Announcement::updateOrCreate(
             ['title' => 'Projekt UI/UX dla aplikacji mobilnej - fintech'],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[3]->id,
                 'category_id' => $uiuxCategory?->id,
                 'title' => 'Projekt UI/UX dla aplikacji mobilnej - fintech',
                 'description' => 'Szukam doświadczonego UI/UX designera do projektu aplikacji mobilnej w branży fintech.
@@ -208,7 +279,7 @@ Projekt do realizacji w ciągu 6-8 tygodni. Możliwość współpracy przy imple
         $announcement5 = Announcement::updateOrCreate(
             ['title' => 'Optymalizacja SEO - sklep e-commerce'],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[4]->id,
                 'category_id' => $seoCategory?->id,
                 'title' => 'Optymalizacja SEO - sklep e-commerce',
                 'description' => 'Szukam specjalisty SEO do kompleksowej optymalizacji sklepu internetowego.
