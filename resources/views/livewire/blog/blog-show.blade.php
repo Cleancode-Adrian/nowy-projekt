@@ -4,9 +4,19 @@
         <article class="card overflow-hidden mb-8 p-0">
             @if($post->featured_image)
                 <div class="w-full h-96">
-                    <img src="{{ asset('storage/' . $post->featured_image) }}"
-                         alt="{{ $post->title }}"
-                         class="w-full h-full object-cover">
+                    @if(str_starts_with($post->featured_image, 'http://') || str_starts_with($post->featured_image, 'https://'))
+                        <img src="{{ $post->featured_image }}"
+                             alt="{{ $post->title }}"
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center" style="display: none;">
+                            <i class="fa-solid fa-blog text-white text-6xl opacity-20"></i>
+                        </div>
+                    @else
+                        <img src="{{ asset('storage/' . $post->featured_image) }}"
+                             alt="{{ $post->title }}"
+                             class="w-full h-full object-cover">
+                    @endif
                 </div>
             @endif
 
@@ -51,8 +61,13 @@
                     @foreach($relatedPosts as $related)
                         <a href="{{ route('blog.show', $related->slug) }}" class="card hover:shadow-lg transition-shadow">
                             @if($related->featured_image)
-                                <img src="{{ asset('storage/' . $related->featured_image) }}"
-                                     class="w-full h-32 object-cover rounded-lg mb-3">
+                                @if(str_starts_with($related->featured_image, 'http://') || str_starts_with($related->featured_image, 'https://'))
+                                    <img src="{{ $related->featured_image }}"
+                                         class="w-full h-32 object-cover rounded-lg mb-3">
+                                @else
+                                    <img src="{{ asset('storage/' . $related->featured_image) }}"
+                                         class="w-full h-32 object-cover rounded-lg mb-3">
+                                @endif
                             @endif
                             <h3 class="font-bold text-gray-900 mb-2">{{ $related->title }}</h3>
                             <p class="text-xs text-gray-500">{{ $related->published_at->format('d.m.Y') }}</p>

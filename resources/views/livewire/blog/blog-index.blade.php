@@ -27,9 +27,19 @@
                     <article class="card hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer h-full flex flex-col overflow-hidden">
                         <div class="w-full h-48 bg-gray-100 rounded-xl overflow-hidden mb-4">
                             @if($post->featured_image)
-                                <img src="{{ asset('storage/' . $post->featured_image) }}"
-                                     alt="{{ $post->title }}"
-                                     class="w-full h-full object-cover">
+                                @if(str_starts_with($post->featured_image, 'http://') || str_starts_with($post->featured_image, 'https://'))
+                                    <img src="{{ $post->featured_image }}"
+                                         alt="{{ $post->title }}"
+                                         class="w-full h-full object-cover"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center" style="display: none;">
+                                        <i class="fa-solid fa-blog text-white text-6xl opacity-20"></i>
+                                    </div>
+                                @else
+                                    <img src="{{ asset('storage/' . $post->featured_image) }}"
+                                         alt="{{ $post->title }}"
+                                         class="w-full h-full object-cover">
+                                @endif
                             @else
                                 <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                                     <i class="fa-solid fa-blog text-white text-6xl opacity-20"></i>
