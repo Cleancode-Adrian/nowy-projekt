@@ -283,7 +283,387 @@ class BlogPostSeeder extends Seeder
         if ($wordpressTag) $post4->tags()->attach($wordpressTag);
         if ($laravelTag) $post4->tags()->attach($laravelTag);
 
-        $this->command->info('✅ Dodano 4 artykuły blogowe z pełnymi danymi SEO!');
+        // Artykuł 5: Brief projektowy
+        $post5 = BlogPost::create([
+            'author_id' => $admin->id,
+            'title' => 'Jak przygotować brief projektowy, który pokochają freelancerzy',
+            'slug' => 'jak-przygotowac-brief-projektowy-freelancer',
+            'excerpt' => 'Uniknij nieporozumień i przyspiesz start projektu. Zobacz, jakie elementy powinien zawierać idealny brief przekazywany wykonawcom na Projekciarz.pl.',
+            'content' => '<h2>Brief to kontrakt w pigułce</h2>
+<p>Dobrze przygotowany brief oszczędza dziesiątki wiadomości i dni opóźnień. Zawiera wszystkie informacje potrzebne freelancerowi, aby mógł skupić się na pracy, a nie na dopytywaniu o detale.</p>
+
+<h2>1. Krótki kontekst biznesowy</h2>
+<ul>
+    <li>Jaka jest misja firmy i kim są klienci końcowi?</li>
+    <li>Dlaczego projekt startuje właśnie teraz?</li>
+    <li>Jak wygląda aktualne rozwiązanie (jeśli istnieje)?</li>
+</ul>
+
+<h2>2. Precyzyjny zakres prac</h2>
+<p>Opisz, co dokładnie ma powstać i co <strong>nie</strong> jest częścią zlecenia. Jeśli projekt składa się z etapów, zaznacz to i dodaj ewentualne zależności.</p>
+
+<h2>3. Materiały referencyjne</h2>
+<p>Dodaj linki do moodboardów, brand booka, poprzednich realizacji lub inspiracji konkurencji. Freelancer łatwiej zrozumie estetykę oraz ograniczenia techniczne.</p>
+
+<h2>4. Oczekiwany rezultat i KPI</h2>
+<p>Opisz, jak będzie mierzony sukces projektu: zwiększenie konwersji, skrócenie procesu sprzedaży, więcej zapytań z formularza itp.</p>
+
+<h2>5. Harmonogram i budżet</h2>
+<p>Podaj terminy pośrednie (np. v1 makiety, testy) oraz deadline finalny. Dołącz widełki budżetowe i sposób rozliczenia – ryczałt, godziny, sprinty.</p>
+
+<h2>6. Kanały komunikacji</h2>
+<p>Z góry ustal, gdzie toczy się dyskusja: Projekciarz.pl, Slack, e-mail, Figma. Zdefiniuj osoby decyzyjne i maksymalny czas odpowiedzi.</p>
+
+<p><strong>Gotowy brief = lepsze oferty.</strong> Do nowego ogłoszenia dodaj szablon z powyższymi sekcjami, a oszczędzisz sobie poprawek i domysłów.</p>',
+            'featured_image' => 'blog/brief-projektowy.svg',
+            'meta_title' => 'Brief projektowy dla freelancera – kompletna checklista',
+            'meta_description' => 'Dowiedz się, jakie informacje umieścić w briefie, aby freelancerzy z Projekciarz.pl szybciej wycenili i dostarczyli projekt.',
+            'meta_keywords' => ['brief projektowy', 'współpraca z freelancerem', 'zarządzanie projektem', 'jak napisać brief'],
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        if ($uiuxTag) $post5->tags()->attach($uiuxTag);
+        if ($responsiveTag) $post5->tags()->attach($responsiveTag);
+        if ($tailwindTag) $post5->tags()->attach($tailwindTag);
+
+        // Artykuł 6: Automatyzacja i AI
+        $post6 = BlogPost::create([
+            'author_id' => $admin->id,
+            'title' => 'Automatyzacja pracy freelancera: AI i narzędzia no-code w praktyce',
+            'slug' => 'automatyzacja-pracy-freelancera-ai-no-code',
+            'excerpt' => 'Poznaj workflow, dzięki któremu skrócisz czas przygotowania ofert, wycen i raportów nawet o 40%. Wykorzystaj AI jako asystenta, a nie zagrożenie.',
+            'content' => '<h2>Dlaczego warto automatyzować?</h2>
+<p>Najwięcej czasu tracimy na powtarzalne zadania: odpowiadanie na podobne pytania, przygotowanie wycen, aktualizacje statusów. Automatyzacja pozwala odzyskać godziny tygodniowo i skupić się na projektach o największej wartości.</p>
+
+<h2>1. Szablony odpowiedzi wspierane przez AI</h2>
+<p>Stwórz bazę najczęstszych pytań klientów i wykorzystaj modele językowe (ChatGPT, Claude) do personalizacji odpowiedzi. Wystarczy wprowadzić nazwę klienta, budżet i główne cele, a AI wygeneruje szkic wiadomości.</p>
+
+<h2>2. Wyceny w Airtable lub Notion</h2>
+<p>Zbuduj kalkulator, który na podstawie zakresu i liczby iteracji automatycznie oblicza koszt. Dodaj formuły uwzględniające Twój minimalny próg rentowności.</p>
+
+<h2>3. Automatyczne raporty statusowe</h2>
+<p>Połącz Trello/Jirę z Google Docs przez Zapier lub Make. Każdy ukończony ticket aktualizuje dokument z raportem dla klienta – bez ręcznego kopiowania.</p>
+
+<h2>4. Monitorowanie leadów</h2>
+<p>Ustaw alerty (RSS + e-mail + webhook) dla nowych ogłoszeń pasujących do Twojej specjalizacji na Projekciarz.pl. Dzięki temu składasz oferty jako pierwszy.</p>
+
+<h2>5. Biblioteka kodu i komponentów</h2>
+<p>Jeśli pracujesz z Laravel lub Tailwind CSS, zbieraj gotowe komponenty w prywatnym pakiecie Composer/NPM. Każdy kolejny projekt startuje szybciej, a Ty utrzymujesz spójny standard.</p>
+
+<p><strong>Automatyzacja = przewaga konkurencyjna.</strong> Poświęć jedno popołudnie na uporządkowanie procesów, a klienci zauważą, że dostarczasz szybciej i bardziej przewidywalnie.</p>',
+            'featured_image' => 'blog/automatyzacja-freelancer.svg',
+            'meta_title' => 'Automatyzacja pracy freelancera – AI i no-code krok po kroku',
+            'meta_description' => 'Sprawdź, jak freelancerzy mogą wykorzystać AI, Notion i Zapier do automatyzacji ofert, raportów i leadów. Praktyczne przykłady.',
+            'meta_keywords' => ['automatyzacja freelancera', 'AI dla freelancera', 'no-code', 'Zapier', 'Notion', 'ChatGPT w pracy'],
+            'status' => 'published',
+            'published_at' => now()->addHours(2),
+        ]);
+
+        if ($laravelTag) $post6->tags()->attach($laravelTag);
+        if ($javascriptTag) $post6->tags()->attach($javascriptTag);
+        if ($phpTag) $post6->tags()->attach($phpTag);
+        if ($seoTag) $post6->tags()->attach($seoTag);
+
+        // Artykuł 7: Jak ustalić stawki jako freelancer
+        $post7 = BlogPost::create([
+            'author_id' => $admin->id,
+            'title' => 'Jak ustalić stawki jako freelancer: kompletny przewodnik wyceny projektów',
+            'slug' => 'jak-ustalic-stawki-freelancer-wycena-projektow',
+            'excerpt' => 'Poznaj sprawdzone metody wyceny projektów freelancerskich. Dowiedz się, jak obliczyć stawkę godzinową, wycenić projekt ryczałtowo i kiedy podnieść ceny. Praktyczne przykłady i kalkulatory.',
+            'content' => '<h2>Dlaczego wycena jest tak ważna?</h2>
+<p>Ustalanie stawek to jeden z najtrudniejszych aspektów freelancingu. Zbyt niskie ceny oznaczają przepracowanie i wypalenie, a zbyt wysokie mogą odstraszyć klientów. W tym przewodniku pokażemy Ci, jak znaleźć złoty środek i wycenić projekty profesjonalnie.</p>
+
+<h2>1. Oblicz swoją stawkę godzinową</h2>
+<p>Zacznij od określenia, ile potrzebujesz zarabiać miesięcznie, aby pokryć wszystkie koszty i osiągnąć cel finansowy.</p>
+
+<h3>Krok 1: Określ miesięczne koszty</h3>
+<ul>
+    <li><strong>Koszty życia</strong> - czynsz, jedzenie, transport, ubezpieczenie</li>
+    <li><strong>Koszty biznesowe</strong> - oprogramowanie, hosting, sprzęt, szkolenia</li>
+    <li><strong>Podatki i ZUS</strong> - około 20-30% przychodu (w zależności od formy działalności)</li>
+    <li><strong>Rezerwa na gorsze miesiące</strong> - minimum 20% dodatkowo</li>
+</ul>
+
+<h3>Krok 2: Oblicz dostępne godziny</h3>
+<p>Freelancerzy rzadko pracują 8 godzin dziennie przez cały miesiąc. Uwzględnij:</p>
+<ul>
+    <li>Średnio 20-25 dni roboczych w miesiącu</li>
+    <li>4-6 godzin produktywnej pracy dziennie (bez spotkań, administracji)</li>
+    <li>Około 60-70% czasu na projekty płatne (reszta to marketing, rozwój)</li>
+</ul>
+
+<h3>Krok 3: Oblicz stawkę</h3>
+<p><strong>Przykład:</strong></p>
+<ul>
+    <li>Koszty miesięczne: 8000 PLN</li>
+    <li>Podatki (25%): +2000 PLN</li>
+    <li>Rezerwa (20%): +2000 PLN</li>
+    <li><strong>Cel: 12000 PLN/miesiąc</strong></li>
+    <li>Dostępne godziny: 22 dni × 5h × 65% = 71,5 godziny</li>
+    <li><strong>Stawka godzinowa: 12000 / 71,5 = 168 PLN/h</strong></li>
+</ul>
+
+<h2>2. Wycena ryczałtowa vs. stawka godzinowa</h2>
+<p>Oba podejścia mają swoje zalety. Wybór zależy od typu projektu i Twojego doświadczenia.</p>
+
+<h3>Kiedy wyceniać ryczałtowo?</h3>
+<ul>
+    <li>Projekt ma jasno określony zakres</li>
+    <li>Masz doświadczenie w podobnych projektach</li>
+    <li>Klient preferuje stałą cenę</li>
+    <li>Możesz oszacować czas z dokładnością ±20%</li>
+</ul>
+
+<h3>Kiedy wyceniać godzinowo?</h3>
+<ul>
+    <li>Zakres jest niejasny lub może się zmieniać</li>
+    <li>Projekt długoterminowy z iteracjami</li>
+    <li>Wsparcie techniczne lub konsultacje</li>
+    <li>Klient chce elastyczności</li>
+</ul>
+
+<h2>3. Metody wyceny projektów</h2>
+
+<h3>Metoda 1: Szacunek czasu × stawka</h3>
+<p>Najprostsza metoda - oszacuj czas i pomnóż przez stawkę godzinową:</p>
+<ul>
+    <li>Analiza i planowanie: 8h</li>
+    <li>Projektowanie: 20h</li>
+    <li>Implementacja: 30h</li>
+    <li>Testy i poprawki: 10h</li>
+    <li><strong>Razem: 68h × 168 PLN = 11 424 PLN</strong></li>
+</ul>
+
+<h3>Metoda 2: Wartość dla klienta</h3>
+<p>Zamiast patrzeć na czas, pomyśl o wartości biznesowej:</p>
+<ul>
+    <li>Ile klient zaoszczędzi dzięki Twojemu rozwiązaniu?</li>
+    <li>Ile dodatkowego przychodu wygeneruje?</li>
+    <li>Jaka jest alternatywna (koszt zatrudnienia etatowca)?</li>
+</ul>
+<p><strong>Przykład:</strong> Strona e-commerce, która zwiększy sprzedaż o 30 000 PLN/miesiąc. Wycena 15 000 PLN to tylko 50% pierwszego miesiąca zysku - to świetna inwestycja dla klienta.</p>
+
+<h3>Metoda 3: Porównanie rynkowe</h3>
+<p>Sprawdź stawki konkurencji na platformach takich jak Projekciarz.pl:</p>
+<ul>
+    <li>Przeglądaj podobne ogłoszenia</li>
+    <li>Analizuj widełki budżetowe</li>
+    <li>Dostosuj cenę do swojego doświadczenia</li>
+</ul>
+
+<h2>4. Kiedy podnieść stawki?</h2>
+<p>Regularnie podnoś ceny, gdy:</p>
+<ul>
+    <li>Masz pełen kalendarz na 2-3 miesiące do przodu</li>
+    <li>Otrzymujesz więcej zapytań niż możesz obsłużyć</li>
+    <li>Zdobyłeś nowe certyfikaty lub umiejętności</li>
+    <li>Masz portfolio z udanymi projektami</li>
+    <li>Klienci regularnie wracają z kolejnymi zleceniami</li>
+</ul>
+
+<h2>5. Częste błędy w wycenie</h2>
+<ul>
+    <li><strong>❌ Zaniżanie ceny "żeby zdobyć klienta"</strong> - prowadzi do przepracowania i frustracji</li>
+    <li><strong>❌ Nie uwzględnianie poprawek</strong> - zawsze dodaj 20-30% buforu na iteracje</li>
+    <li><strong>❌ Zapominanie o kosztach pośrednich</strong> - spotkania, komunikacja, administracja</li>
+    <li><strong>❌ Brak pisemnej umowy</strong> - zawsze dokumentuj zakres i cenę</li>
+</ul>
+
+<h2>6. Szablon wyceny</h2>
+<p>Zawsze przygotuj profesjonalną wycenę zawierającą:</p>
+<ul>
+    <li>Krótkie podsumowanie projektu</li>
+    <li>Szczegółowy zakres prac (co jest wliczone)</li>
+    <li>Co NIE jest wliczone (dodatkowe funkcje, iteracje)</li>
+    <li>Harmonogram realizacji</li>
+    <li>Warunki płatności (zaliczka, etapy)</li>
+    <li>Termin ważności oferty</li>
+</ul>
+
+<h2>Podsumowanie</h2>
+<p>Prawidłowa wycena to fundament udanego freelancingu. Pamiętaj, że Twoja stawka powinna odzwierciedlać wartość, którą dostarczasz, a nie tylko czas spędzony przy komputerze. Regularnie przeglądaj i aktualizuj swoje ceny, a zobaczysz, jak rośnie jakość projektów i satysfakcja z pracy.</p>
+
+<p><strong>Szukasz projektów do wyceny? <a href="/announcements">Przeglądaj aktualne ogłoszenia</a> na Projekciarz.pl i składasz profesjonalne oferty!</strong></p>',
+            'featured_image' => 'blog/stawki-freelancer.svg',
+            'meta_title' => 'Jak Ustalić Stawki jako Freelancer? Przewodnik Wyceny Projektów 2025',
+            'meta_description' => 'Kompletny przewodnik wyceny projektów freelancerskich. Dowiedz się, jak obliczyć stawkę godzinową, wycenić projekt ryczałtowo i kiedy podnieść ceny. Praktyczne przykłady i kalkulatory.',
+            'meta_keywords' => ['stawki freelancera', 'wycena projektów', 'jak wycenić projekt', 'stawka godzinowa freelancera', 'freelancer cennik', 'wycena usług IT', 'jak ustalić stawki'],
+            'status' => 'published',
+            'published_at' => now()->subDays(2),
+        ]);
+
+        if ($phpTag) $post7->tags()->attach($phpTag);
+        if ($uiuxTag) $post7->tags()->attach($uiuxTag);
+        if ($seoTag) $post7->tags()->attach($seoTag);
+
+        // Artykuł 8: Jak znaleźć pierwszych klientów
+        $post8 = BlogPost::create([
+            'author_id' => $admin->id,
+            'title' => 'Jak znaleźć pierwszych klientów jako freelancer: 7 sprawdzonych strategii',
+            'slug' => 'jak-znalezc-pierwszych-klientow-freelancer-strategie',
+            'excerpt' => 'Praktyczny przewodnik po pozyskiwaniu pierwszych klientów jako freelancer. Poznaj 7 sprawdzonych strategii: od platform freelancerskich, przez networking, po content marketing. Działaj już dziś!',
+            'content' => '<h2>Dlaczego pierwszy klient jest tak ważny?</h2>
+<p>Znalezienie pierwszego klienta to największe wyzwanie dla początkujących freelancerów. Bez portfolio i referencji trudno przekonać kogoś do współpracy. W tym artykule pokażemy Ci 7 sprawdzonych strategii, które pomogą Ci zdobyć pierwszych klientów i zbudować fundament udanej kariery freelancera.</p>
+
+<h2>1. Platformy freelancerskie (najszybsza droga)</h2>
+<p>Platformy takie jak <strong>Projekciarz.pl</strong> to najlepsze miejsce na start. Dlaczego?</p>
+
+<h3>Zalety platform freelancerskich:</h3>
+<ul>
+    <li><strong>Gotowy rynek</strong> - klienci już szukają wykonawców</li>
+    <li><strong>Bezpieczeństwo transakcji</strong> - system płatności i ochrony</li>
+    <li><strong>System opinii</strong> - budujesz reputację od pierwszego projektu</li>
+    <li><strong>Różnorodność projektów</strong> - od małych zleceń po duże kontrakty</li>
+</ul>
+
+<h3>Jak skutecznie korzystać z platform:</h3>
+<ul>
+    <li><strong>Wypełnij profil w 100%</strong> - dodaj zdjęcie, portfolio, umiejętności</li>
+    <li><strong>Składaj oferty szybko</strong> - pierwsze oferty mają większą szansę</li>
+    <li><strong>Personalizuj każdą ofertę</strong> - nie wysyłaj kopiuj-wklej</li>
+    <li><strong>Zaczynaj od mniejszych projektów</strong> - budujesz historię i referencje</li>
+    <li><strong>Proś o opinie</strong> - po każdym zakończonym projekcie</li>
+</ul>
+
+<h2>2. Networking i kontakty osobiste</h2>
+<p>Twoja sieć kontaktów to jeden z najcenniejszych zasobów. Wykorzystaj ją!</p>
+
+<h3>Gdzie szukać kontaktów:</h3>
+<ul>
+    <li><strong>Byli koledzy z pracy</strong> - mogą potrzebować wsparcia lub polecić Cię</li>
+    <li><strong>Grupy branżowe na Facebooku/LinkedIn</strong> - aktywnie uczestnicz w dyskusjach</li>
+    <li><strong>Eventy branżowe i meetupy</strong> - poznaj potencjalnych klientów osobiście</li>
+    <li><strong>Alumni uczelni</strong> - wykorzystaj sieć absolwentów</li>
+</ul>
+
+<h3>Jak budować relacje:</h3>
+<ul>
+    <li>Dziel się wartością - pomagaj bez oczekiwania natychmiastowej zapłaty</li>
+    <li>Bądź aktywny w dyskusjach - pokazuj ekspertyzę</li>
+    <li>Organizuj spotkania kawowe - poznaj ludzi osobiście</li>
+    <li>Polecaj innych freelancerów - karma wraca</li>
+</ul>
+
+<h2>3. Content marketing i budowanie ekspertyzy</h2>
+<p>Pisanie artykułów, nagrywanie wideo czy prowadzenie bloga to długoterminowa inwestycja, która przynosi klientów.</p>
+
+<h3>Formy content marketingu:</h3>
+<ul>
+    <li><strong>Blog na własnej stronie</strong> - rozwiązuj problemy potencjalnych klientów</li>
+    <li><strong>Gościnne artykuły</strong> - publikuj na portalach branżowych</li>
+    <li><strong>LinkedIn</strong> - dziel się case studies i przemyśleniami</li>
+    <li><strong>YouTube/TikTok</strong> - tutoriale i porady w formie wideo</li>
+    <li><strong>Newsletter</strong> - buduj bazę kontaktów</li>
+</ul>
+
+<h3>Przykładowe tematy:</h3>
+<ul>
+    <li>"5 błędów, które popełniają firmy przy [Twoja specjalizacja]"</li>
+    <li>"Case study: Jak zwiększyłem konwersję o 45% dla klienta"</li>
+    <li>"Przewodnik: Jak wybrać freelancera do [projektu]"</li>
+</ul>
+
+<h2>4. Praca pro bono i projekty portfolio</h2>
+<p>Na początku kariery warto zrobić kilka projektów za darmo lub za symboliczne wynagrodzenie.</p>
+
+<h3>Kiedy warto pracować pro bono:</h3>
+<ul>
+    <li>Organizacje non-profit z misją, która Ci bliska</li>
+    <li>Startupy z potencjałem - możliwość udziału w zyskach</li>
+    <li>Projekty portfolio - pokażesz je przyszłym klientom</li>
+    <li>Znane marki - prestiż i referencje</li>
+</ul>
+
+<h3>Jak wybrać projekt pro bono:</h3>
+<ul>
+    <li>Projekt musi być wartościowy dla Twojego portfolio</li>
+    <li>Klient powinien być gotowy dać referencje i opinie</li>
+    <li>Ustal jasne granice - ile czasu poświęcasz</li>
+    <li>Dokumentuj proces - możesz wykorzystać jako case study</li>
+</ul>
+
+<h2>5. Cold emailing i outreach</h2>
+<p>Bezpośrednie kontaktowanie się z potencjalnymi klientami może być bardzo skuteczne, jeśli zrobisz to dobrze.</p>
+
+<h3>Jak znaleźć potencjalnych klientów:</h3>
+<ul>
+    <li><strong>LinkedIn</strong> - wyszukaj firmy w Twojej branży</li>
+    <li><strong>Google</strong> - znajdź firmy z przestarzałymi stronami</li>
+    <li><strong>Portale branżowe</strong> - listy firm w Twoim regionie</li>
+    <li><strong>Konkurencja</strong> - sprawdź, kto korzysta z usług innych freelancerów</li>
+</ul>
+
+<h3>Szablon skutecznego cold emaila:</h3>
+<p><strong>Temat:</strong> Szybka poprawa [konkretny problem] dla [nazwa firmy]</p>
+<p><strong>Treść:</strong></p>
+<ul>
+    <li>Krótkie wprowadzenie (1 zdanie)</li>
+    <li>Konkretny problem, który zauważyłeś (np. "Zauważyłem, że strona ładuje się 5 sekund")</li>
+    <li>Krótkie rozwiązanie (1-2 zdania)</li>
+    <li>Przykład podobnego projektu (link do portfolio)</li>
+    <li>Proste CTA - "Mogę przygotować krótką analizę. Zainteresowany?"</li>
+</ul>
+
+<h2>6. Współpraca z agencjami</h2>
+<p>Wiele agencji potrzebuje wsparcia freelancerów przy większych projektach.</p>
+
+<h3>Jak nawiązać współpracę:</h3>
+<ul>
+    <li>Skontaktuj się z agencjami w Twojej branży</li>
+    <li>Zaproponuj się jako wsparcie przy większych projektach</li>
+    <li>Bądź elastyczny - agencje często potrzebują szybkiej pomocy</li>
+    <li>Buduj długoterminowe relacje - regularni klienci to stabilny przychód</li>
+</ul>
+
+<h2>7. Referencje i polecenia</h2>
+<p>Najlepsi klienci przychodzą z polecenia. Jak to przyspieszyć?</p>
+
+<h3>Strategia budowania referencji:</h3>
+<ul>
+    <li><strong>Przekraczaj oczekiwania</strong> - dostarczaj więcej niż obiecałeś</li>
+    <li><strong>Proś o opinie</strong> - po każdym projekcie</li>
+    <li><strong>Program poleceń</strong> - zaoferuj zniżkę za polecenie</li>
+    <li><strong>Utrzymuj kontakt</strong> - regularnie sprawdzaj, jak się mają byli klienci</li>
+    <li><strong>Dziel się sukcesami</strong> - pokazuj wyniki projektów w social media</li>
+</ul>
+
+<h2>Plan działania: pierwsze 30 dni</h2>
+<p>Oto konkretny plan, który możesz wdrożyć już dziś:</p>
+
+<h3>Tydzień 1-2: Przygotowanie</h3>
+<ul>
+    <li>✅ Wypełnij profil na Projekciarz.pl w 100%</li>
+    <li>✅ Przygotuj portfolio (nawet 2-3 projekty wystarczą)</li>
+    <li>✅ Napisz szablon oferty</li>
+    <li>✅ Przygotuj case study z każdego projektu</li>
+</ul>
+
+<h3>Tydzień 3-4: Aktywne działanie</h3>
+<ul>
+    <li>✅ Składaj 5-10 ofert dziennie na platformach</li>
+    <li>✅ Opublikuj pierwszy artykuł na blogu/LinkedIn</li>
+    <li>✅ Skontaktuj się z 3-5 potencjalnymi klientami bezpośrednio</li>
+    <li>✅ Dołącz do 2-3 grup branżowych i aktywnie uczestnicz</li>
+</ul>
+
+<h2>Podsumowanie</h2>
+<p>Znalezienie pierwszych klientów wymaga cierpliwości i systematyczności. Nie zniechęcaj się, jeśli początkowo nie przychodzą odpowiedzi. Kombinuj różne strategie, testuj i dostosowuj podejście. Pamiętaj - każdy freelancer zaczynał od zera. Najważniejsze to zacząć działać już dziś!</p>
+
+<p><strong>Gotowy na pierwszy projekt? <a href="/announcements">Przeglądaj ogłoszenia</a> na Projekciarz.pl i składaj oferty już dziś!</strong></p>',
+            'featured_image' => 'blog/pierwsi-klienci-freelancer.svg',
+            'meta_title' => 'Jak Znaleźć Pierwszych Klientów jako Freelancer? 7 Strategii 2025',
+            'meta_description' => 'Praktyczny przewodnik po pozyskiwaniu pierwszych klientów jako freelancer. Poznaj 7 sprawdzonych strategii: platformy freelancerskie, networking, content marketing i więcej. Działaj już dziś!',
+            'meta_keywords' => ['jak znaleźć klientów', 'pierwsi klienci freelancera', 'pozyskiwanie klientów', 'freelancer marketing', 'jak zdobyć klientów', 'strategie freelancera', 'platformy freelancerskie'],
+            'status' => 'published',
+            'published_at' => now()->subDays(1),
+        ]);
+
+        if ($seoTag) $post8->tags()->attach($seoTag);
+        if ($uiuxTag) $post8->tags()->attach($uiuxTag);
+        if ($phpTag) $post8->tags()->attach($phpTag);
+
+        $this->command->info('✅ Dodano 8 artykułów blogowych z pełnymi danymi SEO!');
     }
 }
 
