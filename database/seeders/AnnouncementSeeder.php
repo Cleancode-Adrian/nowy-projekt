@@ -15,7 +15,7 @@ class AnnouncementSeeder extends Seeder
     {
         // Utwórz przykładowych użytkowników (klientów) jeśli nie istnieją
         $users = [];
-        
+
         // Użytkownik 1
         $user1 = User::firstOrCreate(
             ['email' => 'anna.kowalska@example.com'],
@@ -98,6 +98,11 @@ class AnnouncementSeeder extends Seeder
         $uiuxCategory = Category::where('slug', 'ui-ux-design')->first();
         $seoCategory = Category::where('slug', 'seo')->first();
 
+        if (!$ecommerceCategory || !$wordpressCategory || !$webAppCategory || !$uiuxCategory || !$seoCategory) {
+            $this->command->error('❌ Nie znaleziono wszystkich kategorii! Uruchom najpierw CategorySeeder.');
+            return;
+        }
+
         // Pobierz tagi
         $phpTag = Tag::where('name', 'PHP')->first();
         $laravelTag = Tag::where('name', 'Laravel')->first();
@@ -111,7 +116,7 @@ class AnnouncementSeeder extends Seeder
             ['title' => 'Sklep internetowy WooCommerce - integracja płatności'],
             [
                 'user_id' => $users[0]->id,
-                'category_id' => $ecommerceCategory?->id,
+                'category_id' => $ecommerceCategory->id,
                 'title' => 'Sklep internetowy WooCommerce - integracja płatności',
                 'description' => 'Szukam doświadczonego developera do stworzenia sklepu internetowego na WooCommerce. Projekt obejmuje:
 
@@ -151,7 +156,7 @@ Projekt do realizacji w ciągu 4-6 tygodni. Oferuję elastyczne terminy i możli
             ['title' => 'Strona firmowa WordPress - redesign istniejącej strony'],
             [
                 'user_id' => $users[1]->id,
-                'category_id' => $wordpressCategory?->id,
+                'category_id' => $wordpressCategory->id,
                 'title' => 'Strona firmowa WordPress - redesign istniejącej strony',
                 'description' => 'Potrzebuję kompleksowego redesignu mojej strony firmowej na WordPress. Obecna strona jest przestarzała i nie działa dobrze na mobile.
 
@@ -194,7 +199,7 @@ Budżet: 3000-5000 PLN. Termin: 3-4 tygodnie.',
             ['title' => 'Aplikacja web Laravel - system zarządzania projektami'],
             [
                 'user_id' => $users[2]->id,
-                'category_id' => $webAppCategory?->id,
+                'category_id' => $webAppCategory->id,
                 'title' => 'Aplikacja web Laravel - system zarządzania projektami',
                 'description' => 'Szukam doświadczonego developera Laravel do stworzenia systemu zarządzania projektami dla małej agencji.
 
@@ -238,7 +243,7 @@ Budżet: 15000-25000 PLN. Projekt podzielony na etapy. Szukam długoterminowej w
             ['title' => 'Projekt UI/UX dla aplikacji mobilnej - fintech'],
             [
                 'user_id' => $users[3]->id,
-                'category_id' => $uiuxCategory?->id,
+                'category_id' => $uiuxCategory->id,
                 'title' => 'Projekt UI/UX dla aplikacji mobilnej - fintech',
                 'description' => 'Szukam doświadczonego UI/UX designera do projektu aplikacji mobilnej w branży fintech.
 
@@ -280,7 +285,7 @@ Projekt do realizacji w ciągu 6-8 tygodni. Możliwość współpracy przy imple
             ['title' => 'Optymalizacja SEO - sklep e-commerce'],
             [
                 'user_id' => $users[4]->id,
-                'category_id' => $seoCategory?->id,
+                'category_id' => $seoCategory->id,
                 'title' => 'Optymalizacja SEO - sklep e-commerce',
                 'description' => 'Szukam specjalisty SEO do kompleksowej optymalizacji sklepu internetowego.
 

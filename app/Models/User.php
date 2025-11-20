@@ -171,12 +171,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $phone = $this->phone;
         $length = strlen($phone);
-        
+
         if ($length <= 6) {
             // If phone is too short, show only first 2 characters
             return substr($phone, 0, 2) . str_repeat('X', $length - 2);
         }
-        
+
         // Show first 6 characters, mask the rest
         return substr($phone, 0, 6) . str_repeat('X', $length - 6);
     }

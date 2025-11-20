@@ -7,10 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 class Announcement extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function booted()
+    {
+        static::saved(function ($announcement) {
+            Cache::forget('home.categories');
+            Cache::forget('home.featured');
+            Cache::forget('home.stats');
+        });
+
+        static::deleted(function ($announcement) {
+            Cache::forget('home.categories');
+            Cache::forget('home.featured');
+            Cache::forget('home.stats');
+        });
+    }
 
     protected $fillable = [
         'user_id',
