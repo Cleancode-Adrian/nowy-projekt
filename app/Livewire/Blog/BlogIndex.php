@@ -11,6 +11,8 @@ class BlogIndex extends Component
 {
     use WithPagination;
 
+    protected $paginationTheme = 'tailwind';
+
     public $search = '';
     public $tag = '';
 
