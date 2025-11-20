@@ -106,8 +106,8 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($phpTag) $post1->tags()->attach($phpTag);
-        if ($uiuxTag) $post1->tags()->attach($uiuxTag);
+        if ($phpTag) $post1->tags()->syncWithoutDetaching([$phpTag->id]);
+        if ($uiuxTag) $post1->tags()->syncWithoutDetaching([$uiuxTag->id]);
 
         // Artykuł 2: Najlepsze praktyki w komunikacji z klientem
         $post2 = BlogPost::updateOrCreate(
@@ -209,8 +209,8 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($javascriptTag) $post2->tags()->attach($javascriptTag);
-        if ($uiuxTag) $post2->tags()->attach($uiuxTag);
+        if ($javascriptTag) $post2->tags()->syncWithoutDetaching([$javascriptTag->id]);
+        if ($uiuxTag) $post2->tags()->syncWithoutDetaching([$uiuxTag->id]);
 
         // Artykuł 3: Portfolio, które sprzedaje
         $post3 = BlogPost::updateOrCreate(
@@ -247,9 +247,9 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($uiuxTag) $post3->tags()->attach($uiuxTag);
-        if ($tailwindTag) $post3->tags()->attach($tailwindTag);
-        if ($responsiveTag) $post3->tags()->attach($responsiveTag);
+        if ($uiuxTag) $post3->tags()->syncWithoutDetaching([$uiuxTag->id]);
+        if ($tailwindTag) $post3->tags()->syncWithoutDetaching([$tailwindTag->id]);
+        if ($responsiveTag) $post3->tags()->syncWithoutDetaching([$responsiveTag->id]);
 
         // Artykuł 4: SEO dla freelancerów
         $post4 = BlogPost::updateOrCreate(
@@ -287,9 +287,9 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($seoTag) $post4->tags()->attach($seoTag);
-        if ($wordpressTag) $post4->tags()->attach($wordpressTag);
-        if ($laravelTag) $post4->tags()->attach($laravelTag);
+        if ($seoTag) $post4->tags()->syncWithoutDetaching([$seoTag->id]);
+        if ($wordpressTag) $post4->tags()->syncWithoutDetaching([$wordpressTag->id]);
+        if ($laravelTag) $post4->tags()->syncWithoutDetaching([$laravelTag->id]);
 
         // Artykuł 5: Brief projektowy
         $post5 = BlogPost::updateOrCreate(
@@ -333,9 +333,9 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($uiuxTag) $post5->tags()->attach($uiuxTag);
-        if ($responsiveTag) $post5->tags()->attach($responsiveTag);
-        if ($tailwindTag) $post5->tags()->attach($tailwindTag);
+        if ($uiuxTag) $post5->tags()->syncWithoutDetaching([$uiuxTag->id]);
+        if ($responsiveTag) $post5->tags()->syncWithoutDetaching([$responsiveTag->id]);
+        if ($tailwindTag) $post5->tags()->syncWithoutDetaching([$tailwindTag->id]);
 
         // Artykuł 6: Automatyzacja i AI
         $post6 = BlogPost::updateOrCreate(
@@ -372,10 +372,10 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($laravelTag) $post6->tags()->attach($laravelTag);
-        if ($javascriptTag) $post6->tags()->attach($javascriptTag);
-        if ($phpTag) $post6->tags()->attach($phpTag);
-        if ($seoTag) $post6->tags()->attach($seoTag);
+        if ($laravelTag) $post6->tags()->syncWithoutDetaching([$laravelTag->id]);
+        if ($javascriptTag) $post6->tags()->syncWithoutDetaching([$javascriptTag->id]);
+        if ($phpTag) $post6->tags()->syncWithoutDetaching([$phpTag->id]);
+        if ($seoTag) $post6->tags()->syncWithoutDetaching([$seoTag->id]);
 
         // Artykuł 7: Jak ustalić stawki jako freelancer
         $post7 = BlogPost::updateOrCreate(
@@ -507,9 +507,9 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($phpTag) $post7->tags()->attach($phpTag);
-        if ($uiuxTag) $post7->tags()->attach($uiuxTag);
-        if ($seoTag) $post7->tags()->attach($seoTag);
+        if ($phpTag) $post7->tags()->syncWithoutDetaching([$phpTag->id]);
+        if ($uiuxTag) $post7->tags()->syncWithoutDetaching([$uiuxTag->id]);
+        if ($seoTag) $post7->tags()->syncWithoutDetaching([$seoTag->id]);
 
         // Artykuł 8: Jak znaleźć pierwszych klientów
         $post8 = BlogPost::updateOrCreate(
@@ -675,9 +675,9 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($seoTag) $post8->tags()->attach($seoTag);
-        if ($uiuxTag) $post8->tags()->attach($uiuxTag);
-        if ($phpTag) $post8->tags()->attach($phpTag);
+        if ($seoTag) $post8->tags()->syncWithoutDetaching([$seoTag->id]);
+        if ($uiuxTag) $post8->tags()->syncWithoutDetaching([$uiuxTag->id]);
+        if ($phpTag) $post8->tags()->syncWithoutDetaching([$phpTag->id]);
 
         // Artykuł 9: Jak napisać skuteczną ofertę
         $post9 = BlogPost::updateOrCreate(
@@ -771,8 +771,8 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($uiuxTag) $post9->tags()->attach($uiuxTag);
-        if ($seoTag) $post9->tags()->attach($seoTag);
+        if ($uiuxTag) $post9->tags()->syncWithoutDetaching([$uiuxTag->id]);
+        if ($seoTag) $post9->tags()->syncWithoutDetaching([$seoTag->id]);
 
         // Artykuł 10: Zarządzanie czasem
         $post10 = BlogPost::updateOrCreate(
@@ -880,8 +880,8 @@ class BlogPostSeeder extends Seeder
             ]
         );
 
-        if ($phpTag) $post10->tags()->attach($phpTag);
-        if ($uiuxTag) $post10->tags()->attach($uiuxTag);
+        if ($phpTag) $post10->tags()->syncWithoutDetaching([$phpTag->id]);
+        if ($uiuxTag) $post10->tags()->syncWithoutDetaching([$uiuxTag->id]);
 
         // Artykuł 11: Podatki dla freelancerów
         $post11 = BlogPost::updateOrCreate(
@@ -1062,8 +1062,8 @@ Podatek (17%): 13 600 PLN</p>
             ]
         );
 
-        if ($phpTag) $post11->tags()->attach($phpTag);
-        if ($seoTag) $post11->tags()->attach($seoTag);
+        if ($phpTag) $post11->tags()->syncWithoutDetaching([$phpTag->id]);
+        if ($seoTag) $post11->tags()->syncWithoutDetaching([$seoTag->id]);
 
         // Artykuł 12: Freelancing vs etat
         $post12 = BlogPost::updateOrCreate(
@@ -1230,9 +1230,9 @@ Podatek (17%): 13 600 PLN</p>
             ]
         );
 
-        if ($phpTag) $post12->tags()->attach($phpTag);
-        if ($javascriptTag) $post12->tags()->attach($javascriptTag);
-        if ($uiuxTag) $post12->tags()->attach($uiuxTag);
+        if ($phpTag) $post12->tags()->syncWithoutDetaching([$phpTag->id]);
+        if ($javascriptTag) $post12->tags()->syncWithoutDetaching([$javascriptTag->id]);
+        if ($uiuxTag) $post12->tags()->syncWithoutDetaching([$uiuxTag->id]);
 
         // Artykuł 13: Najlepsze narzędzia
         $post13 = BlogPost::updateOrCreate(
@@ -1456,9 +1456,9 @@ Podatek (17%): 13 600 PLN</p>
             ]
         );
 
-        if ($phpTag) $post13->tags()->attach($phpTag);
-        if ($javascriptTag) $post13->tags()->attach($javascriptTag);
-        if ($uiuxTag) $post13->tags()->attach($uiuxTag);
+        if ($phpTag) $post13->tags()->syncWithoutDetaching([$phpTag->id]);
+        if ($javascriptTag) $post13->tags()->syncWithoutDetaching([$javascriptTag->id]);
+        if ($uiuxTag) $post13->tags()->syncWithoutDetaching([$uiuxTag->id]);
 
         // Artykuł 14: Jak radzić sobie z trudnymi klientami
         $post14 = BlogPost::updateOrCreate(
@@ -1611,8 +1611,8 @@ Podatek (17%): 13 600 PLN</p>
             ]
         );
 
-        if ($uiuxTag) $post14->tags()->attach($uiuxTag);
-        if ($seoTag) $post14->tags()->attach($seoTag);
+        if ($uiuxTag) $post14->tags()->syncWithoutDetaching([$uiuxTag->id]);
+        if ($seoTag) $post14->tags()->syncWithoutDetaching([$seoTag->id]);
 
         // Artykuł 15: Case study portfolio
         $post15 = BlogPost::updateOrCreate(
@@ -1783,9 +1783,9 @@ Podatek (17%): 13 600 PLN</p>
             ]
         );
 
-        if ($uiuxTag) $post15->tags()->attach($uiuxTag);
-        if ($seoTag) $post15->tags()->attach($seoTag);
-        if ($phpTag) $post15->tags()->attach($phpTag);
+        if ($uiuxTag) $post15->tags()->syncWithoutDetaching([$uiuxTag->id]);
+        if ($seoTag) $post15->tags()->syncWithoutDetaching([$seoTag->id]);
+        if ($phpTag) $post15->tags()->syncWithoutDetaching([$phpTag->id]);
 
         $this->command->info('✅ Dodano 15 artykułów blogowych z pełnymi danymi SEO!');
     }
