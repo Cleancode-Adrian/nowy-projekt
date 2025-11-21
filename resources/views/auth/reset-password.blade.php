@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ustaw nowe hasło - Projekciarz.pl</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @if(config('services.recaptcha.site_key'))
+    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}" async defer></script>
+    @endif
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen flex items-center justify-center">
 
@@ -85,19 +87,34 @@
         </div>
     </div>
 
+    @if(config('services.recaptcha.site_key'))
     <script>
         const siteKey = '{{ config("services.recaptcha.site_key") }}';
         
-        grecaptcha.ready(function() {
-            document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                grecaptcha.execute(siteKey, {action: 'reset_password'}).then(function(token) {
-                    document.getElementById('g-recaptcha-response').value = token;
-                    document.getElementById('resetPasswordForm').submit();
-                });
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.ready(function() {
+                const form = document.getElementById('resetPasswordForm');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        grecaptcha.execute(siteKey, {action: 'reset_password'}).then(function(token) {
+                            const tokenInput = document.getElementById('g-recaptcha-response');
+                            if (tokenInput) {
+                                tokenInput.value = token;
+                            }
+                            form.submit();
+                        }).catch(function(error) {
+                            console.error('reCAPTCHA error:', error);
+                            form.submit(); // Fallback - submit anyway
+                        });
+                    });
+                }
             });
-        });
+        } else {
+            console.warn('reCAPTCHA not loaded');
+        }
     </script>
+    @endif
 </body>
 </html>
 

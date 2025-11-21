@@ -16,12 +16,14 @@ class AuthController extends Controller
 {
     public function login(Request $request, RecaptchaService $recaptcha)
     {
-        // Verify reCAPTCHA
-        $recaptchaToken = $request->input('g-recaptcha-response');
-        if (!$recaptcha->verify($recaptchaToken, 0.5)) {
-            return back()->withErrors([
-                'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
-            ])->onlyInput('email');
+        // Verify reCAPTCHA only if configured
+        if (config('services.recaptcha.secret_key')) {
+            $recaptchaToken = $request->input('g-recaptcha-response');
+            if (!$recaptcha->verify($recaptchaToken, 0.5)) {
+                return back()->withErrors([
+                    'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
+                ])->onlyInput('email');
+            }
         }
 
         $credentials = $request->validate([
@@ -47,12 +49,14 @@ class AuthController extends Controller
 
     public function register(Request $request, RecaptchaService $recaptcha)
     {
-        // Verify reCAPTCHA
-        $recaptchaToken = $request->input('g-recaptcha-response');
-        if (!$recaptcha->verify($recaptchaToken, 0.5)) {
-            return back()->withErrors([
-                'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
-            ])->withInput();
+        // Verify reCAPTCHA only if configured
+        if (config('services.recaptcha.secret_key')) {
+            $recaptchaToken = $request->input('g-recaptcha-response');
+            if (!$recaptcha->verify($recaptchaToken, 0.5)) {
+                return back()->withErrors([
+                    'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
+                ])->withInput();
+            }
         }
 
         $validated = $request->validate([

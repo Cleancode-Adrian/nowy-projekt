@@ -19,7 +19,7 @@ class RecaptchaService
 
     /**
      * Verify reCAPTCHA token
-     * 
+     *
      * @param string $token
      * @param float $minScore Minimum score (0.0 to 1.0). Default 0.5
      * @return bool
