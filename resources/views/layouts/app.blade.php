@@ -90,17 +90,26 @@
                                     <h4 class="text-2xl font-bold text-gray-900 mb-2 text-center">Zapisz się do newslettera</h4>
                                     <p class="text-gray-600 text-center mb-6">Otrzymuj najnowsze informacje o projektach i możliwościach</p>
                                 </div>
-                                <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/1010939/forms/125829502731289626/subscribe" data-code="" method="post" target="_blank">
+                                <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/1010939/forms/125829502731289626/subscribe" data-code="" method="post" target="_blank" id="newsletter-form">
                                     <div class="ml-form-formContent">
-                                        <div class="ml-form-fieldRow ml-last-item">
+                                        <div class="ml-form-fieldRow">
                                             <div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
-                                                <input aria-label="email" aria-required="true" type="email" class="form-control w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-inputmask="" name="fields[email]" placeholder="Twój adres email" autocomplete="email">
+                                                <input aria-label="email" aria-required="true" type="email" class="form-control w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-inputmask="" name="fields[email]" placeholder="Twój adres email" autocomplete="email" required>
                                             </div>
+                                        </div>
+                                        <div class="ml-form-checkboxRow mt-4">
+                                            <label class="flex items-start">
+                                                <input type="checkbox" name="privacy_consent" value="1" required class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" id="privacy-consent-checkbox">
+                                                <span class="text-sm text-gray-700">
+                                                    Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z 
+                                                    <a href="{{ route('privacy-policy') }}" target="_blank" class="text-blue-600 hover:text-blue-700 underline font-medium">polityką prywatności</a> *
+                                                </span>
+                                            </label>
                                         </div>
                                     </div>
                                     <input type="hidden" name="ml-submit" value="1">
                                     <div class="ml-form-embedSubmit mt-4">
-                                        <button type="submit" class="primary w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                                        <button type="submit" class="primary w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" id="newsletter-submit-btn">
                                             Zapisz się
                                         </button>
                                         <button disabled="disabled" style="display: none;" type="button" class="loading">
@@ -161,20 +170,20 @@
     {{-- MailerLite Newsletter Scripts --}}
     <style type="text/css">
         @import url("https://assets.mlcdn.com/fonts.css?version=1762785");
-        
+
         .ml-form-embedSubmitLoad {
             display: inline-block;
             width: 20px;
             height: 20px;
         }
-        
+
         .g-recaptcha {
             transform: scale(1);
             -webkit-transform: scale(1);
             transform-origin: 0 0;
             -webkit-transform-origin: 0 0;
         }
-        
+
         .sr-only {
             position: absolute;
             width: 1px;
@@ -185,7 +194,7 @@
             clip: rect(0,0,0,0);
             border: 0;
         }
-        
+
         .ml-form-embedSubmitLoad:after {
             content: " ";
             display: block;
@@ -197,12 +206,12 @@
             border-color: #ffffff #ffffff #ffffff transparent;
             animation: ml-form-embedSubmitLoad 1.2s linear infinite;
         }
-        
+
         @keyframes ml-form-embedSubmitLoad {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer {
             box-sizing: border-box;
             display: table;
@@ -210,7 +219,7 @@
             position: static;
             width: 100% !important;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedWrapper {
             background-color: transparent;
             border-width: 0px;
@@ -223,12 +232,12 @@
             padding: 0;
             position: relative;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedWrapper.embedForm {
             max-width: 400px;
             width: 100%;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedContent h4 {
             color: #000000;
             font-family: 'Open Sans', Arial, Helvetica, sans-serif;
@@ -238,7 +247,7 @@
             text-align: left;
             word-break: break-word;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedContent p {
             color: #000000;
             font-family: 'Open Sans', Arial, Helvetica, sans-serif;
@@ -248,7 +257,7 @@
             margin: 0 0 10px 0;
             text-align: left;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-fieldRow input {
             background-color: #ffffff !important;
             color: #333333 !important;
@@ -267,7 +276,7 @@
             box-sizing: border-box !important;
             max-width: 100% !important;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedSubmit button {
             background-color: #2563eb !important;
             border: none !important;
@@ -284,7 +293,7 @@
             width: 100% !important;
             box-sizing: border-box !important;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedSubmit button:hover {
             background-color: #1d4ed8 !important;
         }
@@ -293,10 +302,59 @@
             display: none;
         }
         
+        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow {
+            margin: 0 0 20px 0;
+            width: 100%;
+        }
+        
+        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label {
+            font-weight: normal;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+        }
+        
+        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow input[type="checkbox"] {
+            box-sizing: border-box;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+            opacity: 1;
+            margin-top: 4px;
+            margin-right: 12px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label span {
+            color: #333333;
+            font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            line-height: 20px;
+        }
+        
+        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label a {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        
+        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label a:hover {
+            color: #1d4ed8;
+        }
+        
         .ml-error input {
             border-color: red !important;
         }
         
+        .ml-error .ml-form-checkboxRow {
+            border: 1px solid red !important;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
         @media only screen and (max-width: 400px) {
             .ml-form-embedWrapper.embedDefault,
             .ml-form-embedWrapper.embedPopup {
@@ -304,15 +362,41 @@
             }
         }
     </style>
-    
+
     <script>
         function ml_webform_success_16123980() {
             var $ = ml_jQuery || jQuery;
             $('.ml-subscribe-form-16123980 .row-success').show();
             $('.ml-subscribe-form-16123980 .row-form').hide();
         }
+        
+        // Walidacja checkboxa przed wysłaniem formularza
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('newsletter-form');
+            const checkbox = document.getElementById('privacy-consent-checkbox');
+            const submitBtn = document.getElementById('newsletter-submit-btn');
+            
+            if (form && checkbox && submitBtn) {
+                form.addEventListener('submit', function(e) {
+                    if (!checkbox.checked) {
+                        e.preventDefault();
+                        alert('Musisz wyrazić zgodę na przetwarzanie danych osobowych, aby zapisać się do newslettera.');
+                        checkbox.focus();
+                        return false;
+                    }
+                });
+                
+                // Aktualizacja stanu przycisku w zależności od checkboxa
+                checkbox.addEventListener('change', function() {
+                    submitBtn.disabled = !this.checked;
+                });
+                
+                // Początkowy stan przycisku
+                submitBtn.disabled = !checkbox.checked;
+            }
+        });
     </script>
-    
+
     <script src="https://groot.mailerlite.com/js/w/webforms.min.js?v176e10baa5e7ed80d35ae235be3d5024" type="text/javascript"></script>
     <script>
         fetch("https://assets.mailerlite.com/jsonp/1010939/forms/125829502731289626/takel");
