@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\RecaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -12,8 +13,16 @@ use Illuminate\Support\Str;
 
 class PasswordResetController extends Controller
 {
-    public function sendResetLink(Request $request)
+    public function sendResetLink(Request $request, RecaptchaService $recaptcha)
     {
+        // Verify reCAPTCHA
+        $recaptchaToken = $request->input('g-recaptcha-response');
+        if (!$recaptcha->verify($recaptchaToken, 0.5)) {
+            return back()->withErrors([
+                'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
+            ]);
+        }
+
         $request->validate(['email' => 'required|email']);
 
         $status = Password::sendResetLink(
@@ -25,8 +34,16 @@ class PasswordResetController extends Controller
             : back()->withErrors(['email' => __($status)]);
     }
 
-    public function reset(Request $request)
+    public function reset(Request $request, RecaptchaService $recaptcha)
     {
+        // Verify reCAPTCHA
+        $recaptchaToken = $request->input('g-recaptcha-response');
+        if (!$recaptcha->verify($recaptchaToken, 0.5)) {
+            return back()->withErrors([
+                'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
+            ]);
+        }
+
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',

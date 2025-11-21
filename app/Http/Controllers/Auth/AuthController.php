@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Mail\NewUserRegisteredMail;
+use App\Services\RecaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,8 +14,16 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(Request $request, RecaptchaService $recaptcha)
     {
+        // Verify reCAPTCHA
+        $recaptchaToken = $request->input('g-recaptcha-response');
+        if (!$recaptcha->verify($recaptchaToken, 0.5)) {
+            return back()->withErrors([
+                'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
+            ])->onlyInput('email');
+        }
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -36,8 +45,16 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    public function register(Request $request)
+    public function register(Request $request, RecaptchaService $recaptcha)
     {
+        // Verify reCAPTCHA
+        $recaptchaToken = $request->input('g-recaptcha-response');
+        if (!$recaptcha->verify($recaptchaToken, 0.5)) {
+            return back()->withErrors([
+                'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
+            ])->withInput();
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',

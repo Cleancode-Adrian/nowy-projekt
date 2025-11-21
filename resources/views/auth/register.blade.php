@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rejestracja - Projekciarz.pl</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen py-12">
 
@@ -32,8 +33,9 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('register') }}" class="space-y-4">
+            <form method="POST" action="{{ route('register') }}" class="space-y-4" id="registerForm">
                 @csrf
+                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Imię i nazwisko *</label>
@@ -103,6 +105,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const siteKey = '{{ config("services.recaptcha.site_key") }}';
+        
+        grecaptcha.ready(function() {
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                grecaptcha.execute(siteKey, {action: 'register'}).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('registerForm').submit();
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 

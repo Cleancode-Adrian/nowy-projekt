@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logowanie - Projekciarz.pl</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen flex items-center justify-center">
 
@@ -40,8 +41,9 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-6">
+            <form method="POST" action="{{ route('login') }}" class="space-y-6" id="loginForm">
                 @csrf
+                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -89,6 +91,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const siteKey = '{{ config("services.recaptcha.site_key") }}';
+        
+        grecaptcha.ready(function() {
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                grecaptcha.execute(siteKey, {action: 'login'}).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('loginForm').submit();
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 
