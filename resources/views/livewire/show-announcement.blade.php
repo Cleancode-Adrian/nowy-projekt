@@ -27,6 +27,11 @@
                                   style="background-color: {{ $announcement->category->color }}20; color: {{ $announcement->category->color }}">
                                 {{ $announcement->category->name }}
                             </span>
+                            @if($announcement->status === 'closed')
+                                <span class="px-3 py-1 text-sm font-medium rounded-full mr-3 bg-gray-200 text-gray-700">
+                                    🔒 Zamknięte
+                                </span>
+                            @endif
                             <span class="text-sm text-gray-500">
                                 Dodano {{ $announcement->created_at->diffForHumans() }}
                             </span>
@@ -119,26 +124,59 @@
                 </div>
             @endif
 
+            {{-- Close Announcement Button (for owner and admin) --}}
+            @if(auth()->check() && ($announcement->user_id === auth()->id() || auth()->user()->role === 'admin') && $announcement->status !== 'closed')
+                <div class="card mb-6 bg-yellow-50 border-yellow-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">Zarządzanie ogłoszeniem</h3>
+                            <p class="text-sm text-gray-600">Możesz zamknąć to ogłoszenie, jeśli nie jest już aktualne</p>
+                        </div>
+                        <button
+                            wire:click="closeAnnouncement"
+                            wire:confirm="Czy na pewno chcesz zamknąć to ogłoszenie? Nie będzie już widoczne w listach aktywnych."
+                            class="btn bg-yellow-600 hover:bg-yellow-700 text-white">
+                            🔒 Zamknij zlecenie
+                        </button>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Closed Announcement Notice --}}
+            @if($announcement->status === 'closed')
+                <div class="card mb-6 bg-gray-50 border-gray-300">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-lock text-gray-500 text-2xl"></i>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">Ogłoszenie zamknięte</h3>
+                            <p class="text-sm text-gray-600">To ogłoszenie zostało zamknięte i nie jest już aktywne</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- Proposals Section (tylko dla właściciela) --}}
             @if(auth()->check() && auth()->id() === $announcement->user_id && $announcement->proposals_count > 0)
                 <livewire:proposals-list :announcementId="$announcement->id" />
             @endif
 
             {{-- CTA dla freelancerów --}}
-            @if(auth()->check() && auth()->id() !== $announcement->user_id)
-                <livewire:proposal-form :announcement="$announcement" />
-            @elseif(!auth()->check())
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
-                    <div class="text-center">
-                        <h3 class="text-2xl font-bold mb-4">Zainteresował Cię ten projekt?</h3>
-                        <p class="text-blue-100 mb-6">
-                            Zaloguj się aby złożyć ofertę do zleceniodawcy
-                        </p>
-                        <a href="{{ route('login') }}" class="inline-flex items-center bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors">
-                            📧 Zaloguj się i złóż ofertę
-                        </a>
+            @if($announcement->status !== 'closed')
+                @if(auth()->check() && auth()->id() !== $announcement->user_id)
+                    <livewire:proposal-form :announcement="$announcement" />
+                @elseif(!auth()->check())
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
+                        <div class="text-center">
+                            <h3 class="text-2xl font-bold mb-4">Zainteresował Cię ten projekt?</h3>
+                            <p class="text-blue-100 mb-6">
+                                Zaloguj się aby złożyć ofertę do zleceniodawcy
+                            </p>
+                            <a href="{{ route('login') }}" class="inline-flex items-center bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors">
+                                📧 Zaloguj się i złóż ofertę
+                            </a>
+                        </div>
                     </div>
-                </div>
+                @endif
             @endif
         </div>
 

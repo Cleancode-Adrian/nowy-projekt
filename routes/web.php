@@ -74,6 +74,19 @@ Route::middleware('guest')->group(function () {
     })->name('register');
 
     Route::post('/register', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
+
+    // Password Reset Routes
+    Route::get('/forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
+
+    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'sendResetLink'])->name('password.email');
+
+    Route::get('/reset-password/{token}', function (string $token) {
+        return view('auth.reset-password', ['token' => $token]);
+    })->name('password.reset');
+
+    Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])->name('password.update');
 });
 
 // Protected routes

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Announcement;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class ShowAnnouncement extends Component
 {
@@ -12,11 +13,49 @@ class ShowAnnouncement extends Component
 
     public function mount($id)
     {
-        $this->announcement = Announcement::with(['user', 'category', 'tags', 'attachments'])
-            ->published()
-            ->findOrFail($id);
+        // Allow viewing closed announcements for owner and admin
+        $query = Announcement::with(['user', 'category', 'tags', 'attachments']);
 
-        $this->announcement->increment('views_count');
+        // First, get the announcement to check ownership
+        $announcement = $query->where('id', $id)->firstOrFail();
+
+        $isOwner = Auth::check() && Auth::id() === $announcement->user_id;
+        $isAdmin = Auth::check() && Auth::user()->role === 'admin';
+
+        if ($isOwner || $isAdmin) {
+            // Owner or admin can view their own closed announcements
+            $this->announcement = $announcement;
+        } else {
+            // Others can only see published announcements
+            $this->announcement = $query->published()->where('id', $id)->firstOrFail();
+        }
+
+        // Only increment views for published announcements
+        if ($this->announcement->status === 'published' && $this->announcement->is_approved) {
+            $this->announcement->increment('views_count');
+        }
+    }
+
+    public function closeAnnouncement()
+    {
+        // Check if user is owner or admin
+        if (!Auth::check()) {
+            return;
+        }
+
+        $isOwner = Auth::id() === $this->announcement->user_id;
+        $isAdmin = Auth::user()->role === 'admin';
+
+        if (!$isOwner && !$isAdmin) {
+            session()->flash('error', 'Nie masz uprawnień do zamknięcia tego ogłoszenia.');
+            return;
+        }
+
+        $this->announcement->update([
+            'status' => 'closed'
+        ]);
+
+        session()->flash('success', 'Ogłoszenie zostało zamknięte.');
     }
 
     public function render()
