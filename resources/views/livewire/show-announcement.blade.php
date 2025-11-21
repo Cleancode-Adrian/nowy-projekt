@@ -155,8 +155,8 @@
                 </div>
             @endif
 
-            {{-- Proposals Section (tylko dla właściciela) --}}
-            @if(auth()->check() && auth()->id() === $announcement->user_id && $announcement->proposals_count > 0)
+            {{-- Proposals Section (dla właściciela i administratora) --}}
+            @if(auth()->check() && (auth()->id() === $announcement->user_id || auth()->user()->role === 'admin') && $announcement->proposals_count > 0)
                 <livewire:proposals-list :announcementId="$announcement->id" />
             @endif
 

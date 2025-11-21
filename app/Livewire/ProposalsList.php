@@ -18,7 +18,7 @@ class ProposalsList extends Component
     public function loadProposals()
     {
         $this->proposals = Proposal::where('announcement_id', $this->announcementId)
-            ->with('freelancer')
+            ->with(['freelancer', 'announcement'])
             ->latest()
             ->get();
     }
@@ -27,6 +27,7 @@ class ProposalsList extends Component
     {
         $proposal = Proposal::findOrFail($proposalId);
 
+        // Tylko właściciel ogłoszenia może akceptować oferty (nie administrator)
         if ($proposal->announcement->user_id !== auth()->id()) {
             $this->dispatch('notify', message: 'Brak uprawnień', type: 'error');
             return;
@@ -51,6 +52,7 @@ class ProposalsList extends Component
     {
         $proposal = Proposal::findOrFail($proposalId);
 
+        // Tylko właściciel ogłoszenia może odrzucać oferty (nie administrator)
         if ($proposal->announcement->user_id !== auth()->id()) {
             $this->dispatch('notify', message: 'Brak uprawnień', type: 'error');
             return;
