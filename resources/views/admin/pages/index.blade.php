@@ -46,7 +46,7 @@
                     <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Slug</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Typ</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kolejność</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Menu</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Akcje</th>
                 </tr>
             </thead>
@@ -85,8 +85,28 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-gray-600">
-                            {{ $page->order }}
+                        <td class="px-6 py-4">
+                            @if($page->show_in_menu)
+                                <div class="flex flex-col gap-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-indigo-100 text-indigo-800">
+                                        <i class="fa-solid fa-check mr-1"></i>
+                                        W menu
+                                    </span>
+                                    @if($page->menu_position)
+                                        <span class="text-xs text-gray-500">
+                                            @if($page->menu_position === 'footer')
+                                                📄 Stopka
+                                            @elseif($page->menu_position === 'header')
+                                                📋 Główne
+                                            @else
+                                                📄📋 Oba
+                                            @endif
+                                        </span>
+                                    @endif
+                                </div>
+                            @else
+                                <span class="text-xs text-gray-400">—</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2">

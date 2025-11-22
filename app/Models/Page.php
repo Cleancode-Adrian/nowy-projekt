@@ -20,12 +20,17 @@ class Page extends Model
         'is_active',
         'is_system', // dla stron systemowych jak polityka prywatności, regulamin
         'order',
+        'show_in_menu',
+        'menu_position', // 'footer', 'header', 'both'
+        'menu_order',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_system' => 'boolean',
+        'show_in_menu' => 'boolean',
         'order' => 'integer',
+        'menu_order' => 'integer',
     ];
 
     protected static function boot()
@@ -58,6 +63,20 @@ class Page extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('order')->orderBy('title');
+    }
+
+    public function scopeInMenu($query, $position = null)
+    {
+        $query->where('show_in_menu', true)->where('is_active', true);
+        
+        if ($position) {
+            $query->where(function($q) use ($position) {
+                $q->where('menu_position', $position)
+                  ->orWhere('menu_position', 'both');
+            });
+        }
+        
+        return $query->orderBy('menu_order')->orderBy('title');
     }
 }
 

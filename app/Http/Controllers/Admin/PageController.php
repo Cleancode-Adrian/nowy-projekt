@@ -31,6 +31,9 @@ class PageController extends Controller
             'is_active' => 'boolean',
             'is_system' => 'boolean',
             'order' => 'nullable|integer|min:0',
+            'show_in_menu' => 'boolean',
+            'menu_position' => 'nullable|in:footer,header,both',
+            'menu_order' => 'nullable|integer|min:0',
         ], [
             'title.required' => 'Tytuł jest wymagany',
             'title.min' => 'Tytuł musi mieć minimum 3 znaki',
@@ -83,6 +86,9 @@ class PageController extends Controller
             'is_active' => 'boolean',
             'is_system' => 'boolean',
             'order' => 'nullable|integer|min:0',
+            'show_in_menu' => 'boolean',
+            'menu_position' => 'nullable|in:footer,header,both',
+            'menu_order' => 'nullable|integer|min:0',
         ], [
             'title.required' => 'Tytuł jest wymagany',
             'title.min' => 'Tytuł musi mieć minimum 3 znaki',
@@ -111,6 +117,9 @@ class PageController extends Controller
             'is_active' => $request->has('is_active'),
             'is_system' => $request->has('is_system'),
             'order' => $validated['order'] ?? 0,
+            'show_in_menu' => $request->has('show_in_menu'),
+            'menu_position' => $validated['menu_position'] ?? null,
+            'menu_order' => $validated['menu_order'] ?? 0,
         ];
 
         $page->update($data);

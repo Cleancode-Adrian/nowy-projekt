@@ -26,12 +26,28 @@
                 </ul>
             </div>
 
-            {{-- Legal --}}
+            {{-- Legal / Pages from DB --}}
             <div>
                 <h3 class="font-semibold mb-4">Informacje</h3>
                 <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="{{ route('terms-of-service') }}" class="hover:text-white transition-colors">Regulamin</a></li>
-                    <li><a href="{{ route('privacy-policy') }}" class="hover:text-white transition-colors">Polityka prywatności</a></li>
+                    @php
+                        $footerPages = \App\Models\Page::inMenu('footer')->get();
+                    @endphp
+                    @forelse($footerPages as $page)
+                        <li>
+                            @if($page->slug === 'polityka-prywatnosci')
+                                <a href="{{ route('privacy-policy') }}" class="hover:text-white transition-colors">{{ $page->title }}</a>
+                            @elseif($page->slug === 'regulamin')
+                                <a href="{{ route('terms-of-service') }}" class="hover:text-white transition-colors">{{ $page->title }}</a>
+                            @else
+                                <a href="{{ route('page.show', $page->slug) }}" class="hover:text-white transition-colors">{{ $page->title }}</a>
+                            @endif
+                        </li>
+                    @empty
+                        {{-- Fallback to hardcoded links if no pages in menu --}}
+                        <li><a href="{{ route('terms-of-service') }}" class="hover:text-white transition-colors">Regulamin</a></li>
+                        <li><a href="{{ route('privacy-policy') }}" class="hover:text-white transition-colors">Polityka prywatności</a></li>
+                    @endforelse
                     <li><a href="mailto:biuro@cleancodeas.pl" class="hover:text-white transition-colors">Kontakt</a></li>
                 </ul>
             </div>

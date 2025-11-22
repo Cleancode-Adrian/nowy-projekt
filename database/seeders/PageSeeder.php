@@ -68,6 +68,9 @@ Email: <a href="mailto:biuro@cleancodeas.pl">biuro@cleancodeas.pl</a></p>',
                 'is_active' => true,
                 'is_system' => true,
                 'order' => 1,
+                'show_in_menu' => true,
+                'menu_position' => 'footer',
+                'menu_order' => 2,
             ]
         );
 
@@ -119,6 +122,9 @@ Email: <a href="mailto:biuro@cleancodeas.pl">biuro@cleancodeas.pl</a></p>',
                 'is_active' => true,
                 'is_system' => true,
                 'order' => 2,
+                'show_in_menu' => true,
+                'menu_position' => 'footer',
+                'menu_order' => 1,
             ]
         );
     }

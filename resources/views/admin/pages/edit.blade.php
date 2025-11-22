@@ -136,6 +136,48 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Menu Settings --}}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-bars text-indigo-600"></i>
+                    Ustawienia menu
+                </h3>
+                <div class="space-y-4">
+                    {{-- Show in Menu --}}
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="show_in_menu" value="1" {{ old('show_in_menu', $page->show_in_menu) ? 'checked' : '' }}
+                               class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="text-sm font-medium text-gray-700">Wyświetlaj w menu</span>
+                    </label>
+
+                    {{-- Menu Position --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Pozycja w menu
+                        </label>
+                        <select name="menu_position" class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">-- Wybierz --</option>
+                            <option value="footer" {{ old('menu_position', $page->menu_position) == 'footer' ? 'selected' : '' }}>Stopka</option>
+                            <option value="header" {{ old('menu_position', $page->menu_position) == 'header' ? 'selected' : '' }}>Główne menu</option>
+                            <option value="both" {{ old('menu_position', $page->menu_position) == 'both' ? 'selected' : '' }}>Oba miejsca</option>
+                        </select>
+                        @error('menu_position') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
+                        <p class="text-xs text-gray-500 mt-2">💡 Wybierz gdzie strona ma być widoczna</p>
+                    </div>
+
+                    {{-- Menu Order --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Kolejność w menu
+                        </label>
+                        <input type="number" name="menu_order" value="{{ old('menu_order', $page->menu_order) }}" min="0"
+                               class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        @error('menu_order') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
+                        <p class="text-xs text-gray-500 mt-2">💡 Niższa liczba = wyżej w menu</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
