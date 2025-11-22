@@ -12,8 +12,11 @@ class Page extends Model
     use HasFactory;
 
     protected $fillable = [
+        'parent_id',
         'title',
         'slug',
+        'route_name', // dla linków do istniejących route (np. blog.index, faq)
+        'external_url', // dla linków zewnętrznych
         'content',
         'meta_title',
         'meta_description',
@@ -23,6 +26,7 @@ class Page extends Model
         'show_in_menu',
         'menu_position', // 'footer', 'header', 'both'
         'menu_order',
+        'icon', // ikona FontAwesome dla menu
     ];
 
     protected $casts = [
@@ -67,7 +71,9 @@ class Page extends Model
 
     public function scopeInMenu($query, $position = null)
     {
-        $query->where('show_in_menu', true)->where('is_active', true);
+        $query->where('show_in_menu', true)
+              ->where('is_active', true)
+              ->whereNull('parent_id'); // tylko główne elementy menu (bez podmenu)
         
         if ($position) {
             $query->where(function($q) use ($position) {
@@ -77,6 +83,37 @@ class Page extends Model
         }
         
         return $query->orderBy('menu_order')->orderBy('title');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Page::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Page::class, 'parent_id')->where('is_active', true)->orderBy('menu_order')->orderBy('title');
+    }
+
+    public function getUrlAttribute()
+    {
+        if ($this->external_url) {
+            return $this->external_url;
+        }
+        
+        if ($this->route_name && \Route::has($this->route_name)) {
+            return route($this->route_name);
+        }
+        
+        if ($this->slug === 'polityka-prywatnosci') {
+            return route('privacy-policy');
+        }
+        
+        if ($this->slug === 'regulamin') {
+            return route('terms-of-service');
+        }
+        
+        return route('page.show', $this->slug);
     }
 }
 

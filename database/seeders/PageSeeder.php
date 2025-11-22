@@ -10,7 +10,7 @@ class PageSeeder extends Seeder
     public function run(): void
     {
         // Polityka prywatności
-        Page::updateOrCreate(
+        $privacy = Page::updateOrCreate(
             ['slug' => 'polityka-prywatnosci'],
             [
                 'title' => 'Polityka Prywatności',
@@ -75,7 +75,7 @@ Email: <a href="mailto:biuro@cleancodeas.pl">biuro@cleancodeas.pl</a></p>',
         );
 
         // Regulamin
-        Page::updateOrCreate(
+        $terms = Page::updateOrCreate(
             ['slug' => 'regulamin'],
             [
                 'title' => 'Regulamin Serwisu',
@@ -127,6 +127,35 @@ Email: <a href="mailto:biuro@cleancodeas.pl">biuro@cleancodeas.pl</a></p>',
                 'menu_order' => 1,
             ]
         );
+
+        // Blog (link do istniejącego route)
+        Page::updateOrCreate(
+            ['slug' => 'blog-menu'],
+            [
+                'title' => 'Blog',
+                'route_name' => 'blog.index',
+                'is_active' => true,
+                'is_system' => false,
+                'show_in_menu' => true,
+                'menu_position' => 'header',
+                'menu_order' => 3,
+                'icon' => 'fa-solid fa-newspaper',
+            ]
+        );
+
+        // FAQ (link do istniejącego route)
+        Page::updateOrCreate(
+            ['slug' => 'faq-menu'],
+            [
+                'title' => 'FAQ',
+                'route_name' => 'faq',
+                'is_active' => true,
+                'is_system' => false,
+                'show_in_menu' => true,
+                'menu_position' => 'header',
+                'menu_order' => 4,
+                'icon' => 'fa-solid fa-question-circle',
+            ]
+        );
     }
 }
-

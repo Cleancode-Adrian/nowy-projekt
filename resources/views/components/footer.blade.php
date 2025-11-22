@@ -31,16 +31,29 @@
                 <h3 class="font-semibold mb-4">Informacje</h3>
                 <ul class="space-y-2 text-sm text-gray-400">
                     @php
-                        $footerPages = \App\Models\Page::inMenu('footer')->get();
+                        $footerPages = \App\Models\Page::inMenu('footer')->with('children')->get();
                     @endphp
                     @forelse($footerPages as $page)
                         <li>
-                            @if($page->slug === 'polityka-prywatnosci')
-                                <a href="{{ route('privacy-policy') }}" class="hover:text-white transition-colors">{{ $page->title }}</a>
-                            @elseif($page->slug === 'regulamin')
-                                <a href="{{ route('terms-of-service') }}" class="hover:text-white transition-colors">{{ $page->title }}</a>
-                            @else
-                                <a href="{{ route('page.show', $page->slug) }}" class="hover:text-white transition-colors">{{ $page->title }}</a>
+                            <a href="{{ $page->url }}" class="hover:text-white transition-colors">
+                                @if($page->icon)
+                                    <i class="{{ $page->icon }} mr-1"></i>
+                                @endif
+                                {{ $page->title }}
+                            </a>
+                            @if($page->children->count() > 0)
+                                <ul class="ml-4 mt-2 space-y-1">
+                                    @foreach($page->children as $child)
+                                        <li>
+                                            <a href="{{ $child->url }}" class="hover:text-white transition-colors text-xs">
+                                                @if($child->icon)
+                                                    <i class="{{ $child->icon }} mr-1"></i>
+                                                @endif
+                                                {{ $child->title }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             @endif
                         </li>
                     @empty

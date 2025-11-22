@@ -21,23 +21,11 @@
                     <a href="{{ route('leaderboard') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         Ranking
                     </a>
-                    <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        Blog
-                    </a>
-                    <a href="{{ route('faq') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        FAQ
-                    </a>
                     @php
-                        $headerPages = \App\Models\Page::inMenu('header')->get();
+                        $headerPages = \App\Models\Page::inMenu('header')->with('children')->get();
                     @endphp
                     @foreach($headerPages as $page)
-                        @if($page->slug === 'polityka-prywatnosci')
-                            <a href="{{ route('privacy-policy') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">{{ $page->title }}</a>
-                        @elseif($page->slug === 'regulamin')
-                            <a href="{{ route('terms-of-service') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">{{ $page->title }}</a>
-                        @else
-                            <a href="{{ route('page.show', $page->slug) }}" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">{{ $page->title }}</a>
-                        @endif
+                        <x-menu-item :page="$page" />
                     @endforeach
                 </nav>
             </div>

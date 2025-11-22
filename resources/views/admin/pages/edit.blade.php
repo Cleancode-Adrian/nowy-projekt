@@ -46,16 +46,49 @@
                 <p class="text-xs text-gray-500 mt-2">💡 Zmiana slugu może wpłynąć na linki do strony</p>
             </div>
 
+            {{-- Link Type --}}
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-sm border-2 border-blue-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-link text-blue-600"></i>
+                    Typ linku
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">Wybierz jeden z opcji poniżej (lub zostaw puste i użyj edytora treści)</p>
+                
+                <div class="space-y-4">
+                    {{-- Route Name --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Route Name (dla istniejących stron jak Blog, FAQ)
+                        </label>
+                        <input type="text" name="route_name" value="{{ old('route_name', $page->route_name) }}"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="np. blog.index, faq, announcements.index">
+                        <p class="text-xs text-gray-500 mt-2">💡 Użyj dla linków do istniejących route (Blog, FAQ, Ogłoszenia itp.)</p>
+                    </div>
+
+                    {{-- External URL --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Link zewnętrzny
+                        </label>
+                        <input type="url" name="external_url" value="{{ old('external_url', $page->external_url) }}"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="https://example.com">
+                        <p class="text-xs text-gray-500 mt-2">💡 Użyj dla linków do zewnętrznych stron</p>
+                    </div>
+                </div>
+            </div>
+
             {{-- Content --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <label class="block text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-file-lines text-green-600"></i>
-                    Treść strony *
+                    Treść strony (opcjonalnie - jeśli używasz route_name lub external_url)
                 </label>
                 <div id="editor-container" style="height: 500px;" class="bg-white border-2 border-gray-200 rounded-lg @error('content') border-red-500 @enderror"></div>
                 <textarea id="content" name="content" class="hidden">{{ old('content', $page->content) }}</textarea>
                 @error('content') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
-                <p class="text-xs text-gray-500 mt-2">💡 Użyj narzędzi edytora do formatowania tekstu</p>
+                <p class="text-xs text-gray-500 mt-2">💡 Użyj narzędzi edytora do formatowania tekstu. Jeśli używasz route_name lub external_url, możesz zostawić puste.</p>
             </div>
 
             {{-- SEO Section --}}
@@ -105,6 +138,33 @@
                     Ustawienia
                 </h3>
                 <div class="space-y-4">
+                    {{-- Parent Page (for submenu) --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Strona nadrzędna (dla podmenu)
+                        </label>
+                        <select name="parent_id" class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Brak (główny element menu) --</option>
+                            @foreach($parentPages as $parent)
+                                <option value="{{ $parent->id }}" {{ old('parent_id', $page->parent_id) == $parent->id ? 'selected' : '' }}>
+                                    {{ $parent->title }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-500 mt-2">💡 Wybierz, jeśli chcesz utworzyć podmenu</p>
+                    </div>
+
+                    {{-- Icon --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Ikona (FontAwesome)
+                        </label>
+                        <input type="text" name="icon" value="{{ old('icon', $page->icon) }}"
+                               class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="np. fa-solid fa-home">
+                        <p class="text-xs text-gray-500 mt-2">💡 Nazwa klasy FontAwesome (np. fa-solid fa-home)</p>
+                    </div>
+
                     {{-- Is Active --}}
                     <label class="flex items-center gap-3 cursor-pointer">
                         <input type="checkbox" name="is_active" value="1" {{ old('is_active', $page->is_active) ? 'checked' : '' }}
