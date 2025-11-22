@@ -101,7 +101,7 @@
                                             <label class="flex items-start">
                                                 <input type="checkbox" name="privacy_consent" value="1" required class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" id="privacy-consent-checkbox">
                                                 <span class="text-sm text-gray-700">
-                                                    Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z 
+                                                    Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z
                                                     <a href="{{ route('privacy-policy') }}" target="_blank" class="text-blue-600 hover:text-blue-700 underline font-medium">polityką prywatności</a> *
                                                 </span>
                                             </label>
@@ -297,16 +297,16 @@
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedSubmit button:hover {
             background-color: #1d4ed8 !important;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedSubmit button.loading {
             display: none;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow {
             margin: 0 0 20px 0;
             width: 100%;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label {
             font-weight: normal;
             margin: 0;
@@ -316,7 +316,7 @@
             align-items: flex-start;
             cursor: pointer;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow input[type="checkbox"] {
             box-sizing: border-box;
             padding: 0;
@@ -328,27 +328,27 @@
             cursor: pointer;
             flex-shrink: 0;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label span {
             color: #333333;
             font-family: 'Open Sans', Arial, Helvetica, sans-serif;
             font-size: 14px;
             line-height: 20px;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label a {
             color: #2563eb;
             text-decoration: underline;
         }
-        
+
         #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label a:hover {
             color: #1d4ed8;
         }
-        
+
         .ml-error input {
             border-color: red !important;
         }
-        
+
         .ml-error .ml-form-checkboxRow {
             border: 1px solid red !important;
             border-radius: 4px;
@@ -369,13 +369,13 @@
             $('.ml-subscribe-form-16123980 .row-success').show();
             $('.ml-subscribe-form-16123980 .row-form').hide();
         }
-        
+
         // Walidacja checkboxa przed wysłaniem formularza
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('newsletter-form');
             const checkbox = document.getElementById('privacy-consent-checkbox');
             const submitBtn = document.getElementById('newsletter-submit-btn');
-            
+
             if (form && checkbox && submitBtn) {
                 form.addEventListener('submit', function(e) {
                     if (!checkbox.checked) {
@@ -385,12 +385,12 @@
                         return false;
                     }
                 });
-                
+
                 // Aktualizacja stanu przycisku w zależności od checkboxa
                 checkbox.addEventListener('change', function() {
                     submitBtn.disabled = !this.checked;
                 });
-                
+
                 // Początkowy stan przycisku
                 submitBtn.disabled = !checkbox.checked;
             }

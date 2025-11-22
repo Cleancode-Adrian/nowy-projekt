@@ -46,6 +46,15 @@ Route::get('/faq', Faq::class)->name('faq');
 Route::get('/polityka-prywatnosci', PrivacyPolicy::class)->name('privacy-policy');
 Route::get('/regulamin', TermsOfService::class)->name('terms-of-service');
 
+// Dynamic pages route (must be last to avoid conflicts)
+Route::get('/strona/{slug}', function($slug) {
+    $page = \App\Models\Page::where('slug', $slug)->active()->firstOrFail();
+    return view('livewire.page-show', ['page' => $page])->layout('layouts.app', [
+        'title' => ($page->meta_title ?: $page->title) . ' - Projekciarz.pl',
+        'description' => $page->meta_description ?: '',
+    ]);
+})->name('page.show');
+
 // Email Verification Routes
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
@@ -143,6 +152,14 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth'])->group(funct
     Route::get('/blog/{id}/edit', [BlogController::class, 'edit'])->name('blog.edit');
     Route::put('/blog/{id}', [BlogController::class, 'update'])->name('blog.update');
     Route::delete('/blog/{id}', [BlogController::class, 'delete'])->name('blog.delete');
+
+    // Pages Management
+    Route::get('/pages', [\App\Http\Controllers\Admin\PageController::class, 'index'])->name('pages.index');
+    Route::get('/pages/create', [\App\Http\Controllers\Admin\PageController::class, 'create'])->name('pages.create');
+    Route::post('/pages', [\App\Http\Controllers\Admin\PageController::class, 'store'])->name('pages.store');
+    Route::get('/pages/{id}/edit', [\App\Http\Controllers\Admin\PageController::class, 'edit'])->name('pages.edit');
+    Route::put('/pages/{id}', [\App\Http\Controllers\Admin\PageController::class, 'update'])->name('pages.update');
+    Route::delete('/pages/{id}', [\App\Http\Controllers\Admin\PageController::class, 'delete'])->name('pages.delete');
 
     // Ratings Moderation
     Route::get('/ratings', [AdminRatingController::class, 'index'])->name('ratings.index');

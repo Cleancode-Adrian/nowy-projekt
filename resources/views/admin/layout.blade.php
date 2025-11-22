@@ -60,6 +60,12 @@
                     <span class="font-medium">Blog</span>
                 </a>
 
+                <a href="{{ route('admin.pages.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all {{ request()->routeIs('admin.pages*') ? 'bg-gradient-to-r from-indigo-600 to-blue-600 shadow-lg' : 'hover:bg-gray-800 hover:translate-x-1' }}">
+                    <i class="fa-solid fa-file-lines w-5"></i>
+                    <span class="font-medium">Strony</span>
+                </a>
+
                 <a href="{{ route('admin.ratings.index') }}"
                    class="flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all {{ request()->routeIs('admin.ratings*') ? 'bg-gradient-to-r from-yellow-600 to-orange-600 shadow-lg' : 'hover:bg-gray-800 hover:translate-x-1' }}">
                     <i class="fa-solid fa-star w-5"></i>
