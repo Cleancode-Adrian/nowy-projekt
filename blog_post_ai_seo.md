@@ -1,5 +1,44 @@
 # Wpis Blogowy - AI i SEO
 
+## ⚙️ Komendy do wykonania w terminalu (PRZED publikacją):
+
+### Lokalnie (Windows/Linux/Mac):
+
+```bash
+# 1. Uruchom migracje bazy danych (dodaje category_id i featured_image_alt)
+php artisan migrate
+
+# 2. (Opcjonalnie) Wyczyść cache jeśli coś nie działa
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+
+# 3. (Opcjonalnie) Zbuduj assety frontendowe jeśli były zmiany
+npm run build
+```
+
+### Na serwerze produkcyjnym (po git pull):
+
+```bash
+# 1. Przejdź do katalogu projektu
+cd /var/www/projekciarz.pl
+
+# 2. Uruchom migracje (jako www-data)
+sudo -u www-data php artisan migrate --force
+
+# 3. Wyczyść cache
+sudo -u www-data php artisan config:cache
+sudo -u www-data php artisan route:cache
+sudo -u www-data php artisan view:cache
+
+# 4. Restart PHP-FPM
+sudo systemctl restart php8.2-fpm
+```
+
+**✅ Migracje zostały już uruchomione lokalnie!**
+
+---
+
 ## Dane do formularza w panelu admina:
 
 ### Tytuł:
