@@ -14,6 +14,7 @@ class BlogPost extends Model
 
     protected $fillable = [
         'author_id',
+        'category_id',
         'title',
         'slug',
         'excerpt',
@@ -21,6 +22,7 @@ class BlogPost extends Model
         'meta_title',
         'meta_description',
         'featured_image',
+        'featured_image_alt',
         'status',
         'published_at',
         'views_count',
@@ -46,6 +48,11 @@ class BlogPost extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function tags(): BelongsToMany

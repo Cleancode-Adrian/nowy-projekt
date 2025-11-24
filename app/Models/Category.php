@@ -39,5 +39,10 @@ class Category extends Model
             ->where('is_approved', true)
             ->where('status', 'published');
     }
+
+    public function blogPosts(): HasMany
+    {
+        return $this->hasMany(BlogPost::class);
+    }
 }
 

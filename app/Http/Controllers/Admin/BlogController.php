@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use App\Models\Tag;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,8 @@ class BlogController extends Controller
     public function create()
     {
         $tags = Tag::orderBy('name')->get();
-        return view('admin.blog.create', compact('tags'));
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        return view('admin.blog.create', compact('tags', 'categories'));
     }
 
     public function store(Request $request)
@@ -34,6 +36,8 @@ class BlogController extends Controller
             'meta_keywords' => 'nullable|string',
             'featured_image' => 'nullable|image|max:2048',
             'featured_image_existing' => 'nullable|string|max:255',
+            'featured_image_alt' => 'nullable|string|max:255',
+            'category_id' => 'nullable|exists:categories,id',
             'tags' => 'nullable|array',
         ], [
             'title.required' => 'Tytuł jest wymagany',
@@ -66,6 +70,7 @@ class BlogController extends Controller
 
         $data = [
             'author_id' => auth()->id(),
+            'category_id' => $validated['category_id'] ?? null,
             'title' => $validated['title'],
             'slug' => $slug,
             'excerpt' => $validated['excerpt'],
@@ -73,6 +78,7 @@ class BlogController extends Controller
             'meta_title' => $validated['meta_title'],
             'meta_description' => $validated['meta_description'],
             'meta_keywords' => $metaKeywords,
+            'featured_image_alt' => $validated['featured_image_alt'] ?? null,
             'status' => $status,
         ];
 
@@ -103,7 +109,8 @@ class BlogController extends Controller
     {
         $post = BlogPost::findOrFail($id);
         $tags = Tag::orderBy('name')->get();
-        return view('admin.blog.edit', compact('post', 'tags'));
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        return view('admin.blog.edit', compact('post', 'tags', 'categories'));
     }
 
     public function update(Request $request, $id)
@@ -119,6 +126,8 @@ class BlogController extends Controller
             'meta_keywords' => 'nullable|string',
             'featured_image' => 'nullable|image|max:2048',
             'featured_image_existing' => 'nullable|string|max:255',
+            'featured_image_alt' => 'nullable|string|max:255',
+            'category_id' => 'nullable|exists:categories,id',
             'status' => 'required|in:draft,published',
             'tags' => 'nullable|array',
         ], [
@@ -147,6 +156,8 @@ class BlogController extends Controller
             'meta_title' => $validated['meta_title'],
             'meta_description' => $validated['meta_description'],
             'meta_keywords' => $metaKeywords,
+            'category_id' => $validated['category_id'] ?? null,
+            'featured_image_alt' => $validated['featured_image_alt'] ?? null,
             'status' => $validated['status'],
         ];
 

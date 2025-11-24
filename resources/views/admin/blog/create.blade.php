@@ -173,13 +173,45 @@
                         onclick="clearSelectedImage('featured_image_input_create','featured_image_existing_create','selected-file-name-create','image-preview-create')">
                     Wyczyść wybrane zdjęcie
                 </button>
+
+                {{-- Alt Text for Image --}}
+                <div class="mt-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-text-width text-green-600"></i>
+                        Tekst alternatywny (Alt Text)
+                    </label>
+                    <input type="text" name="featured_image_alt" value="{{ old('featured_image_alt') }}"
+                           class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                           placeholder="Opisz obrazek dla SEO i dostępności (np. 'Grafika przedstawiająca...')"
+                           maxlength="255">
+                    <p class="text-xs text-gray-500 mt-2">💡 Ważne dla SEO i dostępności - opisz co pokazuje obrazek</p>
+                    @error('featured_image_alt') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            {{-- Category --}}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-folder text-blue-600"></i>
+                    Kategoria
+                </h3>
+                <select name="category_id" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
+                    <option value="">-- Wybierz kategorię --</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="text-xs text-gray-500 mt-2">💡 Wybierz główną kategorię artykułu</p>
+                @error('category_id') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
             </div>
 
             {{-- Tags --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-tags text-orange-600"></i>
-                    Tagi/Kategorie
+                    Tagi
                 </h3>
                 <div class="space-y-2 max-h-64 overflow-y-auto">
                     @foreach($tags as $tag)
@@ -190,7 +222,7 @@
                         </label>
                     @endforeach
                 </div>
-                <p class="text-xs text-gray-500 mt-3">💡 Wybierz tematykę artykułu</p>
+                <p class="text-xs text-gray-500 mt-3">💡 Wybierz tagi opisujące artykuł (można wybrać wiele)</p>
             </div>
 
             {{-- Tips --}}
