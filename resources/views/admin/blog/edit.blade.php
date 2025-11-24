@@ -221,7 +221,7 @@
                     <i class="fa-solid fa-folder text-blue-600"></i>
                     Kategoria
                 </h3>
-                <select name="category_id" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
+                <select name="category_id" id="category_select" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
                     <option value="">-- Wybierz kategorię --</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ old('category_id', $post->category_id) == $category->id ? 'selected' : '' }}>
@@ -229,8 +229,19 @@
                         </option>
                     @endforeach
                 </select>
-                <p class="text-xs text-gray-500 mt-2">💡 Wybierz główną kategorię artykułu</p>
+                <p class="text-xs text-gray-500 mt-2 mb-3">💡 Wybierz główną kategorię artykułu</p>
+
+                <div class="mt-3 pt-3 border-t border-gray-200">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fa-solid fa-plus text-green-600"></i> Lub dodaj nową kategorię:
+                    </label>
+                    <input type="text" name="new_category" value="{{ old('new_category') }}"
+                           class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                           placeholder="Nazwa nowej kategorii">
+                    <p class="text-xs text-gray-500 mt-1">💡 Jeśli wpiszesz nazwę, nowa kategoria zostanie utworzona</p>
+                </div>
                 @error('category_id') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
+                @error('new_category') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
             </div>
 
             {{-- Tags --}}
@@ -239,7 +250,7 @@
                     <i class="fa-solid fa-tags text-orange-600"></i>
                     Tagi
                 </h3>
-                <div class="space-y-2 max-h-64 overflow-y-auto">
+                <div class="space-y-2 max-h-64 overflow-y-auto mb-4">
                     @foreach($tags as $tag)
                         <label class="flex items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
                             <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
@@ -249,7 +260,18 @@
                         </label>
                     @endforeach
                 </div>
-                <p class="text-xs text-gray-500 mt-3">💡 Wybierz tagi opisujące artykuł (można wybrać wiele)</p>
+                <p class="text-xs text-gray-500 mb-3">💡 Wybierz tagi opisujące artykuł (można wybrać wiele)</p>
+
+                <div class="pt-3 border-t border-gray-200">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fa-solid fa-plus text-green-600"></i> Lub dodaj nowe tagi:
+                    </label>
+                    <input type="text" name="new_tags" value="{{ old('new_tags') }}"
+                           class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                           placeholder="Tagi oddzielone przecinkami (np. AI, SEO, Marketing)">
+                    <p class="text-xs text-gray-500 mt-1">💡 Wpisz tagi oddzielone przecinkami - nowe tagi zostaną utworzone</p>
+                </div>
+                @error('new_tags') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
             </div>
 
             {{-- Stats --}}

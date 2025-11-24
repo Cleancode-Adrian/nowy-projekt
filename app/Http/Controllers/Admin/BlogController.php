@@ -21,7 +21,7 @@ class BlogController extends Controller
     public function create()
     {
         $tags = Tag::forBlogs()->orderBy('name')->get();
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
         return view('admin.blog.create', compact('tags', 'categories'));
     }
 
@@ -38,7 +38,9 @@ class BlogController extends Controller
             'featured_image_existing' => 'nullable|string|max:255',
             'featured_image_alt' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
+            'new_category' => 'nullable|string|max:255',
             'tags' => 'nullable|array',
+            'new_tags' => 'nullable|string|max:500',
         ], [
             'title.required' => 'Tytuł jest wymagany',
             'title.min' => 'Tytuł musi mieć minimum 10 znaków',
@@ -96,10 +98,39 @@ class BlogController extends Controller
             Log::warning('Store: featured_image not present in request.');
         }
 
+        // Create new category if provided
+        if (!empty($validated['new_category'])) {
+            $newCategory = Category::firstOrCreate(
+                ['slug' => Str::slug($validated['new_category'])],
+                [
+                    'name' => $validated['new_category'],
+                    'is_active' => true,
+                ]
+            );
+            $data['category_id'] = $newCategory->id;
+        }
+
         $post = BlogPost::create($data);
 
-        if (!empty($validated['tags'])) {
-            $post->tags()->sync($validated['tags']);
+        // Handle tags - existing and new
+        $tagIds = $validated['tags'] ?? [];
+
+        // Create new tags if provided
+        if (!empty($validated['new_tags'])) {
+            $newTagNames = array_map('trim', explode(',', $validated['new_tags']));
+            foreach ($newTagNames as $tagName) {
+                if (!empty($tagName)) {
+                    $newTag = Tag::firstOrCreate(
+                        ['slug' => Str::slug($tagName), 'type' => 'blog'],
+                        ['name' => $tagName]
+                    );
+                    $tagIds[] = $newTag->id;
+                }
+            }
+        }
+
+        if (!empty($tagIds)) {
+            $post->tags()->sync(array_unique($tagIds));
         }
 
         return redirect()->route('admin.blog.index')->with('success', 'Post dodany!');
@@ -109,7 +140,7 @@ class BlogController extends Controller
     {
         $post = BlogPost::findOrFail($id);
         $tags = Tag::forBlogs()->orderBy('name')->get();
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
         return view('admin.blog.edit', compact('post', 'tags', 'categories'));
     }
 
@@ -128,8 +159,10 @@ class BlogController extends Controller
             'featured_image_existing' => 'nullable|string|max:255',
             'featured_image_alt' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
+            'new_category' => 'nullable|string|max:255',
             'status' => 'required|in:draft,published',
             'tags' => 'nullable|array',
+            'new_tags' => 'nullable|string|max:500',
         ], [
             'title.required' => 'Tytuł jest wymagany',
             'title.min' => 'Tytuł musi mieć minimum 10 znaków',
@@ -149,6 +182,19 @@ class BlogController extends Controller
             $metaKeywords = array_map('trim', explode(',', $validated['meta_keywords']));
         }
 
+        // Create new category if provided
+        $categoryId = $validated['category_id'] ?? null;
+        if (!empty($validated['new_category'])) {
+            $newCategory = Category::firstOrCreate(
+                ['slug' => Str::slug($validated['new_category'])],
+                [
+                    'name' => $validated['new_category'],
+                    'is_active' => true,
+                ]
+            );
+            $categoryId = $newCategory->id;
+        }
+
         $data = [
             'title' => $validated['title'],
             'excerpt' => $validated['excerpt'],
@@ -156,7 +202,7 @@ class BlogController extends Controller
             'meta_title' => $validated['meta_title'],
             'meta_description' => $validated['meta_description'],
             'meta_keywords' => $metaKeywords,
-            'category_id' => $validated['category_id'] ?? null,
+            'category_id' => $categoryId,
             'featured_image_alt' => $validated['featured_image_alt'] ?? null,
             'status' => $validated['status'],
         ];
@@ -180,8 +226,27 @@ class BlogController extends Controller
 
         $post->update($data);
 
-        if (isset($validated['tags'])) {
-            $post->tags()->sync($validated['tags']);
+        // Handle tags - existing and new
+        $tagIds = $validated['tags'] ?? [];
+
+        // Create new tags if provided
+        if (!empty($validated['new_tags'])) {
+            $newTagNames = array_map('trim', explode(',', $validated['new_tags']));
+            foreach ($newTagNames as $tagName) {
+                if (!empty($tagName)) {
+                    $newTag = Tag::firstOrCreate(
+                        ['slug' => Str::slug($tagName), 'type' => 'blog'],
+                        ['name' => $tagName]
+                    );
+                    $tagIds[] = $newTag->id;
+                }
+            }
+        }
+
+        if (!empty($tagIds)) {
+            $post->tags()->sync(array_unique($tagIds));
+        } else {
+            $post->tags()->sync([]);
         }
 
         return redirect()->route('admin.blog.index')->with('success', 'Post zaktualizowany!');
