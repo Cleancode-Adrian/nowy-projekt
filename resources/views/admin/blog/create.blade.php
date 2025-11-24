@@ -140,6 +140,7 @@
                     <i class="fa-solid fa-image text-pink-600"></i>
                     Zdjęcie wyróżniające
                 </h3>
+                <input type="hidden" name="featured_image_existing" id="featured_image_existing_create">
                 <label for="featured_image_input_create"
                        class="block border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400">
                     <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-400 mb-3"></i>
@@ -154,11 +155,24 @@
                 <input type="file" name="featured_image" accept="image/*"
                        id="featured_image_input_create"
                        class="hidden"
-                       onchange="previewImage(this)">
+                       onchange="previewImage(this, 'preview-img-create', 'image-preview-create', 'selected-file-name-create')">
                 @error('featured_image') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
-                <div id="image-preview" class="mt-4 hidden">
-                    <img id="preview-img" class="w-full h-48 object-cover rounded-lg border-2 border-gray-200">
+                <div id="image-preview-create" class="mt-4 hidden">
+                    <img id="preview-img-create" class="w-full h-48 object-cover rounded-lg border-2 border-gray-200">
                 </div>
+                @include('admin.media.picker-modal', [
+                    'fieldId' => 'featured_image_existing_create',
+                    'buttonText' => 'Wybierz z biblioteki mediów',
+                    'buttonClass' => 'w-full mt-4 border border-blue-200 text-blue-700 font-semibold py-2 rounded-lg hover:bg-blue-50 transition-colors',
+                    'previewImageId' => 'preview-img-create',
+                    'previewWrapperId' => 'image-preview-create',
+                    'fileNameId' => 'selected-file-name-create'
+                ])
+                <button type="button"
+                        class="mt-3 text-sm text-gray-600 hover:text-gray-900 underline"
+                        onclick="clearSelectedImage('featured_image_input_create','featured_image_existing_create','selected-file-name-create','image-preview-create')">
+                    Wyczyść wybrane zdjęcie
+                </button>
             </div>
 
             {{-- Tags --}}
@@ -221,26 +235,54 @@
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
 <script>
-function previewImage(input) {
-    const preview = document.getElementById('image-preview');
-    const img = document.getElementById('preview-img');
-    const fileName = document.getElementById('selected-file-name-create');
+function previewImage(input, previewImgId = 'preview-img-create', previewWrapperId = 'image-preview-create', fileNameId = 'selected-file-name-create') {
+    const preview = document.getElementById(previewWrapperId);
+    const img = document.getElementById(previewImgId);
+    const fileName = document.getElementById(fileNameId);
+
+    if (!img || !preview) {
+        return;
+    }
 
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
             img.src = e.target.result;
             preview.classList.remove('hidden');
-        }
+        };
         reader.readAsDataURL(input.files[0]);
 
         if (fileName) {
             fileName.textContent = input.files[0].name;
             fileName.classList.remove('hidden');
         }
-    } else if (fileName) {
+    } else {
+        preview.classList.add('hidden');
+        if (fileName) {
+            fileName.textContent = '';
+            fileName.classList.add('hidden');
+        }
+    }
+}
+
+function clearSelectedImage(fileInputId, existingFieldId, fileNameId, previewWrapperId) {
+    const fileInput = document.getElementById(fileInputId);
+    const existingField = document.getElementById(existingFieldId);
+    const fileName = document.getElementById(fileNameId);
+    const preview = document.getElementById(previewWrapperId);
+
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    if (existingField) {
+        existingField.value = '';
+    }
+    if (fileName) {
         fileName.textContent = '';
         fileName.classList.add('hidden');
+    }
+    if (preview) {
+        preview.classList.add('hidden');
     }
 }
 </script>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RatingController as AdminRatingController;
+use App\Http\Controllers\Admin\MediaController;
 use Illuminate\Support\Facades\Route;
 
 use App\Livewire\HomePage;
@@ -160,6 +161,13 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth'])->group(funct
     Route::get('/pages/{id}/edit', [\App\Http\Controllers\Admin\PageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{id}', [\App\Http\Controllers\Admin\PageController::class, 'update'])->name('pages.update');
     Route::delete('/pages/{id}', [\App\Http\Controllers\Admin\PageController::class, 'delete'])->name('pages.delete');
+
+    // Media Library
+    Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+    Route::get('/media/picker/list', [MediaController::class, 'picker'])->name('media.list');
+    Route::post('/media', [MediaController::class, 'store'])->name('media.store');
+    Route::put('/media/{media}', [MediaController::class, 'update'])->name('media.update');
+    Route::delete('/media', [MediaController::class, 'destroy'])->name('media.destroy');
 
     // Ratings Moderation
     Route::get('/ratings', [AdminRatingController::class, 'index'])->name('ratings.index');

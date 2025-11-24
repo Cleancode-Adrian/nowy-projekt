@@ -3,6 +3,10 @@
 .env
 .env.backup
 .env.production
+.env.temp
+*.sqlite
+*.db
+ogloszenia_db
 .phpactor.json
 .phpunit.result.cache
 /.fleet

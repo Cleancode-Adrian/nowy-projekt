@@ -12,7 +12,7 @@
                 <p class="text-gray-600">Twórz i edytuj artykuły dla użytkowników</p>
             </div>
         </div>
-        <a href="{{ route('admin.blog.create') }}" 
+        <a href="{{ route('admin.blog.create') }}"
            class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
             <i class="fa-solid fa-plus"></i>
             Dodaj wpis
@@ -45,8 +45,14 @@
                     <td class="px-4 py-4">
                         <div class="flex items-center gap-3">
                             @if($post->featured_image)
-                                <img src="{{ asset('storage/' . $post->featured_image) }}"
-                                     class="w-16 h-16 object-cover rounded">
+                                @if(str_starts_with($post->featured_image, 'http://') || str_starts_with($post->featured_image, 'https://'))
+                                    <img src="{{ $post->featured_image }}"
+                                         class="w-16 h-16 object-cover rounded"
+                                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'64\' height=\'64\'%3E%3Crect fill=\'%23e5e7eb\' width=\'64\' height=\'64\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%239ca3af\' font-size=\'24\'%3E📷%3C/text%3E%3C/svg%3E';">
+                                @else
+                                    <img src="{{ asset('storage/' . $post->featured_image) }}"
+                                         class="w-16 h-16 object-cover rounded">
+                                @endif
                             @endif
                             <div>
                                 <div class="font-medium text-gray-900">{{ $post->title }}</div>

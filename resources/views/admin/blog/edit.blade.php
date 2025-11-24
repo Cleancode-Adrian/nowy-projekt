@@ -135,12 +135,20 @@
                     <i class="fa-solid fa-image text-pink-600"></i>
                     Zdjęcie wyróżniające
                 </h3>
+                <input type="hidden" name="featured_image_existing" id="featured_image_existing_edit">
 
                 @if($post->featured_image)
                     <div class="mb-4">
-                        <img src="{{ asset('storage/' . $post->featured_image) }}"
-                             alt="Obecne zdjęcie"
-                             class="w-full h-40 object-cover rounded-lg border-2 border-gray-200">
+                        @if(str_starts_with($post->featured_image, 'http://') || str_starts_with($post->featured_image, 'https://'))
+                            <img src="{{ $post->featured_image }}"
+                                 alt="Obecne zdjęcie"
+                                 class="w-full h-40 object-cover rounded-lg border-2 border-gray-200"
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'160\'%3E%3Crect fill=\'%23e5e7eb\' width=\'400\' height=\'160\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%239ca3af\' font-size=\'48\'%3E📷%3C/text%3E%3C/svg%3E';">
+                        @else
+                            <img src="{{ asset('storage/' . $post->featured_image) }}"
+                                 alt="Obecne zdjęcie"
+                                 class="w-full h-40 object-cover rounded-lg border-2 border-gray-200">
+                        @endif
                         <p class="text-xs text-gray-500 mt-2 text-center">📸 Obecne zdjęcie wyróżniające</p>
                     </div>
                 @else
@@ -167,7 +175,7 @@
                        id="featured_image_input"
                        accept="image/*"
                        class="hidden"
-                       onchange="previewImageEdit(this)">
+                       onchange="previewImage(this, 'preview-img-edit', 'image-preview-edit', 'selected-file-name-edit')">
                 @error('featured_image')
                     <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
                 @enderror
@@ -178,6 +186,19 @@
                         <img id="preview-img-edit" class="w-full h-48 object-cover rounded-lg">
                     </div>
                 </div>
+                @include('admin.media.picker-modal', [
+                    'fieldId' => 'featured_image_existing_edit',
+                    'buttonText' => 'Wybierz z biblioteki mediów',
+                    'buttonClass' => 'w-full mt-4 border border-blue-200 text-blue-700 font-semibold py-2 rounded-lg hover:bg-blue-50 transition-colors',
+                    'previewImageId' => 'preview-img-edit',
+                    'previewWrapperId' => 'image-preview-edit',
+                    'fileNameId' => 'selected-file-name-edit'
+                ])
+                <button type="button"
+                        class="mt-3 text-sm text-gray-600 hover:text-gray-900 underline"
+                        onclick="clearSelectedImage('featured_image_input','featured_image_existing_edit','selected-file-name-edit','image-preview-edit')">
+                    Wyczyść wybrane zdjęcie
+                </button>
             </div>
 
             {{-- Tags --}}
@@ -253,27 +274,54 @@
 <!-- Quill Editor JS -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script>
-// Image preview for featured image
-function previewImageEdit(input) {
-    const preview = document.getElementById('image-preview-edit');
-    const img = document.getElementById('preview-img-edit');
-    const fileName = document.getElementById('selected-file-name-edit');
+function previewImage(input, previewImgId = 'preview-img-edit', previewWrapperId = 'image-preview-edit', fileNameId = 'selected-file-name-edit') {
+    const preview = document.getElementById(previewWrapperId);
+    const img = document.getElementById(previewImgId);
+    const fileName = document.getElementById(fileNameId);
+
+    if (!img || !preview) {
+        return;
+    }
 
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
             img.src = e.target.result;
             preview.classList.remove('hidden');
-        }
+        };
         reader.readAsDataURL(input.files[0]);
 
         if (fileName) {
             fileName.textContent = input.files[0].name;
             fileName.classList.remove('hidden');
         }
-    } else if (fileName) {
+    } else {
+        preview.classList.add('hidden');
+        if (fileName) {
+            fileName.textContent = '';
+            fileName.classList.add('hidden');
+        }
+    }
+}
+
+function clearSelectedImage(fileInputId, existingFieldId, fileNameId, previewWrapperId) {
+    const fileInput = document.getElementById(fileInputId);
+    const existingField = document.getElementById(existingFieldId);
+    const fileName = document.getElementById(fileNameId);
+    const preview = document.getElementById(previewWrapperId);
+
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    if (existingField) {
+        existingField.value = '';
+    }
+    if (fileName) {
         fileName.textContent = '';
         fileName.classList.add('hidden');
+    }
+    if (preview) {
+        preview.classList.add('hidden');
     }
 }
 

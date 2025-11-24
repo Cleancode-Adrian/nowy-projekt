@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .card { background: white; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; }
@@ -64,6 +65,12 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all {{ request()->routeIs('admin.pages*') ? 'bg-gradient-to-r from-indigo-600 to-blue-600 shadow-lg' : 'hover:bg-gray-800 hover:translate-x-1' }}">
                     <i class="fa-solid fa-file-lines w-5"></i>
                     <span class="font-medium">Strony</span>
+                </a>
+
+                <a href="{{ route('admin.media.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all {{ request()->routeIs('admin.media*') ? 'bg-gradient-to-r from-cyan-600 to-blue-500 shadow-lg' : 'hover:bg-gray-800 hover:translate-x-1' }}">
+                    <i class="fa-solid fa-photo-film w-5"></i>
+                    <span class="font-medium">Media</span>
                 </a>
 
                 <a href="{{ route('admin.ratings.index') }}"

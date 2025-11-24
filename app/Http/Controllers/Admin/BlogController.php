@@ -33,6 +33,7 @@ class BlogController extends Controller
             'meta_description' => 'nullable|max:160',
             'meta_keywords' => 'nullable|string',
             'featured_image' => 'nullable|image|max:2048',
+            'featured_image_existing' => 'nullable|string|max:255',
             'tags' => 'nullable|array',
         ], [
             'title.required' => 'Tytuł jest wymagany',
@@ -79,7 +80,9 @@ class BlogController extends Controller
             $data['published_at'] = now();
         }
 
-        if ($request->hasFile('featured_image')) {
+        if ($request->filled('featured_image_existing')) {
+            $data['featured_image'] = $request->input('featured_image_existing');
+        } elseif ($request->hasFile('featured_image')) {
             Log::info('Uploading featured image (store).');
             $data['featured_image'] = $request->file('featured_image')->store('blog', 'public');
             Log::info('Stored featured image path: '.$data['featured_image']);
@@ -115,6 +118,7 @@ class BlogController extends Controller
             'meta_description' => 'nullable|max:160',
             'meta_keywords' => 'nullable|string',
             'featured_image' => 'nullable|image|max:2048',
+            'featured_image_existing' => 'nullable|string|max:255',
             'status' => 'required|in:draft,published',
             'tags' => 'nullable|array',
         ], [
@@ -150,7 +154,9 @@ class BlogController extends Controller
             $data['published_at'] = now();
         }
 
-        if ($request->hasFile('featured_image')) {
+        if ($request->filled('featured_image_existing')) {
+            $data['featured_image'] = $request->input('featured_image_existing');
+        } elseif ($request->hasFile('featured_image')) {
             Log::info('Uploading featured image (update).');
             if ($post->featured_image) {
                 \Storage::disk('public')->delete($post->featured_image);
