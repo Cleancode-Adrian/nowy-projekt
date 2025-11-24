@@ -4,10 +4,17 @@
     <div class="p-6">
         {{-- Header --}}
         <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-medium px-3 py-1 rounded-full"
-                  style="background-color: {{ $announcement->category->color }}20; color: {{ $announcement->category->color }}">
-                {{ $announcement->category->name }}
-            </span>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-medium px-3 py-1 rounded-full"
+                      style="background-color: {{ $announcement->category->color }}20; color: {{ $announcement->category->color }}">
+                    {{ $announcement->category->name }}
+                </span>
+                @if($announcement->status === 'closed')
+                    <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+                        🔒 Zamknięte
+                    </span>
+                @endif
+            </div>
             <span class="text-sm text-gray-500">
                 {{ $announcement->created_at->diffForHumans() }}
             </span>

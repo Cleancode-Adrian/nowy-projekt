@@ -132,12 +132,23 @@ class AdminController extends Controller
     {
         $announcement = Announcement::findOrFail($id);
 
+        $status = $request->status;
+
+        // Jeśli status to "closed" lub "published", ogłoszenie musi być zatwierdzone
+        // Jeśli status to "rejected", ogłoszenie nie może być zatwierdzone
+        $isApproved = $request->has('is_approved');
+        if ($status === 'closed' || $status === 'published') {
+            $isApproved = true; // Zamknięte i opublikowane muszą być zatwierdzone
+        } elseif ($status === 'rejected') {
+            $isApproved = false; // Odrzucone nie mogą być zatwierdzone
+        }
+
         $announcement->update([
-            'is_approved' => $request->has('is_approved'),
-            'status' => $request->status,
+            'is_approved' => $isApproved,
+            'status' => $status,
             'is_urgent' => $request->has('is_urgent'),
             'rejection_reason' => $request->rejection_reason,
-            'approved_at' => $request->has('is_approved') ? now() : null,
+            'approved_at' => $isApproved ? ($announcement->approved_at ?? now()) : null,
         ]);
 
         return redirect()->route('admin.announcements')->with('success', 'Ogłoszenie zaktualizowane!');

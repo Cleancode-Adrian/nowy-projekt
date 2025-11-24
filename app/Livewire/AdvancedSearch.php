@@ -34,7 +34,7 @@ class AdvancedSearch extends Component
     public function render()
     {
         $query = Announcement::with(['user', 'category', 'tags'])
-            ->where('status', 'published')
+            ->whereIn('status', ['published', 'closed'])
             ->where('is_approved', true);
 
         if ($this->search) {

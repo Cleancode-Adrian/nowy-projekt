@@ -26,7 +26,7 @@ class Dashboard extends Component
         $this->stats = [
             'total' => $this->announcements->count(),
             'pending' => $this->announcements->where('is_approved', false)->where('status', 'pending')->count(),
-            'approved' => $this->announcements->where('is_approved', true)->where('status', 'published')->count(),
+            'approved' => $this->announcements->where('is_approved', true)->whereIn('status', ['published', 'closed'])->count(),
             'rejected' => $this->announcements->where('status', 'rejected')->count(),
         ];
     }

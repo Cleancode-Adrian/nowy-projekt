@@ -18,15 +18,33 @@ class BlogPostSeeder extends Seeder
             return;
         }
 
-        // Tagi do przypisania
-        $phpTag = Tag::where('name', 'PHP')->first();
-        $javascriptTag = Tag::where('name', 'JavaScript')->first();
-        $uiuxTag = Tag::where('name', 'UI/UX')->first();
-        $wordpressTag = Tag::where('name', 'WordPress')->first();
-        $seoTag = Tag::where('name', 'SEO')->first();
-        $laravelTag = Tag::where('name', 'Laravel')->first();
-        $tailwindTag = Tag::where('name', 'Tailwind CSS')->first();
-        $responsiveTag = Tag::where('name', 'Responsive Design')->first();
+        // Tagi blogowe - tworzymy lub pobieramy
+        $blogTags = [
+            'Freelancing', 'Kariera', 'Poradnik', 'SEO', 'Marketing', 
+            'WordPress', 'Laravel', 'PHP', 'JavaScript', 'Web Development'
+        ];
+        
+        $tagsToAttach = [];
+        foreach ($blogTags as $tagName) {
+            $tag = Tag::updateOrCreate(
+                [
+                    'name' => $tagName,
+                    'type' => 'blog',
+                ],
+                [
+                    'slug' => \Illuminate\Support\Str::slug($tagName),
+                    'type' => 'blog',
+                ]
+            );
+            $tagsToAttach[] = $tag->id;
+        }
+        
+        // Tagi do przypisania (używamy tagów blogowych)
+        $phpTag = Tag::where('name', 'PHP')->where('type', 'blog')->first();
+        $javascriptTag = Tag::where('name', 'JavaScript')->where('type', 'blog')->first();
+        $seoTag = Tag::where('name', 'SEO')->where('type', 'blog')->first();
+        $wordpressTag = Tag::where('name', 'WordPress')->where('type', 'blog')->first();
+        $laravelTag = Tag::where('name', 'Laravel')->where('type', 'blog')->first();
 
         // Artykuł 1: Jak rozpocząć karierę freelancera
         $post1 = BlogPost::updateOrCreate(

@@ -109,6 +109,8 @@
                                     <td class="px-4 py-4">
                                         @if($announcement->is_approved && $announcement->status === 'published')
                                             <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">✅ Opublikowane</span>
+                                        @elseif($announcement->status === 'closed')
+                                            <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium">🔒 Zamknięte</span>
                                         @elseif($announcement->status === 'rejected')
                                             <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">❌ Odrzucone</span>
                                         @else

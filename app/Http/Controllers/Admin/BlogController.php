@@ -20,7 +20,7 @@ class BlogController extends Controller
 
     public function create()
     {
-        $tags = Tag::orderBy('name')->get();
+        $tags = Tag::forBlogs()->orderBy('name')->get();
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         return view('admin.blog.create', compact('tags', 'categories'));
     }
@@ -108,7 +108,7 @@ class BlogController extends Controller
     public function edit($id)
     {
         $post = BlogPost::findOrFail($id);
-        $tags = Tag::orderBy('name')->get();
+        $tags = Tag::forBlogs()->orderBy('name')->get();
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         return view('admin.blog.edit', compact('post', 'tags', 'categories'));
     }

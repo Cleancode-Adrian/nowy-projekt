@@ -15,7 +15,7 @@ class HomePage extends Component
         $categories = Cache::remember('home.categories', 3600, function () {
             return Category::select('id', 'name', 'slug', 'icon', 'color')
                 ->withCount(['announcements' => function ($query) {
-                    $query->where('status', 'published')->where('is_approved', true);
+                    $query->whereIn('status', ['published', 'closed'])->where('is_approved', true);
                 }])
                 ->where('is_active', true)
                 ->orderBy('order')

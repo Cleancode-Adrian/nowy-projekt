@@ -90,7 +90,7 @@ class Announcement extends Model
 
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')->where('is_approved', true);
+        return $query->whereIn('status', ['published', 'closed'])->where('is_approved', true);
     }
 
     public function scopePending($query)

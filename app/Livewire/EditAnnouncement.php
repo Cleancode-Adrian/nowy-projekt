@@ -58,7 +58,7 @@ class EditAnnouncement extends Component
         $this->selectedTags = $announcement->tags->pluck('id')->toArray();
 
         $this->categories = Category::where('is_active', true)->orderBy('order')->get();
-        $this->tags = Tag::orderBy('name')->get();
+        $this->tags = Tag::forAnnouncements()->orderBy('name')->get();
     }
 
     public function update()

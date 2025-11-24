@@ -22,15 +22,17 @@ class ShowAnnouncement extends Component
         $isOwner = Auth::check() && Auth::id() === $announcement->user_id;
         $isAdmin = Auth::check() && Auth::user()->role === 'admin';
 
+        // Allow viewing published and closed announcements for everyone
+        // Rejected and pending only for owner/admin
         if ($isOwner || $isAdmin) {
-            // Owner or admin can view their own closed announcements
+            // Owner or admin can view all their announcements
             $this->announcement = $announcement;
         } else {
-            // Others can only see published announcements
+            // Others can see published and closed announcements
             $this->announcement = $query->published()->where('id', $id)->firstOrFail();
         }
 
-        // Only increment views for published announcements
+        // Only increment views for published announcements (not closed)
         if ($this->announcement->status === 'published' && $this->announcement->is_approved) {
             $this->announcement->increment('views_count');
         }

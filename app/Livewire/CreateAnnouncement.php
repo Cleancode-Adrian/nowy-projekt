@@ -60,7 +60,7 @@ class CreateAnnouncement extends Component
     public function mount()
     {
         $this->categories = Category::where('is_active', true)->orderBy('order')->get();
-        $this->tags = Tag::orderBy('name')->get();
+        $this->tags = Tag::forAnnouncements()->orderBy('name')->get();
     }
 
     public function submit()
