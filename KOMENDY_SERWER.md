@@ -12,6 +12,15 @@ sudo -u www-data git pull origin main
 # 3. Uruchom migracje (dodaje category_id, featured_image_alt do blog_posts oraz type do tags)
 sudo -u www-data php artisan migrate --force
 
+# 3a. Dodaj kategorię "automatyzacje"
+sudo -u www-data php artisan db:seed --class=CategorySeeder
+
+# 3b. Dodaj 4 wpisy blogowe o automatyzacji
+sudo -u www-data php artisan db:seed --class=AutomationBlogPostsSeeder
+
+# 3c. (Opcjonalnie) Usuń wszystkie oferty
+sudo -u www-data php artisan announcements:delete-all --force
+
 # 4. Wyczyść i zoptymalizuj cache
 sudo -u www-data php artisan config:clear
 sudo -u www-data php artisan cache:clear
@@ -29,7 +38,7 @@ sudo -u www-data npm install
 sudo -u www-data npm run build
 
 # 7. Restart PHP-FPM
-sudo systemctl restart php8.2-fpm
+sudo systemctl restart php8.2-fpmsudo systemctl restart php8.2-fpm
 # lub jeśli używasz innej wersji:
 # sudo systemctl restart php-fpm
 ```
@@ -49,6 +58,9 @@ sudo systemctl restart php8.2-fpm
    - Możliwość dodawania nowych tagów bezpośrednio z formularza bloga
    - Możliwość dodawania nowych kategorii bezpośrednio z formularza bloga
    - Tagi i kategorie są teraz w osobnych sekcjach
+   - Kategoria "Automatyzacje" dla ofert
+   - 4 nowe wpisy blogowe o automatyzacji (SEO-optimized)
+   - Komenda do usuwania wszystkich ofert: `php artisan announcements:delete-all`
 
 ## ✅ Sprawdzenie po aktualizacji:
 
