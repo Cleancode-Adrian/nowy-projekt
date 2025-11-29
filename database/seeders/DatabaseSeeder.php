@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             BadgeSeeder::class,
             BlogPostSeeder::class,
+            AutomationBlogPostsSeeder::class,
         ]);
     }
 }

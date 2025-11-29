@@ -134,20 +134,22 @@ class AdminController extends Controller
 
         $status = $request->status;
 
-        // Jeśli status to "closed" lub "published", ogłoszenie musi być zatwierdzone
+        // Jeśli status to "closed" lub "published", ogłoszenie MUSI być zatwierdzone i widoczne
         // Jeśli status to "rejected", ogłoszenie nie może być zatwierdzone
-        $isApproved = $request->has('is_approved');
         if ($status === 'closed' || $status === 'published') {
             $isApproved = true; // Zamknięte i opublikowane muszą być zatwierdzone
         } elseif ($status === 'rejected') {
             $isApproved = false; // Odrzucone nie mogą być zatwierdzone
+        } else {
+            // Dla innych statusów (pending, draft) używamy wartości z checkboxa
+            $isApproved = $request->has('is_approved');
         }
 
         $announcement->update([
             'is_approved' => $isApproved,
             'status' => $status,
             'is_urgent' => $request->has('is_urgent'),
-            'rejection_reason' => $request->rejection_reason,
+            'rejection_reason' => $status === 'rejected' ? $request->rejection_reason : null,
             'approved_at' => $isApproved ? ($announcement->approved_at ?? now()) : null,
         ]);
 

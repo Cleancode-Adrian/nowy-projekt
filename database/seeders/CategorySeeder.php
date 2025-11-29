@@ -91,6 +91,15 @@ class CategorySeeder extends Seeder
                 'is_active' => true,
                 'order' => 9,
             ],
+            [
+                'name' => 'Automatyzacje',
+                'slug' => 'automatyzacje',
+                'description' => 'Automatyzacja procesów biznesowych i workflow',
+                'icon' => 'fa-solid fa-robot',
+                'color' => '#8B5CF6',
+                'is_active' => true,
+                'order' => 10,
+            ],
         ];
 
         foreach ($categories as $category) {
