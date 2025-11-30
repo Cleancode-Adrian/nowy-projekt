@@ -315,40 +315,53 @@ class BlogGeneratorController extends Controller
 
     private function generateContent($topic, $openaiKey)
     {
-        $prompt = "Napisz profesjonalny artykuł na blog dla freelancerów w języku polskim o temacie: '{$topic}'.
+        $prompt = "Napisz profesjonalny, szczegółowy artykuł na blog dla freelancerów w języku polskim o temacie: '{$topic}'.
 
 WYMAGANIA:
 1. Tytuł: Ciekawy, SEO-friendly (50-70 znaków), z liczbą roczną jeśli dotyczy (np. 2025)
 2. Zajawka: 1-2 zdania (150-200 znaków), zachęcająca do czytania
-3. Treść: 1000-1500 słów w HTML (używaj h2, h3, p, ul, li, strong, em, a)
+3. Treść: MINIMUM 2000-2500 słów w HTML (używaj h2, h3, p, ul, li, strong, em, a, table, thead, tbody, tr, th, td, img)
 4. Meta tytuł: SEO (maks 60 znaków)
 5. Meta opis: SEO (maks 160 znaków), z call-to-action
 6. Słowa kluczowe: 5-8 słów oddzielonych przecinkami
 7. Alt text dla zdjęcia: Opisowy (maks 100 znaków)
 
-STRUKTURA TREŚCI:
-- Wprowadzenie (2-3 akapity)
-- 3-5 sekcji z nagłówkami h2
+OBOWIĄZKOWA STRUKTURA TREŚCI:
+- Wprowadzenie (3-4 akapity, minimum 300 słów)
+- MINIMUM 4-6 sekcji z nagłówkami h2 (każda po 300-400 słów)
 - Podsekcje z h3 gdzie potrzebne
-- Listy punktowane i numerowane
-- Przykłady i case studies
-- Tabele porównawcze (jeśli dotyczy)
-- Wnioski i call-to-action na końcu
+- Listy punktowane i numerowane (minimum 2-3 listy)
+- Przykłady i case studies z konkretnymi danymi
+- MINIMUM 1 TABELA porównawcza w formacie HTML (table, thead, tbody, tr, th, td)
+- MINIMUM 2-3 zewnętrzne źródła z linkami (np. badania, raporty McKinsey, HubSpot, Statista)
+- MINIMUM 1 obrazek w treści (użyj <img src=\"https://images.unsplash.com/photo-...\" alt=\"opis\" /> lub podobny placeholder)
+- Wnioski i call-to-action na końcu (2-3 akapity)
 
-STYL:
-- Praktyczny i wartościowy
-- Z konkretnymi przykładami
+STYL I ZAWARTOŚĆ:
+- Praktyczny i wartościowy - daj konkretne, użyteczne informacje
+- Z konkretnymi przykładami, liczbami, statystykami
 - Profesjonalny, ale przystępny
-- Z linkami wewnętrznymi (wspomnij Projekciarz.pl)
-- Z zewnętrznymi źródłami (dodaj linki do badań, raportów)
+- Z linkami wewnętrznymi do Projekciarz.pl (np. /ogloszenia, /ranking) - minimum 2 linki
+- Z zewnętrznymi źródłami (dodaj linki do wiarygodnych badań, raportów, artykułów)
+- Użyj tabel do porównań, zestawień, danych statystycznych
+- Dodaj obrazki ilustrujące kluczowe koncepcje
+
+ŹRÓDŁA:
+- Dodaj sekcję \"Źródła\" lub \"Bibliografia\" na końcu z linkami do:
+  * Raportów branżowych (np. McKinsey, Deloitte, PwC)
+  * Badań statystycznych (np. Statista, GUS)
+  * Artykułów eksperckich (np. Harvard Business Review, HubSpot)
+  * Oficjalnych stron i dokumentów
 
 Zakończ artykuł zachętą do rejestracji na Projekciarz.pl.
+
+WAŻNE: Treść musi być DŁUGA (minimum 2000 słów), szczegółowa, z tabelami, źródłami i obrazkami. Nie skracaj!
 
 ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
 {
     \"title\": \"...\",
     \"excerpt\": \"...\",
-    \"body\": \"<h2>...</h2><p>...</p>...\",
+    \"body\": \"<h2>...</h2><p>...</p><table>...</table>...\",
     \"meta_title\": \"...\",
     \"meta_description\": \"...\",
     \"keywords\": \"słowo1, słowo2, słowo3\",
@@ -374,7 +387,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
                         ]
                     ],
                     'temperature' => 0.7,
-                    'max_tokens' => 4000,
+                    'max_tokens' => 8000, // Zwiększone dla dłuższych treści z tabelami i źródłami
                     'response_format' => ['type' => 'json_object'], // Wymusza format JSON
                 ]);
 
@@ -408,7 +421,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             // Znajdź pierwszy { i ostatni } - to powinien być kompletny JSON
             $firstBrace = strpos($text, '{');
             $lastBrace = strrpos($text, '}');
-            
+
             if ($firstBrace !== false && $lastBrace !== false && $lastBrace > $firstBrace) {
                 $text = substr($text, $firstBrace, $lastBrace - $firstBrace + 1);
             } else {
