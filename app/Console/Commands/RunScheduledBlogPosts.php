@@ -2,10 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\BlogGeneratorController;
+use App\Models\BlogPost;
 use App\Models\BlogSchedule;
+use App\Models\Category;
+use App\Models\Setting;
+use App\Models\Tag;
 use Illuminate\Console\Command;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class RunScheduledBlogPosts extends Command
 {
@@ -66,22 +70,27 @@ class RunScheduledBlogPosts extends Command
         }
 
         // Uruchom generowanie dla każdego tematu
-        $controller = new BlogGeneratorController();
+        $admin = \App\Models\User::where('role', 'admin')->first();
+        
+        if (!$admin) {
+            $this->error('❌ Brak użytkownika admin');
+            return 1;
+        }
         
         foreach ($selectedTopics as $topic) {
             $this->info("  → {$topic}");
             
-            $request = Request::create('/admin/blog/generator/generate', 'POST', [
-                'topics' => $topic,
-                'count' => 1,
-                'category_id' => $schedule->category_id,
-                'tags' => $schedule->tags,
-                'download_image' => $schedule->download_image,
-                'test_mode' => !$schedule->auto_publish,
-            ]);
-            
             try {
-                $controller->generate($request);
+                // Użyj komendy blog:generate-openai
+                \Illuminate\Support\Facades\Artisan::call('blog:generate-openai', [
+                    'topic' => $topic,
+                    '--category' => $schedule->category_id,
+                    '--tags' => $schedule->tags,
+                    '--image' => $schedule->download_image,
+                    '--test' => !$schedule->auto_publish,
+                ]);
+                
+                $this->info("  ✅ Wygenerowano");
             } catch (\Exception $e) {
                 $this->error("  ❌ Błąd: " . $e->getMessage());
             }
