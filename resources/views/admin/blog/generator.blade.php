@@ -234,7 +234,8 @@
             <input type="hidden" name="count" id="runNowCount" value="1">
             <input type="hidden" name="category_id" id="runNowCategory">
             <input type="hidden" name="tags" id="runNowTags">
-            <input type="hidden" name="download_image" value="1" checked>
+            <input type="hidden" name="download_image" value="1">
+            <input type="hidden" name="image_source" id="runNowImageSource" value="unsplash">
             <input type="hidden" name="test_mode" value="0">
         </form>
     </div>
@@ -426,11 +427,17 @@ function addTopic(topic) {
 document.getElementById('generateForm').addEventListener('submit', function(e) {
     const form = e.target;
     const runNowForm = document.getElementById('runNowForm');
-
+    
     runNowForm.querySelector('#runNowTopics').value = form.querySelector('[name="topics"]').value;
     runNowForm.querySelector('#runNowCount').value = form.querySelector('[name="count"]').value || '1';
     runNowForm.querySelector('#runNowCategory').value = form.querySelector('[name="category_id"]').value || '';
     runNowForm.querySelector('#runNowTags').value = form.querySelector('[name="tags"]').value || '';
+    
+    // Pobierz wybrane źródło obrazu
+    const imageSource = form.querySelector('[name="image_source"]:checked');
+    if (imageSource) {
+        runNowForm.querySelector('#runNowImageSource').value = imageSource.value;
+    }
 });
 
 document.getElementById('generateForm').addEventListener('submit', function() {
