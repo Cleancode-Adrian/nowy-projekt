@@ -10,6 +10,8 @@ use App\Models\Setting;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BlogGeneratorController extends Controller
@@ -222,19 +224,36 @@ class BlogGeneratorController extends Controller
 
     private function generatePost($topic, $openaiKey, $request)
     {
-        // Generuj treść
-        $content = $this->generateContent($topic, $openaiKey);
+        try {
+            // Generuj treść
+            Log::info("Generuję treść dla tematu", ['topic' => $topic]);
+            $content = $this->generateContent($topic, $openaiKey);
 
-        if (!$content) {
-            return ['success' => false, 'error' => 'Błąd generowania treści'];
-        }
+            if (!$content) {
+                Log::error("Nie udało się wygenerować treści", ['topic' => $topic]);
+                return ['success' => false, 'error' => 'Błąd generowania treści'];
+            }
 
-        // Pobierz obrazek
-        $imageUrl = null;
-        if ($request->download_image) {
-            $imageSource = $request->image_source ?? 'unsplash'; // 'unsplash' lub 'dalle3'
-            $imageUrl = $this->getImageForTopic($topic, $imageSource);
-        }
+            // Pobierz obrazek
+            $imageUrl = null;
+            if ($request->has('download_image') && $request->download_image) {
+                try {
+                    $imageSource = $request->image_source ?? 'unsplash'; // 'unsplash' lub 'dalle3'
+                    Log::info("Pobieram obrazek", ['topic' => $topic, 'source' => $imageSource]);
+                    $imageUrl = $this->getImageForTopic($topic, $imageSource);
+                    if ($imageUrl) {
+                        Log::info("Obrazek pobrany", ['url' => $imageUrl]);
+                    } else {
+                        Log::warning("Nie udało się pobrać obrazka", ['topic' => $topic, 'source' => $imageSource]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Błąd pobierania obrazka", [
+                        'topic' => $topic,
+                        'message' => $e->getMessage()
+                    ]);
+                    // Kontynuuj bez obrazka
+                }
+            }
 
         // Wybierz tagi i kategorię
         $tags = $this->selectTags($content['title'], $request->tags);
