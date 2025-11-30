@@ -51,7 +51,7 @@ class BlogGeneratorController extends Controller
         try {
             $request->validate([
                 'is_enabled' => 'nullable|boolean',
-                'time' => 'required|string|regex:/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/',
+                'time' => ['required', 'string', 'regex:/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/'],
                 'frequency' => 'required|in:daily,twice_daily,weekly,weekdays',
                 'count' => 'required|integer|min:1|max:10',
                 'topics' => 'required|string|min:3',
@@ -75,7 +75,7 @@ class BlogGeneratorController extends Controller
             }
 
             $schedule = BlogSchedule::first();
-            
+
             if (!$schedule) {
                 $schedule = new BlogSchedule();
             }
@@ -162,12 +162,12 @@ class BlogGeneratorController extends Controller
             }
 
             $topics = array_filter(array_map('trim', explode("\n", $request->topics)));
-            
+
             if (empty($topics)) {
                 Log::warning('Próba generowania z pustymi tematami');
                 return back()->withErrors(['topics' => 'Musisz podać przynajmniej jeden temat']);
             }
-            
+
             $count = min((int)($request->count ?? 1), count($topics), 10);
             $topics = array_slice($topics, 0, $count);
 

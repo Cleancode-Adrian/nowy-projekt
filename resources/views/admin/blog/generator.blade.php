@@ -21,7 +21,7 @@
     </div>
 @endif
 
-@if($errors->any())
+@if(isset($errors) && (is_object($errors) && method_exists($errors, 'any') ? $errors->any() : !empty($errors)))
     <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
         <div class="flex">
             <div class="flex-shrink-0">
@@ -29,9 +29,17 @@
             </div>
             <div class="ml-3">
                 <p class="text-sm text-red-700">
-                    @foreach($errors->all() as $error)
-                        {{ $error }}<br>
-                    @endforeach
+                    @if(is_object($errors) && method_exists($errors, 'all'))
+                        @foreach($errors->all() as $error)
+                            {{ $error }}<br>
+                        @endforeach
+                    @elseif(is_array($errors))
+                        @foreach($errors as $error)
+                            {{ is_array($error) ? implode(', ', $error) : $error }}<br>
+                        @endforeach
+                    @else
+                        {{ $errors }}
+                    @endif
                 </p>
             </div>
         </div>
