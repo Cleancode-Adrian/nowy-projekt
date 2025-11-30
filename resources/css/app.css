@@ -46,3 +46,9 @@
 .animate-fadeIn {
     animation: fadeIn 0.3s ease-in-out;
 }
+
+/* Blog post tables - responsive scrolling */
+.prose table {
+    overflow-x: scroll;
+    display: block;
+}

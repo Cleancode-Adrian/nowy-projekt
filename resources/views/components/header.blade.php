@@ -30,6 +30,14 @@
                 </nav>
             </div>
 
+            {{-- Mobile Menu Button --}}
+            <button @click="mobileMenuOpen = !mobileMenuOpen" 
+                    class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                    aria-label="Toggle menu">
+                <i class="fa-solid fa-bars text-xl" x-show="!mobileMenuOpen"></i>
+                <i class="fa-solid fa-times text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
+            </button>
+
             {{-- User Menu --}}
             <div class="flex items-center gap-2 sm:gap-3 md:gap-4">
                 @auth
@@ -170,6 +178,50 @@
                     </a>
                 @endauth
             </div>
+        </div>
+
+        {{-- Mobile Menu --}}
+        <div x-show="mobileMenuOpen"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="lg:hidden border-t border-gray-200 py-4"
+             style="display: none;">
+            <nav class="flex flex-col space-y-2">
+                <a href="{{ route('announcements.index') }}" 
+                   class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    Ogłoszenia
+                </a>
+                <a href="{{ route('leaderboard') }}" 
+                   class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    Ranking
+                </a>
+                @php
+                    $headerPages = \App\Models\Page::inMenu('header')->with('children')->get();
+                @endphp
+                @foreach($headerPages as $page)
+                    <x-menu-item :page="$page" />
+                @endforeach
+                
+                @auth
+                    @if(auth()->user()->isClient())
+                        <a href="{{ route('announcements.create') }}"
+                           class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors mt-2">
+                            <i class="fa-solid fa-plus"></i>
+                            Dodaj ogłoszenie
+                        </a>
+                    @elseif(auth()->user()->isFreelancer())
+                        <a href="{{ route('proposals.index') }}"
+                           class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            <i class="fa-solid fa-briefcase mr-2"></i>
+                            Moje oferty
+                        </a>
+                    @endif
+                @endauth
+            </nav>
         </div>
     </div>
 </header>
