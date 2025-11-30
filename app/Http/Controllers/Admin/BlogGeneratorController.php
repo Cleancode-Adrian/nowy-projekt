@@ -378,11 +378,26 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
                 ]);
 
             if ($response->failed()) {
+                $errorBody = $response->body();
+                $statusCode = $response->status();
+                Log::error('OpenAI API request failed', [
+                    'topic' => $topic,
+                    'status' => $statusCode,
+                    'response' => $errorBody
+                ]);
                 return null;
             }
 
             $result = $response->json();
             $text = $result['choices'][0]['message']['content'] ?? '';
+
+            if (empty($text)) {
+                Log::error('OpenAI API returned empty content', [
+                    'topic' => $topic,
+                    'response' => $result
+                ]);
+                return null;
+            }
 
             // Wyczyść odpowiedź
             $text = preg_replace('/```json\s*|\s*```/', '', $text);
@@ -391,8 +406,23 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             $text = preg_replace('/[^}]*$/', '', $text) . '}';
 
             $content = json_decode($text, true);
+            $jsonError = json_last_error();
+
+            if ($jsonError !== JSON_ERROR_NONE) {
+                Log::error('JSON decode error in generateContent', [
+                    'topic' => $topic,
+                    'json_error' => json_last_error_msg(),
+                    'raw_text' => substr($text, 0, 500) // Pierwsze 500 znaków dla debugowania
+                ]);
+                return null;
+            }
 
             if (!$content || !isset($content['title'])) {
+                Log::error('Invalid content structure from OpenAI', [
+                    'topic' => $topic,
+                    'content_keys' => $content ? array_keys($content) : 'null',
+                    'raw_text' => substr($text, 0, 500)
+                ]);
                 return null;
             }
 
@@ -404,6 +434,13 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             return $content;
 
         } catch (\Exception $e) {
+            Log::error('Exception in generateContent', [
+                'topic' => $topic,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return null;
         }
     }
