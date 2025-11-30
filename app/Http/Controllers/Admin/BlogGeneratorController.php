@@ -46,53 +46,74 @@ class BlogGeneratorController extends Controller
 
     public function saveSchedule(Request $request)
     {
-        $request->validate([
-            'is_enabled' => 'nullable|boolean',
-            'time' => 'required|string|regex:/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/',
-            'frequency' => 'required|in:daily,twice_daily,weekly,weekdays',
-            'count' => 'required|integer|min:1|max:10',
-            'topics' => 'required|string|min:3',
-            'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|string|max:500',
-            'download_image' => 'nullable|boolean',
-            'image_source' => 'nullable|in:unsplash,dalle3',
-            'auto_publish' => 'nullable|boolean',
-        ], [
-            'time.regex' => 'Godzina musi być w formacie HH:mm (np. 09:00)',
-            'topics.required' => 'Tematy są wymagane',
-            'topics.min' => 'Tematy muszą mieć minimum 3 znaki',
-            'count.min' => 'Liczba wpisów musi być większa od 0',
-            'count.max' => 'Maksymalnie 10 wpisów na raz',
-        ]);
+        try {
+            $request->validate([
+                'is_enabled' => 'nullable|boolean',
+                'time' => 'required|string|regex:/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/',
+                'frequency' => 'required|in:daily,twice_daily,weekly,weekdays',
+                'count' => 'required|integer|min:1|max:10',
+                'topics' => 'required|string|min:3',
+                'category_id' => 'nullable|exists:categories,id',
+                'tags' => 'nullable|string|max:500',
+                'download_image' => 'nullable|boolean',
+                'image_source' => 'nullable|in:unsplash,dalle3',
+                'auto_publish' => 'nullable|boolean',
+            ], [
+                'time.regex' => 'Godzina musi być w formacie HH:mm (np. 09:00)',
+                'topics.required' => 'Tematy są wymagane',
+                'topics.min' => 'Tematy muszą mieć minimum 3 znaki',
+                'count.min' => 'Liczba wpisów musi być większa od 0',
+                'count.max' => 'Maksymalnie 10 wpisów na raz',
+            ]);
 
-        // Sprawdź czy tematy nie są puste po przefiltrowaniu
-        $topics = array_filter(array_map('trim', explode("\n", $request->topics)));
-        if (empty($topics)) {
-            return back()->withErrors(['topics' => 'Musisz podać przynajmniej jeden temat (nie mogą być puste linie)']);
+            // Sprawdź czy tematy nie są puste po przefiltrowaniu
+            $topics = array_filter(array_map('trim', explode("\n", $request->topics)));
+            if (empty($topics)) {
+                return back()->withErrors(['topics' => 'Musisz podać przynajmniej jeden temat (nie mogą być puste linie)']);
+            }
+
+            $schedule = BlogSchedule::first();
+            
+            if (!$schedule) {
+                $schedule = new BlogSchedule();
+            }
+
+            $data = [
+                'is_enabled' => $request->has('is_enabled'),
+                'time' => $request->time,
+                'frequency' => $request->frequency,
+                'count' => $request->count,
+                'topics' => $request->topics,
+                'category_id' => $request->category_id ?: null,
+                'tags' => $request->tags ?: null,
+                'download_image' => $request->has('download_image'),
+                'auto_publish' => $request->has('auto_publish'),
+            ];
+
+            // Sprawdź czy kolumna image_source istnieje przed dodaniem
+            try {
+                $data['image_source'] = $request->image_source ?? 'unsplash';
+            } catch (\Exception $e) {
+                Log::warning('Kolumna image_source nie istnieje w tabeli blog_schedules: ' . $e->getMessage());
+                // Pomijamy image_source jeśli kolumna nie istnieje
+            }
+
+            $schedule->fill($data);
+            $schedule->save();
+
+            Log::info('Harmonogram zapisany pomyślnie', ['schedule_id' => $schedule->id]);
+
+            return back()->with('success', 'Harmonogram został zapisany!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Błąd walidacji harmonogramu', ['errors' => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            Log::error('Błąd zapisywania harmonogramu', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors(['error' => 'Błąd zapisywania harmonogramu: ' . $e->getMessage()]);
         }
-
-        $schedule = BlogSchedule::first();
-
-        if (!$schedule) {
-            $schedule = new BlogSchedule();
-        }
-
-        $schedule->fill([
-            'is_enabled' => $request->has('is_enabled'),
-            'time' => $request->time,
-            'frequency' => $request->frequency,
-            'count' => $request->count,
-            'topics' => $request->topics,
-            'category_id' => $request->category_id ?: null,
-            'tags' => $request->tags ?: null,
-            'download_image' => $request->has('download_image'),
-            'image_source' => $request->image_source ?? 'unsplash',
-            'auto_publish' => $request->has('auto_publish'),
-        ]);
-
-        $schedule->save();
-
-        return back()->with('success', 'Harmonogram został zapisany!');
     }
 
     public function saveApiKeys(Request $request)
@@ -117,59 +138,86 @@ class BlogGeneratorController extends Controller
 
     public function generate(Request $request)
     {
-        $request->validate([
-            'topics' => 'required|string|min:3',
-            'count' => 'nullable|integer|min:1|max:10',
-            'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|string|max:500',
-            'download_image' => 'nullable|boolean',
-            'image_source' => 'nullable|in:unsplash,dalle3',
-            'test_mode' => 'nullable|boolean',
-        ], [
-            'topics.required' => 'Pole tematy jest wymagane',
-            'topics.min' => 'Tematy muszą mieć minimum 3 znaki',
-        ]);
+        try {
+            $request->validate([
+                'topics' => 'required|string|min:3',
+                'count' => 'nullable|integer|min:1|max:10',
+                'category_id' => 'nullable|exists:categories,id',
+                'tags' => 'nullable|string|max:500',
+                'download_image' => 'nullable|boolean',
+                'image_source' => 'nullable|in:unsplash,dalle3',
+                'test_mode' => 'nullable|boolean',
+            ], [
+                'topics.required' => 'Pole tematy jest wymagane',
+                'topics.min' => 'Tematy muszą mieć minimum 3 znaki',
+            ]);
 
-        $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
+            $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
 
-        if (!$openaiKey) {
-            return back()->withErrors(['error' => 'Brak klucza OpenAI API. Dodaj go w ustawieniach.']);
-        }
-
-        $topics = array_filter(array_map('trim', explode("\n", $request->topics)));
-        
-        if (empty($topics)) {
-            return back()->withErrors(['topics' => 'Musisz podać przynajmniej jeden temat']);
-        }
-        
-        $count = min((int)($request->count ?? 1), count($topics), 10);
-        $topics = array_slice($topics, 0, $count);
-
-        $generated = [];
-        $errors = [];
-
-        foreach ($topics as $index => $topic) {
-            if (empty($topic) || strlen(trim($topic)) < 3) continue;
-
-            try {
-                $result = $this->generatePost($topic, $openaiKey, $request);
-
-                if ($result['success']) {
-                    $generated[] = $result['post'];
-                } else {
-                    $errors[] = "Temat '{$topic}': " . $result['error'];
-                }
-            } catch (\Exception $e) {
-                $errors[] = "Temat '{$topic}': " . $e->getMessage();
+            if (!$openaiKey) {
+                Log::warning('Próba generowania bez klucza OpenAI API');
+                return back()->withErrors(['error' => 'Brak klucza OpenAI API. Dodaj go w ustawieniach.']);
             }
-        }
 
-        $message = "Wygenerowano " . count($generated) . " wpisów!";
-        if (!empty($errors)) {
-            $message .= " Błędy: " . count($errors);
-        }
+            $topics = array_filter(array_map('trim', explode("\n", $request->topics)));
+            
+            if (empty($topics)) {
+                Log::warning('Próba generowania z pustymi tematami');
+                return back()->withErrors(['topics' => 'Musisz podać przynajmniej jeden temat']);
+            }
+            
+            $count = min((int)($request->count ?? 1), count($topics), 10);
+            $topics = array_slice($topics, 0, $count);
 
-        return back()->with('success', $message)->with('generated', $generated)->with('errors', $errors);
+            Log::info('Rozpoczynam generowanie wpisów', ['count' => $count, 'topics' => $topics]);
+
+            $generated = [];
+            $errors = [];
+
+            foreach ($topics as $index => $topic) {
+                if (empty($topic) || strlen(trim($topic)) < 3) continue;
+
+                try {
+                    Log::info("Generuję wpis", ['topic' => $topic, 'index' => $index]);
+                    $result = $this->generatePost($topic, $openaiKey, $request);
+
+                    if ($result['success']) {
+                        $generated[] = $result['post'];
+                        Log::info("Wpis wygenerowany pomyślnie", ['post_id' => $result['post']->id]);
+                    } else {
+                        $errorMsg = "Temat '{$topic}': " . $result['error'];
+                        $errors[] = $errorMsg;
+                        Log::error("Błąd generowania wpisu", ['topic' => $topic, 'error' => $result['error']]);
+                    }
+                } catch (\Exception $e) {
+                    $errorMsg = "Temat '{$topic}': " . $e->getMessage();
+                    $errors[] = $errorMsg;
+                    Log::error("Wyjątek podczas generowania wpisu", [
+                        'topic' => $topic,
+                        'message' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                }
+            }
+
+            $message = "Wygenerowano " . count($generated) . " wpisów!";
+            if (!empty($errors)) {
+                $message .= " Błędy: " . count($errors);
+            }
+
+            Log::info('Zakończono generowanie', ['generated' => count($generated), 'errors' => count($errors)]);
+
+            return back()->with('success', $message)->with('generated', $generated)->with('errors', $errors);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Błąd walidacji generowania', ['errors' => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            Log::error('Krytyczny błąd generowania', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors(['error' => 'Błąd generowania: ' . $e->getMessage()]);
+        }
     }
 
     private function generatePost($topic, $openaiKey, $request)
@@ -216,12 +264,30 @@ class BlogGeneratorController extends Controller
             'published_at' => $request->test_mode ? null : now()->subDays(rand(0, 30)),
         ]);
 
-        // Przypisz tagi
-        if (!empty($tags)) {
-            $post->tags()->sync($tags);
-        }
+            // Przypisz tagi
+            if (!empty($tags)) {
+                try {
+                    $post->tags()->sync($tags);
+                    Log::info("Tagi przypisane", ['post_id' => $post->id, 'tags_count' => count($tags)]);
+                } catch (\Exception $e) {
+                    Log::error("Błąd przypisywania tagów", [
+                        'post_id' => $post->id,
+                        'message' => $e->getMessage()
+                    ]);
+                    // Kontynuuj bez tagów
+                }
+            }
 
-        return ['success' => true, 'post' => $post];
+            Log::info("Wpis utworzony pomyślnie", ['post_id' => $post->id, 'title' => $post->title]);
+            return ['success' => true, 'post' => $post];
+        } catch (\Exception $e) {
+            Log::error("Krytyczny błąd w generatePost", [
+                'topic' => $topic,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return ['success' => false, 'error' => 'Błąd tworzenia wpisu: ' . $e->getMessage()];
+        }
     }
 
     private function generateContent($topic, $openaiKey)
