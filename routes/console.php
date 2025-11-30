@@ -9,12 +9,12 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // 🤖 Automatyczne generowanie wpisów blogowych
-Schedule::command('blog:generate')
-    ->dailyAt('09:00')
+Schedule::command('blog:run-scheduled')
+    ->everyMinute() // Sprawdza co minutę czy to właściwy czas
     ->timezone('Europe/Warsaw')
     ->onSuccess(function () {
-        info('✅ Blog post wygenerowany automatycznie');
+        info('✅ Zaplanowane wpisy blogowe wygenerowane');
     })
     ->onFailure(function () {
-        info('❌ Błąd generowania blog posta');
+        info('❌ Błąd generowania zaplanowanych wpisów blogowych');
     });

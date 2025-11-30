@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use App\Models\BlogSchedule;
 use App\Models\Category;
 use App\Models\Setting;
 use App\Models\Tag;
@@ -17,11 +18,63 @@ class BlogGeneratorController extends Controller
     {
         $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
         $unsplashKey = Setting::where('key', 'unsplash_access_key')->value('value');
-        
+
         $categories = Category::orderBy('name')->get();
         $tags = Tag::forBlogs()->orderBy('name')->get();
+        $schedule = BlogSchedule::first() ?? new BlogSchedule();
+
+        return view('admin.blog.generator', compact('openaiKey', 'unsplashKey', 'categories', 'tags', 'schedule'));
+    }
+    
+    public function runNow(Request $request)
+    {
+        $request->validate([
+            'topics' => 'required|string',
+            'count' => 'nullable|integer|min:1|max:10',
+            'category_id' => 'nullable|exists:categories,id',
+            'tags' => 'nullable|string',
+            'download_image' => 'nullable|boolean',
+            'test_mode' => 'nullable|boolean',
+        ]);
+
+        return $this->generate($request);
+    }
+    
+    public function saveSchedule(Request $request)
+    {
+        $request->validate([
+            'is_enabled' => 'nullable|boolean',
+            'time' => 'required|string|regex:/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/',
+            'frequency' => 'required|in:daily,twice_daily,weekly,weekdays',
+            'count' => 'required|integer|min:1|max:10',
+            'topics' => 'required|string',
+            'category_id' => 'nullable|exists:categories,id',
+            'tags' => 'nullable|string',
+            'download_image' => 'nullable|boolean',
+            'auto_publish' => 'nullable|boolean',
+        ]);
+
+        $schedule = BlogSchedule::first();
         
-        return view('admin.blog.generator', compact('openaiKey', 'unsplashKey', 'categories', 'tags'));
+        if (!$schedule) {
+            $schedule = new BlogSchedule();
+        }
+
+        $schedule->fill([
+            'is_enabled' => $request->has('is_enabled'),
+            'time' => $request->time,
+            'frequency' => $request->frequency,
+            'count' => $request->count,
+            'topics' => $request->topics,
+            'category_id' => $request->category_id,
+            'tags' => $request->tags,
+            'download_image' => $request->has('download_image'),
+            'auto_publish' => $request->has('auto_publish'),
+        ]);
+
+        $schedule->save();
+
+        return back()->with('success', 'Harmonogram został zapisany!');
     }
 
     public function saveApiKeys(Request $request)
@@ -56,7 +109,7 @@ class BlogGeneratorController extends Controller
         ]);
 
         $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
-        
+
         if (!$openaiKey) {
             return back()->withErrors(['error' => 'Brak klucza OpenAI API. Dodaj go w ustawieniach.']);
         }
@@ -73,7 +126,7 @@ class BlogGeneratorController extends Controller
 
             try {
                 $result = $this->generatePost($topic, $openaiKey, $request);
-                
+
                 if ($result['success']) {
                     $generated[] = $result['post'];
                 } else {
@@ -96,7 +149,7 @@ class BlogGeneratorController extends Controller
     {
         // Generuj treść
         $content = $this->generateContent($topic, $openaiKey);
-        
+
         if (!$content) {
             return ['success' => false, 'error' => 'Błąd generowania treści'];
         }
@@ -244,7 +297,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
         $keyword = urlencode($keywords[0] ?? 'freelancer');
 
         $unsplashKey = Setting::where('key', 'unsplash_access_key')->value('value');
-        
+
         if ($unsplashKey) {
             try {
                 $response = Http::get('https://api.unsplash.com/photos/random', [
@@ -268,7 +321,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
     private function extractKeywords($text)
     {
         $stopWords = ['dla', 'jak', 'czy', 'co', 'kto', 'gdzie', 'kiedy', 'dlaczego', 'i', 'oraz', 'lub', 'ale', 'w', 'z', 'na', 'po', 'przed', 'pod', 'nad', 'przez', 'do', 'od', 'ze', 'o', 'a', '2025'];
-        
+
         $words = str_word_count(strtolower($text), 1, 'ąćęłńóśźż');
         $keywords = array_filter($words, function($word) use ($stopWords) {
             return strlen($word) > 3 && !in_array($word, $stopWords);
@@ -285,7 +338,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
                 ->where('type', 'blog')
                 ->pluck('id')
                 ->toArray();
-            
+
             if (!empty($tags)) {
                 return $tags;
             }

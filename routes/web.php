@@ -154,11 +154,13 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth'])->group(funct
     Route::get('/blog/{id}/edit', [BlogController::class, 'edit'])->name('blog.edit');
     Route::put('/blog/{id}', [BlogController::class, 'update'])->name('blog.update');
     Route::delete('/blog/{id}', [BlogController::class, 'delete'])->name('blog.delete');
-    
+
     // Blog Generator
     Route::get('/blog/generator', [BlogGeneratorController::class, 'index'])->name('blog.generator');
     Route::post('/blog/generator/api-keys', [BlogGeneratorController::class, 'saveApiKeys'])->name('blog.generator.api-keys');
     Route::post('/blog/generator/generate', [BlogGeneratorController::class, 'generate'])->name('blog.generator.generate');
+    Route::post('/blog/generator/run-now', [BlogGeneratorController::class, 'runNow'])->name('blog.generator.run-now');
+    Route::post('/blog/generator/schedule', [BlogGeneratorController::class, 'saveSchedule'])->name('blog.generator.schedule');
 
     // Pages Management
     Route::get('/pages', [\App\Http\Controllers\Admin\PageController::class, 'index'])->name('pages.index');
