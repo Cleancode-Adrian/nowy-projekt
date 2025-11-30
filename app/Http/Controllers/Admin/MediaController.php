@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MediaItem;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -45,7 +46,7 @@ class MediaController extends Controller
                         'media' => $media,
                     ];
                 } catch (\Exception $e) {
-                    \Log::error('Błąd przetwarzania pliku: ' . $e->getMessage(), ['path' => $path]);
+                    Log::error('Błąd przetwarzania pliku: ' . $e->getMessage(), ['path' => $path]);
                     return null;
                 }
             })
@@ -196,7 +197,7 @@ class MediaController extends Controller
     private function syncMediaRecord(string $path, $disk): MediaItem
     {
         $path = trim($path, '/');
-        
+
         // Sprawdź czy plik istnieje
         if (!$disk->exists($path)) {
             // Jeśli plik nie istnieje, zwróć pusty rekord lub utwórz podstawowy
@@ -211,7 +212,7 @@ class MediaController extends Controller
                 ]
             );
         }
-        
+
         try {
             $fullPath = $disk->path($path);
             $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
@@ -256,8 +257,8 @@ class MediaController extends Controller
             );
         } catch (\Exception $e) {
             // W przypadku błędu, zwróć podstawowy rekord
-            \Log::error('Błąd syncMediaRecord: ' . $e->getMessage(), ['path' => $path]);
-            
+            Log::error('Błąd syncMediaRecord: ' . $e->getMessage(), ['path' => $path]);
+
             return MediaItem::firstOrCreate(
                 ['path' => $path],
                 [
