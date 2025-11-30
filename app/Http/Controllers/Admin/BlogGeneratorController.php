@@ -400,11 +400,23 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
                 return null;
             }
 
-            // Wyczyść odpowiedź
-            $text = preg_replace('/```json\s*|\s*```/', '', $text);
+            // Wyczyść odpowiedź - usuń markdown code blocks
+            $text = preg_replace('/```json\s*/', '', $text);
+            $text = preg_replace('/\s*```/', '', $text);
             $text = trim($text);
-            $text = preg_replace('/^[^{]*/', '', $text);
-            $text = preg_replace('/[^}]*$/', '', $text) . '}';
+
+            // Znajdź pierwszy { i ostatni } - to powinien być kompletny JSON
+            $firstBrace = strpos($text, '{');
+            $lastBrace = strrpos($text, '}');
+            
+            if ($firstBrace !== false && $lastBrace !== false && $lastBrace > $firstBrace) {
+                $text = substr($text, $firstBrace, $lastBrace - $firstBrace + 1);
+            } else {
+                // Fallback - spróbuj znaleźć JSON w inny sposób
+                if (preg_match('/\{.*\}/s', $text, $matches)) {
+                    $text = $matches[0];
+                }
+            }
 
             $content = json_decode($text, true);
             $jsonError = json_last_error();
