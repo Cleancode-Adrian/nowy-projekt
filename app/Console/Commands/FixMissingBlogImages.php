@@ -34,7 +34,7 @@ class FixMissingBlogImages extends Command
 
         foreach ($posts as $post) {
             $imageUrl = $this->getImageForPost($post->title);
-            
+
             if ($imageUrl) {
                 $post->featured_image = $imageUrl;
                 $post->save();
@@ -85,7 +85,7 @@ class FixMissingBlogImages extends Command
     {
         // Usuń polskie znaki i wyciągnij kluczowe słowa
         $stopWords = ['dla', 'jak', 'czy', 'co', 'kto', 'gdzie', 'kiedy', 'dlaczego', 'i', 'oraz', 'lub', 'ale', 'w', 'z', 'na', 'po', 'przed', 'pod', 'nad', 'przez', 'do', 'od', 'ze', 'o', 'a'];
-        
+
         $words = str_word_count(strtolower($title), 1, 'ąćęłńóśźż');
         $keywords = array_filter($words, function($word) use ($stopWords) {
             return strlen($word) > 3 && !in_array($word, $stopWords);

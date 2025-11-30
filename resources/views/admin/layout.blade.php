@@ -56,9 +56,15 @@
                 </a>
 
                 <a href="{{ route('admin.blog.index') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all {{ request()->routeIs('admin.blog*') ? 'bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg' : 'hover:bg-gray-800 hover:translate-x-1' }}">
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all {{ request()->routeIs('admin.blog*') && !request()->routeIs('admin.blog.generator*') ? 'bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg' : 'hover:bg-gray-800 hover:translate-x-1' }}">
                     <i class="fa-solid fa-newspaper w-5"></i>
                     <span class="font-medium">Blog</span>
+                </a>
+
+                <a href="{{ route('admin.blog.generator') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all {{ request()->routeIs('admin.blog.generator*') ? 'bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg' : 'hover:bg-gray-800 hover:translate-x-1' }}">
+                    <i class="fa-solid fa-robot w-5"></i>
+                    <span class="font-medium">Generator AI</span>
                 </a>
 
                 <a href="{{ route('admin.pages.index') }}"

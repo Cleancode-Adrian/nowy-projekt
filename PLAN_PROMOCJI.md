@@ -26,7 +26,7 @@ Szukasz freelancera do:
 ✅ Skryptów automatyzujących pracę
 ✅ Integracji API
 
-Teraz możesz łatwo znaleźć specjalistę od automatyzacji! 
+Teraz możesz łatwo znaleźć specjalistę od automatyzacji!
 
 👉 Przejdź do kategorii: [LINK]
 
@@ -50,7 +50,7 @@ Na naszym blogu znajdziesz kompletny przewodnik:
 📝 Automatyzacja marketingu - jak zdobywać klientów bez wysiłku
 📝 Praktyczny przewodnik krok po kroku
 
-Wszystko z case studies, tabelami porównawczymi i konkretnymi przykładami! 
+Wszystko z case studies, tabelami porównawczymi i konkretnymi przykładami!
 
 👉 Przeczytaj na blogu: [LINK DO BLOGA]
 
@@ -95,10 +95,10 @@ Freelancerzy, którzy automatyzują swoją pracę:
 3 narzędzia, które zaoszczędzą Ci czas JUŻ DZIŚ:
 
 1️⃣ Zapier - automatyzacja między aplikacjami
-2️⃣ ChatGPT - asystent do pisania i generowania pomysłów  
+2️⃣ ChatGPT - asystent do pisania i generowania pomysłów
 3️⃣ Fakturownia - automatyczne faktury i przypomnienia
 
-Każde z nich może zaoszczędzić Ci 2-3 godziny tygodniowo! 
+Każde z nich może zaoszczędzić Ci 2-3 godziny tygodniowo!
 
 👉 Więcej porad na naszym blogu: [LINK]
 
@@ -224,7 +224,7 @@ Przykładowe projekty:
 **Kiedy:** Dzień 18 kampanii
 
 ```
-💬 "Dzięki Projekciarz.pl znalazłem 3 stałych klientów w pierwszym miesiącu. Platforma jest intuicyjna, a system opinii daje mi wiarygodność. Polecam!" 
+💬 "Dzięki Projekciarz.pl znalazłem 3 stałych klientów w pierwszym miesiącu. Platforma jest intuicyjna, a system opinii daje mi wiarygodność. Polecam!"
 
 - Jan K., Freelancer od automatyzacji
 
@@ -516,7 +516,7 @@ Opis: 5000+ freelancerów | Bezpieczne transakcje | Darmowa rejestracja
 
 ### Facebook/Meta Ads
 1. **Lookalike Audiences:** Utwórz z istniejących użytkowników (1-3%)
-2. **Custom Audiences:** 
+2. **Custom Audiences:**
    - Osoby odwiedzające stronę
    - Osoby czytające blog
    - Osoby, które nie zarejestrowały się

@@ -23,16 +23,31 @@ npm run build
 # 1. Przejdź do katalogu projektu
 cd /var/www/projekciarz.pl
 
-# 2. Uruchom migracje (jako www-data)
+# 2. Pobierz najnowsze zmiany z Git
+sudo -u www-data git pull origin main
+
+# 3. Uruchom migracje (dodaje category_id, featured_image_alt oraz type do tags)
 sudo -u www-data php artisan migrate --force
 
-# 3. Wyczyść cache
+# 4. Wyczyść cache
+sudo -u www-data php artisan config:clear
+sudo -u www-data php artisan cache:clear
+sudo -u www-data php artisan view:clear
+sudo -u www-data php artisan route:clear
+
+# 5. Zoptymalizuj cache dla produkcji
 sudo -u www-data php artisan config:cache
 sudo -u www-data php artisan route:cache
 sudo -u www-data php artisan view:cache
 
-# 4. Restart PHP-FPM
+# 6. (Opcjonalnie) Zaktualizuj zależności jeśli były zmiany
+sudo -u www-data composer install --no-dev --optimize-autoloader
+sudo -u www-data npm install
+sudo -u www-data npm run build
+
+# 7. Restart PHP-FPM
 sudo systemctl restart php8.2-fpm
+# lub: sudo systemctl restart php-fpm
 ```
 
 **✅ Migracje zostały już uruchomione lokalnie!**

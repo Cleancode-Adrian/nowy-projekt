@@ -1,145 +1,151 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
-use App\Models\Tag;
 use App\Models\Category;
-use App\Models\User;
-use Illuminate\Console\Command;
+use App\Models\Setting;
+use App\Models\Tag;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class GenerateBlogPostOpenAI extends Command
+class BlogGeneratorController extends Controller
 {
-    protected $signature = 'blog:generate-openai
-                            {topic? : Temat wpisu (opcjonalnie)}
-                            {--count=1 : Liczba wpisów do wygenerowania}
-                            {--category= : ID kategorii}
-                            {--tags= : Tagi oddzielone przecinkami}
-                            {--test : Tryb testowy - nie publikuj}
-                            {--image : Pobierz obrazek z Unsplash}';
-
-    protected $description = 'Generuje wpisy blogowe używając OpenAI API';
-
-    private $defaultTopics = [
-        'Jak znaleźć pierwszych klientów jako freelancer w 2025',
-        'Najlepsze narzędzia automatyzacji dla freelancerów',
-        'Jak ustalać stawki jako freelancer - kompletny przewodnik',
-        'Time management dla freelancerów - 10 sprawdzonych metod',
-        'Jak budować portfolio freelancera, które przyciąga klientów',
-        'Fakturowanie i podatki dla freelancerów w Polsce',
-        'Work-life balance w freelancingu - jak nie wypalić się',
-        'Jak negocjować z klientami - praktyczne wskazówki',
-        'Najlepsze platformy freelancerskie w 2025',
-        'Jak radzić sobie z trudnymi klientami',
-        'Marketing dla freelancerów - jak zdobywać klientów',
-        'Budowanie marki osobistej jako freelancer',
-        'Passive income dla freelancerów - pomysły i strategie',
-        'Jak unikać wypalenia zawodowego w freelancingu',
-        'Networking dla freelancerów - jak budować relacje',
-        'Automatyzacja procesów biznesowych dla freelancerów',
-        'Narzędzia AI dla freelancerów - ChatGPT, Claude i inne',
-        'Jak zautomatyzować marketing jako freelancer',
-        'SEO dla freelancerów - jak zdobywać klientów z Google',
-        'Social media marketing dla freelancerów',
-    ];
-
-    public function handle()
+    public function index()
     {
-        $this->info('🤖 Generator wpisów blogowych z OpenAI');
-        $this->newLine();
-
-        // Sprawdź API key
-        if (!env('OPENAI_API_KEY')) {
-            $this->error('❌ Brak OPENAI_API_KEY w .env');
-            $this->info('💡 Dodaj: OPENAI_API_KEY=sk-...');
-            $this->info('🔗 Pobierz klucz: https://platform.openai.com/api-keys');
-            return 1;
-        }
-
-        $count = (int) $this->option('count');
-        $testMode = $this->option('test');
-        $downloadImage = $this->option('image');
-
-        $admin = User::where('role', 'admin')->first();
-        if (!$admin) {
-            $this->error('❌ Brak użytkownika admin w bazie');
-            return 1;
-        }
-
-        for ($i = 0; $i < $count; $i++) {
-            $this->newLine();
-            $this->info("📝 Generowanie wpisu " . ($i + 1) . "/{$count}...");
-
-            // Wybierz temat
-            $topic = $this->argument('topic') ?? $this->defaultTopics[array_rand($this->defaultTopics)];
-            $this->info("🎯 Temat: {$topic}");
-
-            // Generuj treść
-            $this->info('🧠 Generuję treść przez OpenAI...');
-            $content = $this->generateContent($topic);
-
-            if (!$content) {
-                $this->error('❌ Błąd generowania treści');
-                continue;
-            }
-
-            // Pobierz obrazek
-            $imageUrl = null;
-            if ($downloadImage) {
-                $this->info('🖼️ Pobieram obrazek...');
-                $imageUrl = $this->getImageForTopic($topic);
-            }
-
-            // Wybierz tagi i kategorię
-            $tags = $this->selectTags($content['title'], $this->option('tags'));
-            $categoryId = $this->option('category') ?: $this->selectCategory($content['title']);
-
-            // Utwórz wpis
-            $slug = Str::slug($content['title']);
-            $counter = 1;
-            while (BlogPost::where('slug', $slug)->exists()) {
-                $slug = Str::slug($content['title']) . '-' . $counter++;
-            }
-
-            $post = BlogPost::create([
-                'author_id' => $admin->id,
-                'category_id' => $categoryId,
-                'title' => $content['title'],
-                'slug' => $slug,
-                'excerpt' => $content['excerpt'],
-                'content' => $content['body'],
-                'meta_title' => $content['meta_title'],
-                'meta_description' => $content['meta_description'],
-                'meta_keywords' => $content['keywords'],
-                'featured_image' => $imageUrl,
-                'featured_image_alt' => $content['featured_image_alt'] ?? $content['title'],
-                'status' => $testMode ? 'draft' : 'published',
-                'published_at' => $testMode ? null : now()->subDays(rand(0, 30)),
-            ]);
-
-            // Przypisz tagi
-            if (!empty($tags)) {
-                $post->tags()->sync($tags);
-            }
-
-            $status = $testMode ? 'SZKIC' : 'OPUBLIKOWANY';
-            $this->info("✅ Wpis utworzony! Status: {$status}");
-            $this->info("🔗 URL: /blog/{$post->slug}");
-        }
-
-        $this->newLine();
-        $this->info("🎉 Wygenerowano {$count} wpisów!");
-
-        return 0;
+        $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
+        $unsplashKey = Setting::where('key', 'unsplash_access_key')->value('value');
+        
+        $categories = Category::orderBy('name')->get();
+        $tags = Tag::forBlogs()->orderBy('name')->get();
+        
+        return view('admin.blog.generator', compact('openaiKey', 'unsplashKey', 'categories', 'tags'));
     }
 
-    private function generateContent($topic)
+    public function saveApiKeys(Request $request)
     {
-        try {
-            $prompt = "Napisz profesjonalny artykuł na blog dla freelancerów w języku polskim o temacie: '{$topic}'.
+        $request->validate([
+            'openai_api_key' => 'nullable|string|max:255',
+            'unsplash_access_key' => 'nullable|string|max:255',
+        ]);
+
+        Setting::updateOrCreate(
+            ['key' => 'openai_api_key'],
+            ['value' => $request->openai_api_key]
+        );
+
+        Setting::updateOrCreate(
+            ['key' => 'unsplash_access_key'],
+            ['value' => $request->unsplash_access_key]
+        );
+
+        return back()->with('success', 'Klucze API zostały zapisane!');
+    }
+
+    public function generate(Request $request)
+    {
+        $request->validate([
+            'topics' => 'required|string',
+            'count' => 'nullable|integer|min:1|max:10',
+            'category_id' => 'nullable|exists:categories,id',
+            'tags' => 'nullable|string',
+            'download_image' => 'nullable|boolean',
+            'test_mode' => 'nullable|boolean',
+        ]);
+
+        $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
+        
+        if (!$openaiKey) {
+            return back()->withErrors(['error' => 'Brak klucza OpenAI API. Dodaj go w ustawieniach.']);
+        }
+
+        $topics = array_filter(array_map('trim', explode("\n", $request->topics)));
+        $count = min((int)($request->count ?? 1), count($topics), 10);
+        $topics = array_slice($topics, 0, $count);
+
+        $generated = [];
+        $errors = [];
+
+        foreach ($topics as $index => $topic) {
+            if (empty($topic)) continue;
+
+            try {
+                $result = $this->generatePost($topic, $openaiKey, $request);
+                
+                if ($result['success']) {
+                    $generated[] = $result['post'];
+                } else {
+                    $errors[] = "Temat '{$topic}': " . $result['error'];
+                }
+            } catch (\Exception $e) {
+                $errors[] = "Temat '{$topic}': " . $e->getMessage();
+            }
+        }
+
+        $message = "Wygenerowano " . count($generated) . " wpisów!";
+        if (!empty($errors)) {
+            $message .= " Błędy: " . count($errors);
+        }
+
+        return back()->with('success', $message)->with('generated', $generated)->with('errors', $errors);
+    }
+
+    private function generatePost($topic, $openaiKey, $request)
+    {
+        // Generuj treść
+        $content = $this->generateContent($topic, $openaiKey);
+        
+        if (!$content) {
+            return ['success' => false, 'error' => 'Błąd generowania treści'];
+        }
+
+        // Pobierz obrazek
+        $imageUrl = null;
+        if ($request->download_image) {
+            $imageUrl = $this->getImageForTopic($topic);
+        }
+
+        // Wybierz tagi i kategorię
+        $tags = $this->selectTags($content['title'], $request->tags);
+        $categoryId = $request->category_id ?: $this->selectCategory($content['title']);
+
+        // Utwórz wpis
+        $admin = auth()->user();
+        $slug = Str::slug($content['title']);
+        $counter = 1;
+        while (BlogPost::where('slug', $slug)->exists()) {
+            $slug = Str::slug($content['title']) . '-' . $counter++;
+        }
+
+        $post = BlogPost::create([
+            'author_id' => $admin->id,
+            'category_id' => $categoryId,
+            'title' => $content['title'],
+            'slug' => $slug,
+            'excerpt' => $content['excerpt'],
+            'content' => $content['body'],
+            'meta_title' => $content['meta_title'],
+            'meta_description' => $content['meta_description'],
+            'meta_keywords' => $content['keywords'],
+            'featured_image' => $imageUrl,
+            'featured_image_alt' => $content['featured_image_alt'] ?? $content['title'],
+            'status' => $request->test_mode ? 'draft' : 'published',
+            'published_at' => $request->test_mode ? null : now()->subDays(rand(0, 30)),
+        ]);
+
+        // Przypisz tagi
+        if (!empty($tags)) {
+            $post->tags()->sync($tags);
+        }
+
+        return ['success' => true, 'post' => $post];
+    }
+
+    private function generateContent($topic, $openaiKey)
+    {
+        $prompt = "Napisz profesjonalny artykuł na blog dla freelancerów w języku polskim o temacie: '{$topic}'.
 
 WYMAGANIA:
 1. Tytuł: Ciekawy, SEO-friendly (50-70 znaków), z liczbą roczną jeśli dotyczy (np. 2025)
@@ -179,13 +185,14 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
     \"featured_image_alt\": \"...\"
 }";
 
+        try {
             $response = Http::timeout(120)
                 ->withHeaders([
-                    'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
+                    'Authorization' => 'Bearer ' . $openaiKey,
                     'Content-Type' => 'application/json',
                 ])
                 ->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-4o-mini', // lub 'gpt-4' dla lepszej jakości
+                    'model' => 'gpt-4o-mini',
                     'messages' => [
                         [
                             'role' => 'system',
@@ -201,7 +208,6 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
                 ]);
 
             if ($response->failed()) {
-                $this->error('Błąd API: ' . $response->body());
                 return null;
             }
 
@@ -211,14 +217,12 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             // Wyczyść odpowiedź
             $text = preg_replace('/```json\s*|\s*```/', '', $text);
             $text = trim($text);
-            $text = preg_replace('/^[^{]*/', '', $text); // Usuń tekst przed {
-            $text = preg_replace('/[^}]*$/', '', $text) . '}'; // Usuń tekst po }
+            $text = preg_replace('/^[^{]*/', '', $text);
+            $text = preg_replace('/[^}]*$/', '', $text) . '}';
 
             $content = json_decode($text, true);
 
             if (!$content || !isset($content['title'])) {
-                $this->error('Nieprawidłowa odpowiedź AI');
-                $this->line('Odpowiedź: ' . substr($text, 0, 200));
                 return null;
             }
 
@@ -230,22 +234,21 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             return $content;
 
         } catch (\Exception $e) {
-            $this->error('Błąd: ' . $e->getMessage());
             return null;
         }
     }
 
     private function getImageForTopic($topic)
     {
-        // Wyciągnij słowa kluczowe
         $keywords = $this->extractKeywords($topic);
         $keyword = urlencode($keywords[0] ?? 'freelancer');
 
-        // Spróbuj Unsplash API
-        if (env('UNSPLASH_ACCESS_KEY')) {
+        $unsplashKey = Setting::where('key', 'unsplash_access_key')->value('value');
+        
+        if ($unsplashKey) {
             try {
                 $response = Http::get('https://api.unsplash.com/photos/random', [
-                    'client_id' => env('UNSPLASH_ACCESS_KEY'),
+                    'client_id' => $unsplashKey,
                     'query' => $keyword,
                     'orientation' => 'landscape',
                 ]);
@@ -259,14 +262,13 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             }
         }
 
-        // Fallback - Unsplash Source
         return "https://source.unsplash.com/1200x630/?{$keyword}";
     }
 
     private function extractKeywords($text)
     {
         $stopWords = ['dla', 'jak', 'czy', 'co', 'kto', 'gdzie', 'kiedy', 'dlaczego', 'i', 'oraz', 'lub', 'ale', 'w', 'z', 'na', 'po', 'przed', 'pod', 'nad', 'przez', 'do', 'od', 'ze', 'o', 'a', '2025'];
-
+        
         $words = str_word_count(strtolower($text), 1, 'ąćęłńóśźż');
         $keywords = array_filter($words, function($word) use ($stopWords) {
             return strlen($word) > 3 && !in_array($word, $stopWords);
@@ -283,13 +285,12 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
                 ->where('type', 'blog')
                 ->pluck('id')
                 ->toArray();
-
+            
             if (!empty($tags)) {
                 return $tags;
             }
         }
 
-        // Automatyczne dopasowanie tagów
         $tagKeywords = [
             'Automatyzacja' => ['automatyzacja', 'automatyzować', 'zapier', 'make', 'workflow'],
             'AI' => ['ai', 'chatgpt', 'claude', 'sztuczna inteligencja', 'machine learning'],
@@ -318,7 +319,6 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             }
         }
 
-        // Jeśli nie znaleziono, dodaj domyślne
         if (empty($selectedTags)) {
             $defaultTag = Tag::where('name', 'Freelancing')
                 ->where('type', 'blog')
@@ -335,7 +335,6 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
     {
         $titleLower = strtolower($title);
 
-        // Automatyczne dopasowanie kategorii
         if (str_contains($titleLower, 'automatyzacja') || str_contains($titleLower, 'ai')) {
             $category = Category::where('slug', 'automatyzacje')->first();
             if ($category) return $category->id;
@@ -346,7 +345,6 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             if ($category) return $category->id;
         }
 
-        // Domyślna kategoria
         return Category::first()?->id;
     }
 }
