@@ -51,7 +51,7 @@ class BlogGeneratorController extends Controller
             'time' => 'required|string|regex:/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/',
             'frequency' => 'required|in:daily,twice_daily,weekly,weekdays',
             'count' => 'required|integer|min:1|max:10',
-            'topics' => 'required|string',
+            'topics' => 'required|string|min:3',
             'category_id' => 'nullable|exists:categories,id',
             'tags' => 'nullable|string|max:500',
             'download_image' => 'nullable|boolean',
@@ -60,9 +60,16 @@ class BlogGeneratorController extends Controller
         ], [
             'time.regex' => 'Godzina musi być w formacie HH:mm (np. 09:00)',
             'topics.required' => 'Tematy są wymagane',
+            'topics.min' => 'Tematy muszą mieć minimum 3 znaki',
             'count.min' => 'Liczba wpisów musi być większa od 0',
             'count.max' => 'Maksymalnie 10 wpisów na raz',
         ]);
+
+        // Sprawdź czy tematy nie są puste po przefiltrowaniu
+        $topics = array_filter(array_map('trim', explode("\n", $request->topics)));
+        if (empty($topics)) {
+            return back()->withErrors(['topics' => 'Musisz podać przynajmniej jeden temat (nie mogą być puste linie)']);
+        }
 
         $schedule = BlogSchedule::first();
 
