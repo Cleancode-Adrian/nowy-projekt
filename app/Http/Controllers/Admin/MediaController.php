@@ -27,24 +27,30 @@ class MediaController extends Controller
 
         $files = collect($disk->files($currentPath))
             ->map(function ($path) use ($disk) {
-                $media = $this->syncMediaRecord($path, $disk);
-                $modified = $disk->lastModified($path);
+                try {
+                    $media = $this->syncMediaRecord($path, $disk);
+                    $modified = $disk->exists($path) ? $disk->lastModified($path) : time();
 
-                return [
-                    'path' => $path,
-                    'name' => basename($path),
-                    'extension' => $media->extension,
-                    'size' => $this->formatSize($media->size),
-                    'size_raw' => $media->size,
-                    'modified' => Carbon::createFromTimestamp($modified)->diffForHumans(),
-                    'modified_full' => Carbon::createFromTimestamp($modified)->format('d.m.Y H:i'),
-                    'url' => asset('storage/' . ($media->webp_path ?? $path)),
-                    'original_url' => asset('storage/' . $path),
-                    'is_image' => $media->is_image,
-                    'media' => $media,
-                ];
+                    return [
+                        'path' => $path,
+                        'name' => basename($path),
+                        'extension' => $media->extension ?? strtolower(pathinfo($path, PATHINFO_EXTENSION)),
+                        'size' => $this->formatSize($media->size ?? 0),
+                        'size_raw' => $media->size ?? 0,
+                        'modified' => Carbon::createFromTimestamp($modified)->diffForHumans(),
+                        'modified_full' => Carbon::createFromTimestamp($modified)->format('d.m.Y H:i'),
+                        'url' => asset('storage/' . ($media->webp_path ?? $path)),
+                        'original_url' => asset('storage/' . $path),
+                        'is_image' => $media->is_image ?? false,
+                        'media' => $media,
+                    ];
+                } catch (\Exception $e) {
+                    \Log::error('Błąd przetwarzania pliku: ' . $e->getMessage(), ['path' => $path]);
+                    return null;
+                }
             })
-            ->sortByDesc(fn ($file) => $file['media']->updated_at)
+            ->filter() // Usuń null values
+            ->sortByDesc(fn ($file) => $file['media']->updated_at ?? now())
             ->values();
 
         $parentPath = null;
@@ -190,47 +196,79 @@ class MediaController extends Controller
     private function syncMediaRecord(string $path, $disk): MediaItem
     {
         $path = trim($path, '/');
-        $fullPath = $disk->path($path);
-        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-        $size = $disk->size($path) ?? 0;
-        $isImage = in_array($extension, self::IMAGE_EXTENSIONS, true);
-        $width = null;
-        $height = null;
-        $mime = null;
-        $webpPath = null;
-
-        if ($isImage && function_exists('getimagesize')) {
-            $info = @getimagesize($fullPath);
-            if ($info) {
-                $width = $info[0];
-                $height = $info[1];
-                $mime = $info['mime'] ?? null;
-            }
-
-            $optimized = $this->optimizeImage($fullPath, $extension, $width, $height);
-            if ($optimized) {
-                [$width, $height] = $optimized;
-            }
-
-            $webpPath = $this->createWebpVersion($fullPath, $extension);
-        } elseif (function_exists('mime_content_type')) {
-            $mime = @mime_content_type($fullPath) ?: null;
+        
+        // Sprawdź czy plik istnieje
+        if (!$disk->exists($path)) {
+            // Jeśli plik nie istnieje, zwróć pusty rekord lub utwórz podstawowy
+            return MediaItem::firstOrCreate(
+                ['path' => $path],
+                [
+                    'disk' => 'public',
+                    'filename' => basename($path),
+                    'extension' => strtolower(pathinfo($path, PATHINFO_EXTENSION)),
+                    'size' => 0,
+                    'is_image' => false,
+                ]
+            );
         }
+        
+        try {
+            $fullPath = $disk->path($path);
+            $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            $size = $disk->exists($path) ? ($disk->size($path) ?? 0) : 0;
+            $isImage = in_array($extension, self::IMAGE_EXTENSIONS, true);
+            $width = null;
+            $height = null;
+            $mime = null;
+            $webpPath = null;
 
-        return MediaItem::updateOrCreate(
-            ['path' => $path],
-            [
-                'disk' => 'public',
-                'filename' => basename($path),
-                'extension' => $extension,
-                'size' => $size,
-                'is_image' => $isImage,
-                'width' => $width,
-                'height' => $height,
-                'mime_type' => $mime,
-                'webp_path' => $webpPath,
-            ]
-        );
+            if ($isImage && function_exists('getimagesize') && file_exists($fullPath)) {
+                $info = @getimagesize($fullPath);
+                if ($info) {
+                    $width = $info[0];
+                    $height = $info[1];
+                    $mime = $info['mime'] ?? null;
+                }
+
+                $optimized = $this->optimizeImage($fullPath, $extension, $width, $height);
+                if ($optimized) {
+                    [$width, $height] = $optimized;
+                }
+
+                $webpPath = $this->createWebpVersion($fullPath, $extension);
+            } elseif (function_exists('mime_content_type') && file_exists($fullPath)) {
+                $mime = @mime_content_type($fullPath) ?: null;
+            }
+
+            return MediaItem::updateOrCreate(
+                ['path' => $path],
+                [
+                    'disk' => 'public',
+                    'filename' => basename($path),
+                    'extension' => $extension,
+                    'size' => $size,
+                    'is_image' => $isImage,
+                    'width' => $width,
+                    'height' => $height,
+                    'mime_type' => $mime,
+                    'webp_path' => $webpPath,
+                ]
+            );
+        } catch (\Exception $e) {
+            // W przypadku błędu, zwróć podstawowy rekord
+            \Log::error('Błąd syncMediaRecord: ' . $e->getMessage(), ['path' => $path]);
+            
+            return MediaItem::firstOrCreate(
+                ['path' => $path],
+                [
+                    'disk' => 'public',
+                    'filename' => basename($path),
+                    'extension' => strtolower(pathinfo($path, PATHINFO_EXTENSION)),
+                    'size' => 0,
+                    'is_image' => false,
+                ]
+            );
+        }
     }
 
     private function optimizeImage(string $fullPath, string $extension, ?int $width, ?int $height): ?array
