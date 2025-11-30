@@ -29,12 +29,16 @@ class BlogGeneratorController extends Controller
     public function runNow(Request $request)
     {
         $request->validate([
-            'topics' => 'required|string',
+            'topics' => 'required|string|min:3',
             'count' => 'nullable|integer|min:1|max:10',
             'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|string',
+            'tags' => 'nullable|string|max:500',
             'download_image' => 'nullable|boolean',
+            'image_source' => 'nullable|in:unsplash,dalle3',
             'test_mode' => 'nullable|boolean',
+        ], [
+            'topics.required' => 'Pole tematy jest wymagane',
+            'topics.min' => 'Tematy muszą mieć minimum 3 znaki',
         ]);
 
         return $this->generate($request);
@@ -107,12 +111,16 @@ class BlogGeneratorController extends Controller
     public function generate(Request $request)
     {
         $request->validate([
-            'topics' => 'required|string',
+            'topics' => 'required|string|min:3',
             'count' => 'nullable|integer|min:1|max:10',
             'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|string',
+            'tags' => 'nullable|string|max:500',
             'download_image' => 'nullable|boolean',
+            'image_source' => 'nullable|in:unsplash,dalle3',
             'test_mode' => 'nullable|boolean',
+        ], [
+            'topics.required' => 'Pole tematy jest wymagane',
+            'topics.min' => 'Tematy muszą mieć minimum 3 znaki',
         ]);
 
         $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
@@ -122,6 +130,11 @@ class BlogGeneratorController extends Controller
         }
 
         $topics = array_filter(array_map('trim', explode("\n", $request->topics)));
+        
+        if (empty($topics)) {
+            return back()->withErrors(['topics' => 'Musisz podać przynajmniej jeden temat']);
+        }
+        
         $count = min((int)($request->count ?? 1), count($topics), 10);
         $topics = array_slice($topics, 0, $count);
 
@@ -129,7 +142,7 @@ class BlogGeneratorController extends Controller
         $errors = [];
 
         foreach ($topics as $index => $topic) {
-            if (empty($topic)) continue;
+            if (empty($topic) || strlen(trim($topic)) < 3) continue;
 
             try {
                 $result = $this->generatePost($topic, $openaiKey, $request);
@@ -310,7 +323,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
         $keyword = urlencode($keywords[0] ?? 'freelancer');
 
         $unsplashKey = Setting::where('key', 'unsplash_access_key')->value('value');
-        
+
         if ($unsplashKey) {
             try {
                 $response = Http::get('https://api.unsplash.com/photos/random', [
@@ -334,7 +347,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
     private function generateImageWithDalle3($topic)
     {
         $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
-        
+
         if (!$openaiKey) {
             return null;
         }
@@ -363,7 +376,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
             if ($response->successful()) {
                 $data = $response->json();
                 $imageUrl = $data['data'][0]['url'] ?? null;
-                
+
                 if ($imageUrl) {
                     // Pobierz obrazek i zapisz lokalnie
                     return $this->downloadAndSaveImage($imageUrl, $topic);
@@ -381,13 +394,13 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
     {
         try {
             $imageContent = Http::timeout(30)->get($imageUrl)->body();
-            
+
             // Generuj unikalną nazwę pliku
             $filename = 'blog/' . time() . '-' . Str::slug($topic) . '.png';
-            
+
             // Zapisz do storage
             Storage::disk('public')->put($filename, $imageContent);
-            
+
             return $filename;
         } catch (\Exception $e) {
             Log::error('Błąd pobierania obrazu: ' . $e->getMessage());

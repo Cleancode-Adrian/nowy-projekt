@@ -125,10 +125,11 @@
                 </label>
                 <textarea
                     name="topics"
+                    id="topicsInput"
                     rows="6"
                     placeholder="Jak znaleźć pierwszych klientów jako freelancer&#10;Najlepsze narzędzia automatyzacji dla freelancerów&#10;Jak ustalać stawki jako freelancer"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required></textarea>
+                    required>{{ old('topics') }}</textarea>
                 <p class="text-xs text-gray-500 mt-1">Każdy temat w osobnej linii. Możesz podać wiele tematów.</p>
             </div>
 
@@ -300,9 +301,11 @@
                 </label>
                 <textarea
                     name="topics"
+                    id="scheduleTopicsInput"
                     rows="4"
                     placeholder="Jak znaleźć pierwszych klientów&#10;Najlepsze narzędzia automatyzacji&#10;Jak ustalać stawki"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ $schedule->topics ?? '' }}</textarea>
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required>{{ old('topics', $schedule->topics ?? '') }}</textarea>
             </div>
 
             <div class="mb-4">
@@ -338,7 +341,7 @@
                            class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     <span class="text-sm text-gray-700">Pobierz obrazek</span>
                 </label>
-                
+
                 <div id="scheduleImageSourceOptions" class="ml-6 mt-2 space-y-2">
                     <label class="flex items-center">
                         <input type="radio"
@@ -427,12 +430,12 @@ function addTopic(topic) {
 document.getElementById('generateForm').addEventListener('submit', function(e) {
     const form = e.target;
     const runNowForm = document.getElementById('runNowForm');
-    
+
     runNowForm.querySelector('#runNowTopics').value = form.querySelector('[name="topics"]').value;
     runNowForm.querySelector('#runNowCount').value = form.querySelector('[name="count"]').value || '1';
     runNowForm.querySelector('#runNowCategory').value = form.querySelector('[name="category_id"]').value || '';
     runNowForm.querySelector('#runNowTags').value = form.querySelector('[name="tags"]').value || '';
-    
+
     // Pobierz wybrane źródło obrazu
     const imageSource = form.querySelector('[name="image_source"]:checked');
     if (imageSource) {
