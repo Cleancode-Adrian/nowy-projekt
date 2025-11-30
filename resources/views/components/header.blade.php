@@ -31,7 +31,7 @@
             </div>
 
             {{-- Mobile Menu Button --}}
-            <button @click="mobileMenuOpen = !mobileMenuOpen" 
+            <button @click="mobileMenuOpen = !mobileMenuOpen"
                     class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
                     aria-label="Toggle menu">
                 <i class="fa-solid fa-bars text-xl" x-show="!mobileMenuOpen"></i>
@@ -170,10 +170,11 @@
                     </div>
 
                 @else
-                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 text-sm font-medium px-3 py-2">
+                    {{-- Login and Register - Hidden on mobile, shown on desktop --}}
+                    <a href="{{ route('login') }}" class="hidden lg:inline-block text-gray-600 hover:text-gray-900 text-sm font-medium px-3 py-2">
                         Zaloguj
                     </a>
-                    <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
+                    <a href="{{ route('register') }}" class="hidden lg:inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
                         Rejestracja
                     </a>
                 @endauth
@@ -191,11 +192,11 @@
              class="lg:hidden border-t border-gray-200 py-4"
              style="display: none;">
             <nav class="flex flex-col space-y-2">
-                <a href="{{ route('announcements.index') }}" 
+                <a href="{{ route('announcements.index') }}"
                    class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                     Ogłoszenia
                 </a>
-                <a href="{{ route('leaderboard') }}" 
+                <a href="{{ route('leaderboard') }}"
                    class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                     Ranking
                 </a>
@@ -205,7 +206,7 @@
                 @foreach($headerPages as $page)
                     <x-menu-item :page="$page" />
                 @endforeach
-                
+
                 @auth
                     @if(auth()->user()->isClient())
                         <a href="{{ route('announcements.create') }}"
@@ -220,6 +221,20 @@
                             Moje oferty
                         </a>
                     @endif
+                @else
+                    {{-- Login and Register in mobile menu --}}
+                    <div class="border-t border-gray-200 pt-4 mt-4">
+                        <a href="{{ route('login') }}"
+                           class="block text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors mb-2">
+                            <i class="fa-solid fa-right-to-bracket mr-2"></i>
+                            Zaloguj
+                        </a>
+                        <a href="{{ route('register') }}"
+                           class="block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+                            <i class="fa-solid fa-user-plus mr-2"></i>
+                            Rejestracja
+                        </a>
+                    </div>
                 @endauth
             </nav>
         </div>
