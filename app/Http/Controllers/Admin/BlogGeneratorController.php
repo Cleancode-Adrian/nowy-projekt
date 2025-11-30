@@ -25,7 +25,7 @@ class BlogGeneratorController extends Controller
 
         return view('admin.blog.generator', compact('openaiKey', 'unsplashKey', 'categories', 'tags', 'schedule'));
     }
-    
+
     public function runNow(Request $request)
     {
         $request->validate([
@@ -39,7 +39,7 @@ class BlogGeneratorController extends Controller
 
         return $this->generate($request);
     }
-    
+
     public function saveSchedule(Request $request)
     {
         $request->validate([
@@ -49,13 +49,18 @@ class BlogGeneratorController extends Controller
             'count' => 'required|integer|min:1|max:10',
             'topics' => 'required|string',
             'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|string',
+            'tags' => 'nullable|string|max:500',
             'download_image' => 'nullable|boolean',
             'auto_publish' => 'nullable|boolean',
+        ], [
+            'time.regex' => 'Godzina musi być w formacie HH:mm (np. 09:00)',
+            'topics.required' => 'Tematy są wymagane',
+            'count.min' => 'Liczba wpisów musi być większa od 0',
+            'count.max' => 'Maksymalnie 10 wpisów na raz',
         ]);
 
         $schedule = BlogSchedule::first();
-        
+
         if (!$schedule) {
             $schedule = new BlogSchedule();
         }
@@ -66,8 +71,8 @@ class BlogGeneratorController extends Controller
             'frequency' => $request->frequency,
             'count' => $request->count,
             'topics' => $request->topics,
-            'category_id' => $request->category_id,
-            'tags' => $request->tags,
+            'category_id' => $request->category_id ?: null,
+            'tags' => $request->tags ?: null,
             'download_image' => $request->has('download_image'),
             'auto_publish' => $request->has('auto_publish'),
         ]);
