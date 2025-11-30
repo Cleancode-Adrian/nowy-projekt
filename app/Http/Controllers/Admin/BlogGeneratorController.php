@@ -375,6 +375,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
                     ],
                     'temperature' => 0.7,
                     'max_tokens' => 4000,
+                    'response_format' => ['type' => 'json_object'], // Wymusza format JSON
                 ]);
 
             if ($response->failed()) {
