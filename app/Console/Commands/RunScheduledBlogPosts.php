@@ -40,7 +40,7 @@ class RunScheduledBlogPosts extends Command
         }
 
         // Przygotuj tematy
-        $topics = $schedule->topics 
+        $topics = $schedule->topics
             ? array_filter(array_map('trim', explode("\n", $schedule->topics)))
             : [];
 
@@ -63,7 +63,7 @@ class RunScheduledBlogPosts extends Command
         $this->info("📝 Generuję " . count($selectedTopics) . " wpisów...");
 
         $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
-        
+
         if (!$openaiKey) {
             $this->error('❌ Brak klucza OpenAI API');
             return 1;
@@ -71,25 +71,35 @@ class RunScheduledBlogPosts extends Command
 
         // Uruchom generowanie dla każdego tematu
         $admin = \App\Models\User::where('role', 'admin')->first();
-        
+
         if (!$admin) {
             $this->error('❌ Brak użytkownika admin');
             return 1;
         }
-        
+
         foreach ($selectedTopics as $topic) {
             $this->info("  → {$topic}");
-            
+
             try {
                 // Użyj komendy blog:generate-openai
-                \Illuminate\Support\Facades\Artisan::call('blog:generate-openai', [
-                    'topic' => $topic,
-                    '--category' => $schedule->category_id,
-                    '--tags' => $schedule->tags,
-                    '--image' => $schedule->download_image,
-                    '--test' => !$schedule->auto_publish,
+                // Użyj kontrolera bezpośrednio zamiast komendy
+                $controller = new \App\Http\Controllers\Admin\BlogGeneratorController();
+                $request = \Illuminate\Http\Request::create('/admin/blog/generator/generate', 'POST', [
+                    'topics' => $topic,
+                    'count' => 1,
+                    'category_id' => $schedule->category_id,
+                    'tags' => $schedule->tags,
+                    'download_image' => $schedule->download_image,
+                    'image_source' => $schedule->image_source ?? 'unsplash',
+                    'test_mode' => !$schedule->auto_publish,
                 ]);
                 
+                try {
+                    $controller->generate($request);
+                } catch (\Exception $e) {
+                    $this->error("  ❌ Błąd: " . $e->getMessage());
+                }
+
                 $this->info("  ✅ Wygenerowano");
             } catch (\Exception $e) {
                 $this->error("  ❌ Błąd: " . $e->getMessage());

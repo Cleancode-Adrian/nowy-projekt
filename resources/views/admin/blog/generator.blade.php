@@ -174,9 +174,31 @@
                            name="download_image"
                            value="1"
                            checked
+                           id="downloadImageCheckbox"
                            class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                    <span class="text-sm text-gray-700">Pobierz obrazek z Unsplash</span>
+                    <span class="text-sm text-gray-700">Pobierz obrazek</span>
                 </label>
+
+                <div id="imageSourceOptions" class="ml-6 mt-2 space-y-2">
+                    <label class="flex items-center">
+                        <input type="radio"
+                               name="image_source"
+                               value="unsplash"
+                               checked
+                               class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                        <span class="text-sm text-gray-700">📸 Unsplash (darmowe)</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio"
+                               name="image_source"
+                               value="dalle3"
+                               class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                        <span class="text-sm text-gray-700">🎨 DALL-E 3 (AI generowane)</span>
+                    </label>
+                    <p class="text-xs text-gray-500 ml-6">
+                        DALL-E 3 używa tego samego klucza OpenAI API. Koszt: ~$0.04 za obrazek.
+                    </p>
+                </div>
 
                 <label class="flex items-center">
                     <input type="checkbox"
@@ -188,7 +210,7 @@
             </div>
 
             <div class="grid grid-cols-2 gap-2">
-                <button type="submit" 
+                <button type="submit"
                         id="generateBtn"
                         class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-lg transition-all">
                     <span id="btnText">🚀 Generuj</span>
@@ -196,7 +218,7 @@
                         <i class="fa-solid fa-spinner fa-spin mr-2"></i> ...
                     </span>
                 </button>
-                
+
                 <button type="button"
                         onclick="document.getElementById('runNowForm').submit()"
                         class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-all">
@@ -204,7 +226,7 @@
                 </button>
             </div>
         </form>
-        
+
         {{-- Formularz do natychmiastowego uruchomienia --}}
         <form method="POST" action="{{ route('admin.blog.generator.run-now') }}" id="runNowForm" class="hidden">
             @csrf
@@ -216,36 +238,36 @@
             <input type="hidden" name="test_mode" value="0">
         </form>
     </div>
-    
+
     {{-- Harmonogram --}}
     <div class="card">
         <h2 class="text-xl font-bold text-gray-900 mb-4">⏰ Harmonogram</h2>
-        
+
         <form method="POST" action="{{ route('admin.blog.generator.schedule') }}">
             @csrf
-            
+
             <div class="mb-4">
                 <label class="flex items-center">
-                    <input type="checkbox" 
-                           name="is_enabled" 
+                    <input type="checkbox"
+                           name="is_enabled"
                            value="1"
                            {{ $schedule->is_enabled ? 'checked' : '' }}
                            class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     <span class="text-sm font-medium text-gray-700">Włącz automatyczne generowanie</span>
                 </label>
             </div>
-            
+
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Godzina
                     </label>
-                    <input type="time" 
-                           name="time" 
+                    <input type="time"
+                           name="time"
                            value="{{ $schedule->time ?? '09:00' }}"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Częstotliwość
@@ -258,30 +280,30 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     Liczba wpisów na raz
                 </label>
-                <input type="number" 
-                       name="count" 
+                <input type="number"
+                       name="count"
                        value="{{ $schedule->count ?? 1 }}"
                        min="1"
                        max="10"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
             </div>
-            
+
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     Tematy (jeden na linię)
                 </label>
-                <textarea 
-                    name="topics" 
+                <textarea
+                    name="topics"
                     rows="4"
                     placeholder="Jak znaleźć pierwszych klientów&#10;Najlepsze narzędzia automatyzacji&#10;Jak ustalać stawki"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ $schedule->topics ?? '' }}</textarea>
             </div>
-            
+
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     Kategoria
@@ -293,38 +315,58 @@
                     @endforeach
                 </select>
             </div>
-            
+
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     Tagi (oddzielone przecinkami)
                 </label>
-                <input type="text" 
-                       name="tags" 
+                <input type="text"
+                       name="tags"
                        value="{{ $schedule->tags ?? '' }}"
                        placeholder="Freelancing, Marketing"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
             </div>
-            
+
             <div class="mb-4 space-y-2">
                 <label class="flex items-center">
-                    <input type="checkbox" 
-                           name="download_image" 
+                    <input type="checkbox"
+                           name="download_image"
                            value="1"
+                           id="scheduleDownloadImage"
                            {{ ($schedule->download_image ?? true) ? 'checked' : '' }}
                            class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     <span class="text-sm text-gray-700">Pobierz obrazek</span>
                 </label>
                 
+                <div id="scheduleImageSourceOptions" class="ml-6 mt-2 space-y-2">
+                    <label class="flex items-center">
+                        <input type="radio"
+                               name="image_source"
+                               value="unsplash"
+                               {{ ($schedule->image_source ?? 'unsplash') === 'unsplash' ? 'checked' : '' }}
+                               class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                        <span class="text-sm text-gray-700">📸 Unsplash</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio"
+                               name="image_source"
+                               value="dalle3"
+                               {{ ($schedule->image_source ?? '') === 'dalle3' ? 'checked' : '' }}
+                               class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                        <span class="text-sm text-gray-700">🎨 DALL-E 3</span>
+                    </label>
+                </div>
+
                 <label class="flex items-center">
-                    <input type="checkbox" 
-                           name="auto_publish" 
+                    <input type="checkbox"
+                           name="auto_publish"
                            value="1"
                            {{ ($schedule->auto_publish ?? true) ? 'checked' : '' }}
                            class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     <span class="text-sm text-gray-700">Auto-publikuj (bez zaznaczenia = szkic)</span>
                 </label>
             </div>
-            
+
             @if($schedule->last_run_at)
                 <div class="mb-4 p-3 bg-gray-50 rounded-lg">
                     <p class="text-xs text-gray-600">
@@ -333,7 +375,7 @@
                     </p>
                 </div>
             @endif
-            
+
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                 💾 Zapisz harmonogram
             </button>
@@ -384,7 +426,7 @@ function addTopic(topic) {
 document.getElementById('generateForm').addEventListener('submit', function(e) {
     const form = e.target;
     const runNowForm = document.getElementById('runNowForm');
-    
+
     runNowForm.querySelector('#runNowTopics').value = form.querySelector('[name="topics"]').value;
     runNowForm.querySelector('#runNowCount').value = form.querySelector('[name="count"]').value || '1';
     runNowForm.querySelector('#runNowCategory').value = form.querySelector('[name="category_id"]').value || '';

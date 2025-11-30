@@ -51,6 +51,7 @@ class BlogGeneratorController extends Controller
             'category_id' => 'nullable|exists:categories,id',
             'tags' => 'nullable|string|max:500',
             'download_image' => 'nullable|boolean',
+            'image_source' => 'nullable|in:unsplash,dalle3',
             'auto_publish' => 'nullable|boolean',
         ], [
             'time.regex' => 'Godzina musi być w formacie HH:mm (np. 09:00)',
@@ -74,6 +75,7 @@ class BlogGeneratorController extends Controller
             'category_id' => $request->category_id ?: null,
             'tags' => $request->tags ?: null,
             'download_image' => $request->has('download_image'),
+            'image_source' => $request->image_source ?? 'unsplash',
             'auto_publish' => $request->has('auto_publish'),
         ]);
 
@@ -162,7 +164,8 @@ class BlogGeneratorController extends Controller
         // Pobierz obrazek
         $imageUrl = null;
         if ($request->download_image) {
-            $imageUrl = $this->getImageForTopic($topic);
+            $imageSource = $request->image_source ?? 'unsplash'; // 'unsplash' lub 'dalle3'
+            $imageUrl = $this->getImageForTopic($topic, $imageSource);
         }
 
         // Wybierz tagi i kategorię
@@ -296,13 +299,18 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
         }
     }
 
-    private function getImageForTopic($topic)
+    private function getImageForTopic($topic, $source = 'unsplash')
     {
+        if ($source === 'dalle3') {
+            return $this->generateImageWithDalle3($topic);
+        }
+
+        // Unsplash (domyślne)
         $keywords = $this->extractKeywords($topic);
         $keyword = urlencode($keywords[0] ?? 'freelancer');
 
         $unsplashKey = Setting::where('key', 'unsplash_access_key')->value('value');
-
+        
         if ($unsplashKey) {
             try {
                 $response = Http::get('https://api.unsplash.com/photos/random', [
@@ -321,6 +329,70 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
         }
 
         return "https://source.unsplash.com/1200x630/?{$keyword}";
+    }
+
+    private function generateImageWithDalle3($topic)
+    {
+        $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
+        
+        if (!$openaiKey) {
+            return null;
+        }
+
+        // Przygotuj prompt dla DALL-E 3 na podstawie tematu
+        $keywords = $this->extractKeywords($topic);
+        $imagePrompt = "Professional, modern illustration for a blog article about: {$topic}. ";
+        $imagePrompt .= "Style: clean, minimalist, business-oriented, suitable for freelancers. ";
+        $imagePrompt .= "Colors: blue and purple gradient, professional. ";
+        $imagePrompt .= "No text, no watermark, high quality, 16:9 aspect ratio.";
+
+        try {
+            $response = Http::timeout(60)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $openaiKey,
+                    'Content-Type' => 'application/json',
+                ])
+                ->post('https://api.openai.com/v1/images/generations', [
+                    'model' => 'dall-e-3',
+                    'prompt' => $imagePrompt,
+                    'size' => '1024x1024', // DALL-E 3 obsługuje tylko 1024x1024, 1024x1792, 1792x1024
+                    'quality' => 'standard', // 'standard' lub 'hd'
+                    'n' => 1,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $imageUrl = $data['data'][0]['url'] ?? null;
+                
+                if ($imageUrl) {
+                    // Pobierz obrazek i zapisz lokalnie
+                    return $this->downloadAndSaveImage($imageUrl, $topic);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Błąd generowania obrazu DALL-E 3: ' . $e->getMessage());
+            return null;
+        }
+
+        return null;
+    }
+
+    private function downloadAndSaveImage($imageUrl, $topic)
+    {
+        try {
+            $imageContent = Http::timeout(30)->get($imageUrl)->body();
+            
+            // Generuj unikalną nazwę pliku
+            $filename = 'blog/' . time() . '-' . Str::slug($topic) . '.png';
+            
+            // Zapisz do storage
+            Storage::disk('public')->put($filename, $imageContent);
+            
+            return $filename;
+        } catch (\Exception $e) {
+            Log::error('Błąd pobierania obrazu: ' . $e->getMessage());
+            return null;
+        }
     }
 
     private function extractKeywords($text)

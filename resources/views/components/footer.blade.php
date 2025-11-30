@@ -68,6 +68,9 @@
 
         <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
             <p>&copy; {{ date('Y') }} Projekciarz.pl. Wszelkie prawa zastrzeżone.</p>
+            <p class="mt-2">
+                Wykonane przez <a href="https://cleancodeas.pl" target="_blank" rel="nofollow" class="text-blue-400 hover:text-blue-300 transition-colors underline">CleanCodeAS.pl</a>
+            </p>
         </div>
     </div>
 </footer>

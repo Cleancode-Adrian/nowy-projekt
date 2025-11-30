@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->string('tags')->nullable(); // Tagi oddzielone przecinkami
             $table->boolean('download_image')->default(true);
+            $table->enum('image_source', ['unsplash', 'dalle3'])->default('unsplash');
             $table->boolean('auto_publish')->default(true); // false = szkic
             $table->timestamp('last_run_at')->nullable();
             $table->timestamps();

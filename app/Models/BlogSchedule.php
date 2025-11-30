@@ -15,6 +15,7 @@ class BlogSchedule extends Model
         'category_id',
         'tags',
         'download_image',
+        'image_source',
         'auto_publish',
         'last_run_at',
     ];
