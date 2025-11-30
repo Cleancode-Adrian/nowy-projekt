@@ -108,13 +108,15 @@ class BlogGeneratorController extends Controller
             return back()->with('success', 'Harmonogram został zapisany!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Błąd walidacji harmonogramu', ['errors' => $e->errors()]);
-            return back()->withErrors($e->errors());
+            return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             Log::error('Błąd zapisywania harmonogramu', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
-            return back()->withErrors(['error' => 'Błąd zapisywania harmonogramu: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Błąd zapisywania harmonogramu: ' . $e->getMessage()])->withInput();
         }
     }
 
