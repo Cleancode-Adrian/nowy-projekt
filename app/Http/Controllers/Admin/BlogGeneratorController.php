@@ -303,7 +303,9 @@ class BlogGeneratorController extends Controller
             Log::error("Krytyczny błąd w generatePost", [
                 'topic' => $topic,
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
             return ['success' => false, 'error' => 'Błąd tworzenia wpisu: ' . $e->getMessage()];
         }
