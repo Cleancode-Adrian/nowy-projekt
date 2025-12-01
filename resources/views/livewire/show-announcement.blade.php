@@ -244,11 +244,12 @@
 {{-- Schema.org for this announcement --}}
 @push('head')
 @php
-    $isRemote = !$announcement->location || strtolower($announcement->location) === 'zdalna' || strtolower($announcement->location) === 'zdalnie';
+    $isRemote = !$announcement->location || strtolower(trim($announcement->location)) === 'zdalna' || strtolower(trim($announcement->location)) === 'zdalnie';
     $location = $announcement->location ?? 'Zdalna';
-    $validThrough = $announcement->deadline 
-        ? \Carbon\Carbon::parse($announcement->deadline)->toIso8601String()
-        : $announcement->created_at->addDays(30)->toIso8601String();
+    $validThroughDate = $announcement->deadline 
+        ? \Carbon\Carbon::parse($announcement->deadline)
+        : $announcement->created_at->copy()->addDays(30);
+    $validThrough = $validThroughDate->toIso8601String();
 @endphp
 <script type="application/ld+json">
 {
