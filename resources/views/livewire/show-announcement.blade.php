@@ -243,36 +243,44 @@
 
 {{-- Schema.org for this announcement --}}
 @push('head')
+@php
+    $isRemote = !$announcement->location || strtolower($announcement->location) === 'zdalna' || strtolower($announcement->location) === 'zdalnie';
+    $location = $announcement->location ?? 'Zdalna';
+    $validThrough = $announcement->deadline 
+        ? \Carbon\Carbon::parse($announcement->deadline)->toIso8601String()
+        : $announcement->created_at->addDays(30)->toIso8601String();
+@endphp
 <script type="application/ld+json">
 {
     "@@context": "https://schema.org",
     "@@type": "JobPosting",
-    "title": "{{ $announcement->title }}",
-    "description": "{{ $announcement->description }}",
+    "title": "{{ addslashes($announcement->title) }}",
+    "description": "{{ addslashes(strip_tags($announcement->description)) }}",
     "datePosted": "{{ $announcement->created_at->toIso8601String() }}",
+    "validThrough": "{{ $validThrough }}",
     "hiringOrganization": {
         "@@type": "Organization",
-        "name": "{{ $announcement->user->company ?? $announcement->user->name }}"
+        "name": "{{ addslashes($announcement->user->company ?? $announcement->user->name) }}"
     },
     "jobLocation": {
         "@@type": "Place",
         "address": {
             "@@type": "PostalAddress",
-            "addressLocality": "{{ $announcement->location ?? 'Zdalna' }}"
+            "addressLocality": "{{ $isRemote ? 'Zdalna' : addslashes($location) }}",
+            "streetAddress": "{{ $isRemote ? '' : '' }}",
+            "addressCountry": "{{ $isRemote ? 'PL' : 'PL' }}"
         }
-    }
-    @if($announcement->budget_min && $announcement->budget_max)
-    ,"baseSalary": {
+    },
+    "baseSalary": {
         "@@type": "MonetaryAmount",
-        "currency": "PLN",
+        "currency": "{{ $announcement->budget_currency ?? 'PLN' }}",
         "value": {
             "@@type": "QuantitativeValue",
-            "minValue": {{ $announcement->budget_min }},
-            "maxValue": {{ $announcement->budget_max }},
+            "minValue": {{ $announcement->budget_min ?? 0 }},
+            "maxValue": {{ $announcement->budget_max ?? ($announcement->budget_min ?? 0) }},
             "unitText": "TOTAL"
         }
     }
-    @endif
 }
 </script>
 @endpush

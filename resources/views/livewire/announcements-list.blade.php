@@ -97,21 +97,44 @@
     "@@type": "ItemList",
     "itemListElement": [
         @foreach($announcements as $index => $announcement)
+        @php
+            $isRemote = !$announcement->location || strtolower($announcement->location) === 'zdalna' || strtolower($announcement->location) === 'zdalnie';
+            $location = $announcement->location ?? 'Zdalna';
+            $validThrough = $announcement->deadline 
+                ? \Carbon\Carbon::parse($announcement->deadline)->toIso8601String()
+                : $announcement->created_at->addDays(30)->toIso8601String();
+        @endphp
         {
             "@@type": "ListItem",
             "position": {{ $index + 1 }},
             "item": {
                 "@@type": "JobPosting",
-                "title": "{{ $announcement->title }}",
-                "description": "{{ Str::limit($announcement->description, 200) }}",
+                "title": "{{ addslashes($announcement->title) }}",
+                "description": "{{ addslashes(strip_tags(Str::limit($announcement->description, 200))) }}",
                 "datePosted": "{{ $announcement->created_at->toIso8601String() }}",
+                "validThrough": "{{ $validThrough }}",
                 "hiringOrganization": {
                     "@@type": "Organization",
-                    "name": "{{ $announcement->user->company ?? $announcement->user->name }}"
+                    "name": "{{ addslashes($announcement->user->company ?? $announcement->user->name) }}"
                 },
                 "jobLocation": {
                     "@@type": "Place",
-                    "address": "{{ $announcement->location ?? 'Zdalna' }}"
+                    "address": {
+                        "@@type": "PostalAddress",
+                        "addressLocality": "{{ $isRemote ? 'Zdalna' : addslashes($location) }}",
+                        "streetAddress": "",
+                        "addressCountry": "PL"
+                    }
+                },
+                "baseSalary": {
+                    "@@type": "MonetaryAmount",
+                    "currency": "{{ $announcement->budget_currency ?? 'PLN' }}",
+                    "value": {
+                        "@@type": "QuantitativeValue",
+                        "minValue": {{ $announcement->budget_min ?? 0 }},
+                        "maxValue": {{ $announcement->budget_max ?? ($announcement->budget_min ?? 0) }},
+                        "unitText": "TOTAL"
+                    }
                 }
             }
         }{{ $loop->last ? '' : ',' }}
