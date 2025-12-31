@@ -198,13 +198,13 @@
                         <div class="text-blue-100">Aktywnych projektów czeka na Ciebie</div>
                     </div>
                     <div class="space-y-4">
-                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <div class="bg-white/20 rounded-lg p-4">
                             <div class="flex items-center justify-between">
                                 <span class="text-sm">Średnia wartość zlecenia</span>
                                 <span class="font-bold">3 500 PLN</span>
                             </div>
                         </div>
-                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <div class="bg-white/20 rounded-lg p-4">
                             <div class="flex items-center justify-between">
                                 <span class="text-sm">Średni czas realizacji</span>
                                 <span class="font-bold">14 dni</span>

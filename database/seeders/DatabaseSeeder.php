@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             TagSeeder::class,
             BadgeSeeder::class,
+            PageSeeder::class,
             BlogPostSeeder::class,
             AutomationBlogPostsSeeder::class,
         ]);

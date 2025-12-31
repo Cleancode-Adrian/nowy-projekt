@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -166,27 +168,75 @@ class UserController extends Controller
 
     public function delete($id)
     {
-        $user = User::withTrashed()->findOrFail($id);
+        try {
+            $user = User::withTrashed()->findOrFail($id);
 
-        if ($user->id === auth()->id()) {
-            return redirect()->route('admin.users.index')->with('error', 'Nie możesz usunąć własnego konta!');
+            if ($user->id === auth()->id()) {
+                return redirect()->route('admin.users.index')->with('error', 'Nie możesz usunąć własnego konta!');
+            }
+
+            // Usuń avatar jeśli istnieje
+            if ($user->avatar) {
+                try {
+                    Storage::disk('public')->delete($user->avatar);
+                } catch (\Exception $e) {
+                    Log::warning('Nie udało się usunąć avatara: ' . $e->getMessage());
+                }
+            }
+
+            // Usuń powiązane dane w transakcji
+            DB::transaction(function () use ($user) {
+                // Ogłoszenia
+                $user->announcements()->forceDelete();
+
+                // Propozycje
+                $user->proposals()->forceDelete();
+
+                // Wiadomości (wysłane i otrzymane)
+                $user->sentMessages()->forceDelete();
+                $user->receivedMessages()->forceDelete();
+
+                // Portfolio
+                $user->portfolioItems()->forceDelete();
+
+                // Oceny (wystawione i otrzymane)
+                $user->ratingsGiven()->forceDelete();
+                $user->ratingsReceived()->forceDelete();
+
+                // Powiadomienia
+                $user->notifications()->forceDelete();
+
+                // Zgłoszenia
+                $user->reports()->forceDelete();
+
+                // Wpisy blogowe (zmień autora na admina lub usuń)
+                $admin = User::where('role', 'admin')->first();
+                if ($admin) {
+                    $user->blogPosts()->update(['author_id' => $admin->id]);
+                } else {
+                    $user->blogPosts()->forceDelete();
+                }
+
+                // Zapisane ogłoszenia (belongsToMany - detach)
+                $user->savedAnnouncements()->detach();
+
+                // Odznaki (belongsToMany - detach)
+                $user->badges()->detach();
+
+                // Usuń użytkownika na zawsze (force delete)
+                $user->forceDelete();
+            });
+
+            return redirect()->route('admin.users.index')->with('success', 'Użytkownik został trwale usunięty z systemu!');
+
+        } catch (\Exception $e) {
+            Log::error('Błąd usuwania użytkownika: ' . $e->getMessage(), [
+                'user_id' => $id,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->route('admin.users.index')->with('error', 'Wystąpił błąd podczas usuwania użytkownika: ' . $e->getMessage());
         }
-
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-        }
-
-        // Usuń powiązane dane
-        $user->announcements()->forceDelete();
-        $user->proposals()->forceDelete();
-        $user->messages()->forceDelete();
-        $user->portfolioItems()->forceDelete();
-        $user->ratings()->forceDelete();
-
-        // Usuń użytkownika na zawsze (force delete)
-        $user->forceDelete();
-
-        return redirect()->route('admin.users.index')->with('success', 'Użytkownik został trwale usunięty z systemu!');
     }
 }
 
