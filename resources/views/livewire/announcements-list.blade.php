@@ -100,7 +100,7 @@
         @php
             $isRemote = !$announcement->location || strtolower(trim($announcement->location)) === 'zdalna' || strtolower(trim($announcement->location)) === 'zdalnie';
             $location = $announcement->location ?? 'Zdalna';
-            $validThroughDate = $announcement->deadline 
+            $validThroughDate = $announcement->deadline
                 ? \Carbon\Carbon::parse($announcement->deadline)
                 : $announcement->created_at->copy()->addDays(30);
             $validThrough = $validThroughDate->toIso8601String();

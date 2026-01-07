@@ -12,7 +12,7 @@
 
     <div class="min-h-screen flex items-center justify-center px-4 py-16">
         <div class="max-w-2xl w-full text-center">
-            
+
             <div class="mb-8">
                 <div class="text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600">
                     500
@@ -27,11 +27,11 @@
             </p>
 
             <div class="flex items-center justify-center gap-4 mb-8">
-                <a href="{{ route('home') }}" 
+                <a href="{{ route('home') }}"
                    class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">
                     🏠 Strona główna
                 </a>
-                <button onclick="window.history.back()" 
+                <button onclick="window.history.back()"
                         class="bg-gray-600 hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
                     ← Wróć
                 </button>
@@ -43,7 +43,7 @@
                     <li>• Odśwież stronę (F5)</li>
                     <li>• Spróbuj ponownie za chwilę</li>
                     <li>• Wyczyść cache przeglądarki</li>
-                    <li>• Jeśli problem się powtarza, napisz do nas: <a href="mailto:kontakt@Projekciarz.pl.pl" class="underline font-semibold">kontakt@Projekciarz.pl.pl</a></li>
+                    <li>• Jeśli problem się powtarza, napisz do nas: <a href="mailto:biuro@cleancodeas.pl" class="underline font-semibold">biuro@cleancodeas.pl</a></li>
                 </ul>
             </div>
 
