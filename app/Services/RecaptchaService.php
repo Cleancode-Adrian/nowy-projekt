@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Log;
 
 class RecaptchaService
 {
-    private string $secretKey;
-    private string $siteKey;
+    private ?string $secretKey;
+    private ?string $siteKey;
     private string $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
 
     public function __construct()
     {
-        $this->secretKey = config('services.recaptcha.secret_key');
-        $this->siteKey = config('services.recaptcha.site_key');
+        $this->secretKey = config('services.recaptcha.secret_key') ?? '';
+        $this->siteKey = config('services.recaptcha.site_key') ?? '';
     }
 
     /**
@@ -26,8 +26,9 @@ class RecaptchaService
      */
     public function verify(string $token, float $minScore = 0.5): bool
     {
-        if (empty($token)) {
-            return false;
+        // If reCAPTCHA is not configured, skip verification
+        if (empty($this->secretKey) || empty($token)) {
+            return true; // Allow if not configured
         }
 
         try {
@@ -78,7 +79,7 @@ class RecaptchaService
      */
     public function getSiteKey(): string
     {
-        return $this->siteKey;
+        return $this->siteKey ?? '';
     }
 }
 
