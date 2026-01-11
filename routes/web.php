@@ -37,6 +37,9 @@ use App\Http\Controllers\Admin\BlogGeneratorController;
 // Public pages
 Route::get('/', HomePage::class)->name('home');
 Route::get('/announcements', AnnouncementsList::class)->name('announcements.index');
+// Protected announcement create route (must be before /announcements/{id} to avoid route conflicts)
+Route::get('/announcements/create', CreateAnnouncement::class)->middleware('auth')->name('announcements.create');
+// Public announcement show route (must be after /create and /edit routes)
 Route::get('/announcements/{id}', ShowAnnouncement::class)->name('announcements.show');
 Route::get('/szukaj', AdvancedSearch::class)->name('search.advanced');
 Route::get('/profil/{user}', UserProfile::class)->name('users.profile');
@@ -100,7 +103,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])->name('password.update');
 });
 
-// Protected routes
+// Protected routes - announcements routes must be before public {id} route
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
 
@@ -110,7 +113,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/statystyki', Stats::class)->name('stats');
     Route::get('/powiadomienia', Notifications::class)->name('notifications');
 
-    Route::get('/announcements/create', CreateAnnouncement::class)->name('announcements.create');
     Route::get('/announcements/{announcement}/edit', EditAnnouncement::class)->name('announcements.edit');
     Route::get('/announcements/{announcement}/proposals', AnnouncementProposals::class)->name('announcements.proposals');
 

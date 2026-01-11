@@ -8,6 +8,7 @@ use App\Models\Announcement;
 use App\Models\Rating;
 use App\Mail\UserApprovedMail;
 use App\Mail\AnnouncementApprovedMail;
+use App\Mail\NewAnnouncementForFreelancersMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -130,7 +131,8 @@ class AdminController extends Controller
 
     public function updateAnnouncement(Request $request, $id)
     {
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Announcement::with(['user', 'category', 'tags'])->findOrFail($id);
+        $wasPublished = $announcement->status === 'published' && $announcement->is_approved;
 
         $status = $request->status;
 
@@ -153,26 +155,72 @@ class AdminController extends Controller
             'approved_at' => $isApproved ? ($announcement->approved_at ?? now()) : null,
         ]);
 
+        // Send notifications if announcement is being published for the first time
+        if ($status === 'published' && $isApproved && !$wasPublished) {
+            // Send email notification to client
+            try {
+                Mail::to($announcement->user->email)->send(new AnnouncementApprovedMail($announcement));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send announcement approval email: ' . $e->getMessage());
+            }
+
+            // Send email notification to all approved freelancers
+            try {
+                $freelancers = User::where('role', 'freelancer')
+                    ->where('is_approved', true)
+                    ->where('email_verified_at', '!=', null)
+                    ->get();
+
+                foreach ($freelancers as $freelancer) {
+                    try {
+                        Mail::to($freelancer->email)->send(new NewAnnouncementForFreelancersMail($announcement));
+                    } catch (\Exception $e) {
+                        \Log::warning('Failed to send announcement email to freelancer ' . $freelancer->email . ': ' . $e->getMessage());
+                    }
+                }
+            } catch (\Exception $e) {
+                \Log::error('Failed to send announcement notifications to freelancers: ' . $e->getMessage());
+            }
+        }
+
         return redirect()->route('admin.announcements')->with('success', 'Ogłoszenie zaktualizowane!');
     }
 
     public function approveAnnouncement($id)
     {
-        $announcement = Announcement::with('user', 'category')->findOrFail($id);
+        $announcement = Announcement::with(['user', 'category', 'tags'])->findOrFail($id);
         $announcement->update([
             'is_approved' => true,
             'status' => 'published',
             'approved_at' => now(),
         ]);
 
-        // Send email notification
+        // Send email notification to client
         try {
             Mail::to($announcement->user->email)->send(new AnnouncementApprovedMail($announcement));
         } catch (\Exception $e) {
             \Log::error('Failed to send announcement approval email: ' . $e->getMessage());
         }
 
-        return back()->with('success', 'Ogłoszenie zatwierdzone i opublikowane!');
+        // Send email notification to all approved freelancers
+        try {
+            $freelancers = User::where('role', 'freelancer')
+                ->where('is_approved', true)
+                ->where('email_verified_at', '!=', null)
+                ->get();
+
+            foreach ($freelancers as $freelancer) {
+                try {
+                    Mail::to($freelancer->email)->send(new NewAnnouncementForFreelancersMail($announcement));
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to send announcement email to freelancer ' . $freelancer->email . ': ' . $e->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send announcement notifications to freelancers: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Ogłoszenie zatwierdzone i opublikowane! Powiadomienia wysłane do freelancerów.');
     }
 
     public function rejectAnnouncement(Request $request, $id)

@@ -61,6 +61,17 @@ class CreateAnnouncement extends Component
     {
         $this->categories = Category::where('is_active', true)->orderBy('order')->get();
         $this->tags = Tag::forAnnouncements()->orderBy('name')->get();
+
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        // Check if there are any active categories
+        if ($this->categories->isEmpty()) {
+            session()->flash('error', 'Brak aktywnych kategorii. Skontaktuj się z administratorem.');
+            return redirect()->route('dashboard');
+        }
     }
 
     public function submit()
