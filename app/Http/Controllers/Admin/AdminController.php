@@ -119,7 +119,10 @@ class AdminController extends Controller
 
     public function announcements()
     {
-        $announcements = Announcement::with(['user', 'category'])->latest()->paginate(20);
+        $announcements = Announcement::with(['user', 'category'])
+            ->withCount('proposals')
+            ->latest()
+            ->paginate(20);
         return view('admin.announcements', compact('announcements'));
     }
 

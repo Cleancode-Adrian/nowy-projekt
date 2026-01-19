@@ -11,6 +11,7 @@
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Użytkownik</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategoria</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Budżet</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Oferty</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Zatw.</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Akcje</th>
@@ -30,6 +31,16 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">{{ $announcement->budget_range }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                    @if($announcement->proposals_count > 0)
+                        <a href="{{ route('announcements.proposals', $announcement) }}"
+                           class="text-blue-600 hover:text-blue-800 font-semibold">
+                            📨 {{ $announcement->proposals_count }}
+                        </a>
+                    @else
+                        <span class="text-gray-400">0</span>
+                    @endif
+                </td>
                 <td class="px-6 py-4">
                     @if($announcement->status === 'pending')
                         <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">Oczekujące</span>
@@ -70,7 +81,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                     Brak ogłoszeń
                 </td>
             </tr>
