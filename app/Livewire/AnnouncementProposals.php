@@ -14,7 +14,16 @@ class AnnouncementProposals extends Component
 
     public function mount(Announcement $announcement)
     {
-        if ($announcement->user_id !== auth()->id()) {
+        // Sprawdź czy użytkownik jest zalogowany
+        if (!auth()->check()) {
+            abort(403, 'Musisz być zalogowany, aby zobaczyć oferty');
+        }
+
+        // Właściciel ogłoszenia lub administrator może zobaczyć oferty
+        $isOwner = $announcement->user_id === auth()->id();
+        $isAdmin = auth()->user()->role === 'admin';
+
+        if (!$isOwner && !$isAdmin) {
             abort(403, 'Brak dostępu do tego ogłoszenia');
         }
 
@@ -37,8 +46,14 @@ class AnnouncementProposals extends Component
     {
         $proposal = Proposal::findOrFail($proposalId);
 
-        if ($proposal->announcement_id !== $this->announcement->id) {
-            $this->dispatch('notify', message: 'Błąd: nieprawidłowa propozycja', type: 'error');
+        // Sprawdź uprawnienia - tylko właściciel może akceptować
+        if ($proposal->announcement_id !== $this->announcement->id || $this->announcement->user_id !== auth()->id()) {
+            $this->dispatch('notify', message: 'Tylko właściciel ogłoszenia może akceptować oferty', type: 'error');
+            return;
+        }
+
+        if ($proposal->status !== 'pending') {
+            $this->dispatch('notify', message: 'Oferta już została rozpatrzona', type: 'error');
             return;
         }
 
@@ -76,8 +91,14 @@ class AnnouncementProposals extends Component
     {
         $proposal = Proposal::findOrFail($proposalId);
 
-        if ($proposal->announcement_id !== $this->announcement->id) {
-            $this->dispatch('notify', message: 'Błąd: nieprawidłowa propozycja', type: 'error');
+        // Sprawdź uprawnienia - tylko właściciel może odrzucać
+        if ($proposal->announcement_id !== $this->announcement->id || $this->announcement->user_id !== auth()->id()) {
+            $this->dispatch('notify', message: 'Tylko właściciel ogłoszenia może odrzucać oferty', type: 'error');
+            return;
+        }
+
+        if ($proposal->status !== 'pending') {
+            $this->dispatch('notify', message: 'Oferta już została rozpatrzona', type: 'error');
             return;
         }
 

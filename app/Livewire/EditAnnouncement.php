@@ -16,6 +16,8 @@ class EditAnnouncement extends Component
     public $budget_min;
     public $budget_max;
     public $budget_currency;
+    public $hourly_rate_min;
+    public $hourly_rate_max;
     public $deadline;
     public $location;
     public $is_urgent;
@@ -32,6 +34,8 @@ class EditAnnouncement extends Component
             'category_id' => 'required|exists:categories,id',
             'budget_min' => 'nullable|numeric|min:0',
             'budget_max' => 'nullable|numeric|min:0|gte:budget_min',
+            'hourly_rate_min' => 'nullable|numeric|min:0',
+            'hourly_rate_max' => 'nullable|numeric|min:0|gte:hourly_rate_min',
             'deadline' => 'nullable|date',
             'location' => 'nullable|string|max:255',
             'selectedTags' => 'array|max:10',
@@ -52,6 +56,8 @@ class EditAnnouncement extends Component
         $this->budget_min = $announcement->budget_min;
         $this->budget_max = $announcement->budget_max;
         $this->budget_currency = $announcement->budget_currency;
+        $this->hourly_rate_min = $announcement->hourly_rate_min;
+        $this->hourly_rate_max = $announcement->hourly_rate_max;
         $this->deadline = $announcement->deadline?->format('Y-m-d');
         $this->location = $announcement->location;
         $this->is_urgent = $announcement->is_urgent;
@@ -72,6 +78,8 @@ class EditAnnouncement extends Component
             'budget_min' => $this->budget_min ?: null,
             'budget_max' => $this->budget_max ?: null,
             'budget_currency' => $this->budget_currency,
+            'hourly_rate_min' => $this->hourly_rate_min ?: null,
+            'hourly_rate_max' => $this->hourly_rate_max ?: null,
             'deadline' => $this->deadline ?: null,
             'location' => $this->location ?: null,
             'is_urgent' => $this->is_urgent,

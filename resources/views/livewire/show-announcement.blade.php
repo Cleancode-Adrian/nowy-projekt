@@ -156,8 +156,47 @@
             @endif
 
             {{-- Proposals Section (dla właściciela i administratora) --}}
-            @if(auth()->check() && (auth()->id() === $announcement->user_id || auth()->user()->role === 'admin') && $announcement->proposals_count > 0)
-                <livewire:proposals-list :announcementId="$announcement->id" />
+            @if(auth()->check() && (auth()->id() === $announcement->user_id || auth()->user()->role === 'admin'))
+                @if($announcement->proposals_count > 0)
+                    <livewire:proposals-list :announcementId="$announcement->id" />
+                @else
+                    <div class="card bg-blue-50 border-blue-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">📨 Otrzymane oferty</h3>
+                                <p class="text-sm text-gray-600">
+                                    @if(auth()->id() === $announcement->user_id)
+                                        Na razie nie otrzymałeś żadnych ofert do tego ogłoszenia
+                                    @else
+                                        To ogłoszenie nie ma jeszcze żadnych ofert
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Link do pełnego widoku ofert --}}
+                @if($announcement->proposals_count > 0)
+                    <div class="card bg-gradient-to-r from-green-50 to-blue-50 border-green-200 mb-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">💼 Zarządzaj ofertami</h3>
+                                <p class="text-sm text-gray-600">
+                                    @if(auth()->id() === $announcement->user_id)
+                                        Zobacz wszystkie szczegóły i odpowiedz na oferty
+                                    @else
+                                        Zobacz wszystkie oferty do tego ogłoszenia
+                                    @endif
+                                </p>
+                            </div>
+                            <a href="{{ route('announcements.proposals', $announcement) }}"
+                               class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg">
+                                📨 Zobacz wszystkie oferty ({{ $announcement->proposals_count }})
+                            </a>
+                        </div>
+                    </div>
+                @endif
             @endif
 
             {{-- CTA dla freelancerów --}}

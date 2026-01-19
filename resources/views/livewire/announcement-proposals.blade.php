@@ -38,9 +38,14 @@
         {{-- Proposals List --}}
         <div class="card">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">
-                    📨 Otrzymane oferty
-                </h2>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        📨 Otrzymane oferty
+                    </h2>
+                    @if(auth()->user()->role === 'admin' && $announcement->user_id !== auth()->id())
+                        <p class="text-sm text-gray-500 mt-1">Widzisz oferty jako administrator</p>
+                    @endif
+                </div>
                 <span class="text-lg font-semibold text-blue-600">
                     {{ $proposals->count() }} {{ $proposals->count() === 1 ? 'oferta' : 'ofert' }}
                 </span>
@@ -125,18 +130,28 @@
                         {{-- Actions --}}
                         @if($proposal->status === 'pending')
                             <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
-                                <button
-                                    wire:click="accept({{ $proposal->id }})"
-                                    wire:confirm="Czy na pewno chcesz zaakceptować tę ofertę? Pozostałe oferty zostaną automatycznie odrzucone."
-                                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg">
-                                    ✅ Zaakceptuj ofertę
-                                </button>
-                                <button
-                                    wire:click="reject({{ $proposal->id }})"
-                                    wire:confirm="Czy na pewno chcesz odrzucić tę ofertę?"
-                                    class="text-red-600 hover:text-red-700 font-semibold px-4 py-2 hover:bg-red-50 rounded-lg transition-colors">
-                                    ❌ Odrzuć
-                                </button>
+                                @php
+                                    $isOwner = $announcement->user_id === auth()->id();
+                                    $isAdmin = auth()->user()->role === 'admin';
+                                @endphp
+                                @if($isOwner)
+                                    <button
+                                        wire:click="accept({{ $proposal->id }})"
+                                        wire:confirm="Czy na pewno chcesz zaakceptować tę ofertę? Pozostałe oferty zostaną automatycznie odrzucone."
+                                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg">
+                                        ✅ Zaakceptuj ofertę
+                                    </button>
+                                    <button
+                                        wire:click="reject({{ $proposal->id }})"
+                                        wire:confirm="Czy na pewno chcesz odrzucić tę ofertę?"
+                                        class="text-red-600 hover:text-red-700 font-semibold px-4 py-2 hover:bg-red-50 rounded-lg transition-colors">
+                                        ❌ Odrzuć
+                                    </button>
+                                @elseif($isAdmin)
+                                    <span class="text-sm text-gray-500 italic bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200">
+                                        👁️ Tylko właściciel ogłoszenia może akceptować/odrzucać oferty
+                                    </span>
+                                @endif
                             </div>
                         @endif
 

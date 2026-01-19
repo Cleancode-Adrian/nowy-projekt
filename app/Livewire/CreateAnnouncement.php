@@ -22,6 +22,8 @@ class CreateAnnouncement extends Component
     public $budget_min = '';
     public $budget_max = '';
     public $budget_currency = 'PLN';
+    public $hourly_rate_min = '';
+    public $hourly_rate_max = '';
     public $deadline = '';
     public $location = '';
     public $is_urgent = false;
@@ -39,6 +41,8 @@ class CreateAnnouncement extends Component
             'category_id' => 'required|exists:categories,id',
             'budget_min' => 'nullable|numeric|min:0',
             'budget_max' => 'nullable|numeric|min:0|gte:budget_min',
+            'hourly_rate_min' => 'nullable|numeric|min:0',
+            'hourly_rate_max' => 'nullable|numeric|min:0|gte:hourly_rate_min',
             'deadline' => 'nullable|date|after:today',
             'location' => 'nullable|string|max:255',
             'selectedTags' => 'array|max:10',
@@ -96,6 +100,8 @@ class CreateAnnouncement extends Component
             'budget_min' => $this->budget_min ?: null,
             'budget_max' => $this->budget_max ?: null,
             'budget_currency' => $this->budget_currency,
+            'hourly_rate_min' => $this->hourly_rate_min ?: null,
+            'hourly_rate_max' => $this->hourly_rate_max ?: null,
             'deadline' => $this->deadline ?: null,
             'location' => $this->location ?: null,
             'is_urgent' => $this->is_urgent,

@@ -36,6 +36,8 @@ class Announcement extends Model
         'budget_min',
         'budget_max',
         'budget_currency',
+        'hourly_rate_min',
+        'hourly_rate_max',
         'deadline',
         'location',
         'status',
@@ -52,6 +54,8 @@ class Announcement extends Model
         return [
             'budget_min' => 'decimal:2',
             'budget_max' => 'decimal:2',
+            'hourly_rate_min' => 'decimal:2',
+            'hourly_rate_max' => 'decimal:2',
             'is_approved' => 'boolean',
             'is_urgent' => 'boolean',
             'approved_at' => 'datetime',
