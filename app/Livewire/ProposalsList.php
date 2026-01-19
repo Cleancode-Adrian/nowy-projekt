@@ -11,8 +11,10 @@ class ProposalsList extends Component
     public $announcementId;
     public $proposals;
 
-    public function mount()
+    public function mount($announcementId)
     {
+        $this->announcementId = $announcementId;
+
         // Sprawdź uprawnienia - właściciel ogłoszenia lub administrator może zobaczyć oferty
         $announcement = Announcement::findOrFail($this->announcementId);
 
