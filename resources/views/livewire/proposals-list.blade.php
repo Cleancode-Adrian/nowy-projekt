@@ -44,14 +44,14 @@
                 </div>
 
                 {{-- Proposal Details --}}
-                <div class="grid grid-cols-2 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-                    <div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                    <div class="text-center sm:text-left">
                         <div class="text-sm text-gray-600">Cena</div>
-                        <div class="text-xl font-bold text-green-600">{{ number_format($proposal->price, 2) }} PLN</div>
+                        <div class="text-lg sm:text-xl font-bold text-green-600">{{ number_format($proposal->price, 2) }} PLN</div>
                     </div>
-                    <div>
+                    <div class="text-center sm:text-left">
                         <div class="text-sm text-gray-600">Termin</div>
-                        <div class="text-xl font-bold text-blue-600">{{ $proposal->delivery_days }} dni</div>
+                        <div class="text-lg sm:text-xl font-bold text-blue-600">{{ $proposal->delivery_days }} dni</div>
                     </div>
                 </div>
 

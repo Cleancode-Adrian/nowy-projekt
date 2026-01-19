@@ -98,7 +98,7 @@
             {{-- Description --}}
             <div class="card mb-6">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">Opis projektu</h2>
-                <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
                     {{ $announcement->description }}
                 </div>
             </div>

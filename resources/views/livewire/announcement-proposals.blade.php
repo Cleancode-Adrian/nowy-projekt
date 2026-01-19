@@ -110,14 +110,14 @@
                         </div>
 
                         {{-- Proposal Details --}}
-                        <div class="grid grid-cols-2 gap-4 mb-4 p-5 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200">
-                            <div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 p-4 sm:p-5 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200">
+                            <div class="text-center sm:text-left">
                                 <div class="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1">Cena</div>
-                                <div class="text-2xl font-bold text-green-600">{{ number_format($proposal->price, 2) }} PLN</div>
+                                <div class="text-xl sm:text-2xl font-bold text-green-600">{{ number_format($proposal->price, 2) }} PLN</div>
                             </div>
-                            <div>
+                            <div class="text-center sm:text-left">
                                 <div class="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1">Termin realizacji</div>
-                                <div class="text-2xl font-bold text-blue-600">{{ $proposal->delivery_days }} {{ $proposal->delivery_days === 1 ? 'dzień' : 'dni' }}</div>
+                                <div class="text-xl sm:text-2xl font-bold text-blue-600">{{ $proposal->delivery_days }} {{ $proposal->delivery_days === 1 ? 'dzień' : 'dni' }}</div>
                             </div>
                         </div>
 

@@ -74,10 +74,35 @@
                         <i class="fa-solid fa-bell text-base sm:text-lg md:text-xl"></i>
                         @php
                             $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count();
+
+                            // Dla klientów: liczba nowych ofert do ich ogłoszeń
+                            if (auth()->user()->isClient()) {
+                                $newProposals = \App\Models\Proposal::whereHas('announcement', function($q) {
+                                    $q->where('user_id', auth()->id());
+                                })->where('status', 'pending')->count();
+                                $totalBadge = $unreadNotifications + $newProposals;
+                            }
+                            // Dla freelancerów: liczba nowych ogłoszeń pasujących do zapisanych wyszukiwań
+                            elseif (auth()->user()->isFreelancer()) {
+                                $newMatchingAnnouncements = 0;
+                                $savedSearches = auth()->user()->savedSearches()->where('notify_on_match', true)->get();
+                                foreach ($savedSearches as $search) {
+                                    $matching = $search->findMatchingAnnouncements();
+                                    if ($search->last_notified_at) {
+                                        $matching = $matching->filter(function($announcement) use ($search) {
+                                            return $announcement->created_at > $search->last_notified_at;
+                                        });
+                                    }
+                                    $newMatchingAnnouncements += $matching->count();
+                                }
+                                $totalBadge = $unreadNotifications + $newMatchingAnnouncements;
+                            } else {
+                                $totalBadge = $unreadNotifications;
+                            }
                         @endphp
-                        @if($unreadNotifications > 0)
+                        @if($totalBadge > 0)
                             <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                                {{ $unreadNotifications > 9 ? '9+' : $unreadNotifications }}
+                                {{ $totalBadge > 9 ? '9+' : $totalBadge }}
                             </span>
                         @endif
                     </a>
