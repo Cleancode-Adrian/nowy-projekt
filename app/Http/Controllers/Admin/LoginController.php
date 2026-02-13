@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\RecaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,8 +17,16 @@ class LoginController extends Controller
         return view('admin.login');
     }
 
-    public function login(Request $request)
+    public function login(Request $request, RecaptchaService $recaptcha)
     {
+        $recaptchaToken = (string) $request->input('g-recaptcha-response', '');
+        $minScore = (float) config('services.recaptcha.min_score_admin_login', 0.8);
+        if (!$recaptcha->verify($recaptchaToken, $minScore, 'admin_login')) {
+            return back()->withErrors([
+                'email' => 'Weryfikacja bezpieczeństwa (reCAPTCHA) nie powiodła się. Odśwież stronę i spróbuj ponownie.',
+            ])->onlyInput('email');
+        }
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',

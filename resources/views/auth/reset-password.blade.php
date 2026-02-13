@@ -90,28 +90,32 @@
     @if(config('services.recaptcha.site_key'))
     <script>
         const siteKey = '{{ config("services.recaptcha.site_key") }}';
-        
-        if (typeof grecaptcha !== 'undefined') {
-            grecaptcha.ready(function() {
-                const form = document.getElementById('resetPasswordForm');
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        grecaptcha.execute(siteKey, {action: 'reset_password'}).then(function(token) {
+
+        const form = document.getElementById('resetPasswordForm');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                if (typeof grecaptcha === 'undefined') {
+                    e.preventDefault();
+                    alert('Nie udało się załadować reCAPTCHA. Wyłącz blokowanie skryptów (np. AdBlock) i spróbuj ponownie.');
+                    return;
+                }
+
+                e.preventDefault();
+                grecaptcha.ready(function () {
+                    grecaptcha.execute(siteKey, { action: 'reset_password' })
+                        .then(function (token) {
                             const tokenInput = document.getElementById('g-recaptcha-response');
                             if (tokenInput) {
                                 tokenInput.value = token;
                             }
                             form.submit();
-                        }).catch(function(error) {
+                        })
+                        .catch(function (error) {
                             console.error('reCAPTCHA error:', error);
-                            form.submit(); // Fallback - submit anyway
+                            alert('Weryfikacja reCAPTCHA nie powiodła się. Odśwież stronę i spróbuj ponownie.');
                         });
-                    });
-                }
+                });
             });
-        } else {
-            console.warn('reCAPTCHA not loaded');
         }
     </script>
     @endif

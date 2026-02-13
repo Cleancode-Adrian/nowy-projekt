@@ -38,6 +38,11 @@ return [
     'recaptcha' => [
         'site_key' => env('RECAPTCHA_SITE_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+        'min_score_login' => (float) env('RECAPTCHA_MIN_SCORE_LOGIN', 0.7),
+        'min_score_register' => (float) env('RECAPTCHA_MIN_SCORE_REGISTER', 0.6),
+        'min_score_admin_login' => (float) env('RECAPTCHA_MIN_SCORE_ADMIN_LOGIN', 0.8),
+        // Optional: lock verification to a single hostname (e.g. "projekciarz.pl")
+        'expected_hostname' => env('RECAPTCHA_EXPECTED_HOSTNAME'),
     ],
 
 ];

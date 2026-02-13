@@ -15,14 +15,13 @@ class PasswordResetController extends Controller
 {
     public function sendResetLink(Request $request, RecaptchaService $recaptcha)
     {
-        // Verify reCAPTCHA only if configured
-        if (config('services.recaptcha.secret_key')) {
-            $recaptchaToken = $request->input('g-recaptcha-response');
-            if (!$recaptcha->verify($recaptchaToken, 0.5)) {
-                return back()->withErrors([
-                    'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
-                ]);
-            }
+        // Verify reCAPTCHA (v3). In local/testing it is allowed to be unconfigured.
+        $recaptchaToken = (string) $request->input('g-recaptcha-response', '');
+        $minScore = (float) config('services.recaptcha.min_score_login', 0.7);
+        if (!$recaptcha->verify($recaptchaToken, $minScore, 'forgot_password')) {
+            return back()->withErrors([
+                'email' => 'Weryfikacja bezpieczeństwa (reCAPTCHA) nie powiodła się. Odśwież stronę i spróbuj ponownie.',
+            ]);
         }
 
         $request->validate(['email' => 'required|email']);
@@ -38,14 +37,13 @@ class PasswordResetController extends Controller
 
     public function reset(Request $request, RecaptchaService $recaptcha)
     {
-        // Verify reCAPTCHA only if configured
-        if (config('services.recaptcha.secret_key')) {
-            $recaptchaToken = $request->input('g-recaptcha-response');
-            if (!$recaptcha->verify($recaptchaToken, 0.5)) {
-                return back()->withErrors([
-                    'email' => 'Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.',
-                ]);
-            }
+        // Verify reCAPTCHA (v3). In local/testing it is allowed to be unconfigured.
+        $recaptchaToken = (string) $request->input('g-recaptcha-response', '');
+        $minScore = (float) config('services.recaptcha.min_score_login', 0.7);
+        if (!$recaptcha->verify($recaptchaToken, $minScore, 'reset_password')) {
+            return back()->withErrors([
+                'email' => 'Weryfikacja bezpieczeństwa (reCAPTCHA) nie powiodła się. Odśwież stronę i spróbuj ponownie.',
+            ]);
         }
 
         $request->validate([

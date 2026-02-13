@@ -7,6 +7,9 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    @if(config('services.recaptcha.site_key'))
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}" async defer></script>
+    @endif
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
@@ -27,8 +30,9 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.login.post') }}" class="space-y-6">
+            <form method="POST" action="{{ route('admin.login.post') }}" class="space-y-6" id="adminLoginForm">
                 @csrf
+                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -58,6 +62,38 @@
             </form>
         </div>
     </div>
+
+    @if(config('services.recaptcha.site_key'))
+        <script>
+            const siteKey = '{{ config("services.recaptcha.site_key") }}';
+            const form = document.getElementById('adminLoginForm');
+
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    if (typeof grecaptcha === 'undefined') {
+                        e.preventDefault();
+                        alert('Nie udało się załadować reCAPTCHA. Wyłącz blokowanie skryptów (np. AdBlock) i spróbuj ponownie.');
+                        return;
+                    }
+
+                    e.preventDefault();
+                    grecaptcha.ready(function () {
+                        grecaptcha.execute(siteKey, { action: 'admin_login' })
+                            .then(function (token) {
+                                const tokenInput = document.getElementById('g-recaptcha-response');
+                                if (tokenInput) {
+                                    tokenInput.value = token;
+                                }
+                                form.submit();
+                            })
+                            .catch(function () {
+                                alert('Weryfikacja reCAPTCHA nie powiodła się. Odśwież stronę i spróbuj ponownie.');
+                            });
+                    });
+                });
+            }
+        </script>
+    @endif
 </body>
 </html>
 

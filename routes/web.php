@@ -81,26 +81,26 @@ Route::middleware('guest')->group(function () {
         return view('auth.login');
     })->name('login');
 
-    Route::post('/login', [\App\Http\Controllers\Auth\AuthController::class, 'login']);
+    Route::post('/login', [\App\Http\Controllers\Auth\AuthController::class, 'login'])->middleware('throttle:login');
 
     Route::get('/register', function () {
         return view('auth.register');
     })->name('register');
 
-    Route::post('/register', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
+    Route::post('/register', [\App\Http\Controllers\Auth\AuthController::class, 'register'])->middleware('throttle:register');
 
     // Password Reset Routes
     Route::get('/forgot-password', function () {
         return view('auth.forgot-password');
     })->name('password.request');
 
-    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'sendResetLink'])->name('password.email');
+    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'sendResetLink'])->middleware('throttle:password-reset')->name('password.email');
 
     Route::get('/reset-password/{token}', function (string $token) {
         return view('auth.reset-password', ['token' => $token]);
     })->name('password.reset');
 
-    Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])->name('password.update');
+    Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])->middleware('throttle:password-reset')->name('password.update');
 });
 
 // Protected routes - announcements routes must be before public {id} route
@@ -126,7 +126,7 @@ Route::middleware('auth')->group(function () {
 
 // Admin Login
 Route::get('/admin/login', [LoginController::class, 'showLogin'])->name('admin.login');
-Route::post('/admin/login', [LoginController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/login', [LoginController::class, 'login'])->middleware('throttle:admin-login')->name('admin.login.post');
 Route::post('/admin/logout', [LoginController::class, 'logout'])->name('admin.logout');
 
 // Admin Panel Routes (require authentication)

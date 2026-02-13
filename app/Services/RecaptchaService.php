@@ -22,13 +22,25 @@ class RecaptchaService
      *
      * @param string $token
      * @param float $minScore Minimum score (0.0 to 1.0). Default 0.5
+     * @param string|null $expectedAction Expected action for v3 (e.g. "login")
      * @return bool
      */
-    public function verify(string $token, float $minScore = 0.5): bool
+    public function verify(string $token, float $minScore = 0.5, ?string $expectedAction = null): bool
     {
-        // If reCAPTCHA is not configured, skip verification
-        if (empty($this->secretKey) || empty($token)) {
-            return true; // Allow if not configured
+        // If reCAPTCHA is not configured, allow only in local/testing.
+        if (empty($this->secretKey)) {
+            if (app()->environment(['local', 'testing'])) {
+                return true;
+            }
+
+            Log::error('reCAPTCHA secret key is missing in a non-local environment');
+            return false;
+        }
+
+        // Token is required when secret key is configured.
+        if (empty($token)) {
+            Log::warning('reCAPTCHA token is missing');
+            return false;
         }
 
         try {
@@ -63,6 +75,25 @@ class RecaptchaService
                     ]);
                     return false;
                 }
+            }
+
+            // Verify expected action for v3 (if present in the response)
+            if ($expectedAction !== null && isset($data['action']) && $data['action'] !== $expectedAction) {
+                Log::warning('reCAPTCHA action mismatch', [
+                    'expected' => $expectedAction,
+                    'actual' => $data['action'],
+                ]);
+                return false;
+            }
+
+            // Optional: verify hostname to reduce token abuse across domains
+            $expectedHostname = config('services.recaptcha.expected_hostname');
+            if (!empty($expectedHostname) && isset($data['hostname']) && $data['hostname'] !== $expectedHostname) {
+                Log::warning('reCAPTCHA hostname mismatch', [
+                    'expected' => $expectedHostname,
+                    'actual' => $data['hostname'],
+                ]);
+                return false;
             }
 
             return true;
