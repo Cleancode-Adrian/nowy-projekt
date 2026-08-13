@@ -159,8 +159,115 @@
     </div>
 </section>
 
+{{-- Zakres usługi: co bierzemy na siebie, a co zostaje po stronie stron umowy --}}
+<section id="zakres-uslugi" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                Za co odpowiadamy, a co ustalasz sam
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Mówimy o tym wprost, żebyś nie odkrył tego dopiero w trakcie projektu.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div class="bg-green-50 border border-green-200 rounded-xl p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fa-solid fa-circle-check text-green-600 mr-2"></i>
+                    To bierzemy na siebie
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Dotarcie do wykonawców.</span>
+                            <span class="text-gray-700">Twoje zlecenie trafia do specjalistów z wybranej kategorii.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Weryfikację kont wykonawców.</span>
+                            <span class="text-gray-700">Każde konto wykonawcy zatwierdza administrator, zanim zacznie składać oferty.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Oferty w jednym miejscu.</span>
+                            <span class="text-gray-700">Wycena, termin i portfolio obok siebie - bez przekopywania skrzynki mailowej.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Moderację ogłoszeń i opinii.</span>
+                            <span class="text-gray-700">Zlecenia i oceny przechodzą sprawdzenie przed publikacją.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Historię współpracy.</span>
+                            <span class="text-gray-700">Po zakończonym projekcie wystawiasz ocenę, którą widzą kolejni zleceniodawcy.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fa-solid fa-handshake text-gray-600 mr-2"></i>
+                    To ustalasz bezpośrednio z wykonawcą
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-minus text-gray-400 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Płatność.</span>
+                            <span class="text-gray-700">Nie pośredniczymy w przelewach i nie prowadzimy rachunku powierniczego. Pieniądze idą bezpośrednio do wykonawcy.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-minus text-gray-400 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Fakturę lub rachunek.</span>
+                            <span class="text-gray-700">Dokument księgowy wystawia wykonawca, na zasadach swojej formy działalności.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-minus text-gray-400 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Umowę i zakres prac.</span>
+                            <span class="text-gray-700">Warto spisać zakres, etapy odbioru i prawa do kodu, zanim ruszy praca.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-minus text-gray-400 mt-1 mr-3"></i>
+                        <div>
+                            <span class="font-semibold text-gray-900">Harmonogram.</span>
+                            <span class="text-gray-700">Terminy etapów uzgadniacie między sobą - my ich nie egzekwujemy.</span>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="mt-6 pt-6 border-t border-gray-300">
+                    <p class="text-sm text-gray-600">
+                        <i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i>
+                        Dlatego przy każdej ofercie widzisz portfolio i oceny wykonawcy -
+                        to na ich podstawie decydujesz, komu powierzyć projekt.
+                        Zobacz też
+                        <a href="{{ route('blog.show', 'ile-kosztuje-strona-internetowa-2026') }}" class="text-blue-600 hover:underline">na co zwrócić uwagę w wycenie</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 {{-- Dla zlecających --}}
-<section id="dla-zlecajacych" class="py-20 bg-white">
+<section id="dla-zlecajacych" class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -230,7 +337,7 @@
 </section>
 
 {{-- For Freelancers --}}
-<section id="dla-freelancerow" class="py-20 bg-gray-50">
+<section id="dla-freelancerow" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>

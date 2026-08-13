@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             BlogPostSeeder::class,
             AutomationBlogPostsSeeder::class,
             BlogPostPricingSeeder::class,
+            BlogPostBriefSeeder::class,
         ]);
     }
 }

@@ -75,8 +75,15 @@ class AuthController extends Controller
                 'accept_terms.accepted' => 'Musisz zaakceptować regulamin',
             ]);
 
+            // Zleceniodawcy wchodzą od razu - jedyne, co mogą zrobić, to opublikować
+            // zlecenie, a te i tak przechodzą moderację przed pokazaniem publicznie.
+            // Wykonawcy składają oferty i kontaktują się z klientami, więc ich konta
+            // nadal zatwierdza administrator ręcznie.
+            $autoApprove = $validated['role'] === 'client'
+                && config('security.auto_approve_clients', true);
+
             // Use database transaction to ensure data integrity
-            $user = DB::transaction(function () use ($validated) {
+            $user = DB::transaction(function () use ($validated, $autoApprove) {
                 return User::create([
                     'name' => $validated['name'],
                     'email' => $validated['email'],
@@ -84,7 +91,7 @@ class AuthController extends Controller
                     'phone' => $validated['phone'] ?? null,
                     'company' => $validated['company'] ?? null,
                     'role' => $validated['role'],
-                    'is_approved' => false, // require admin approval
+                    'is_approved' => $autoApprove,
                 ]);
             });
 
@@ -126,6 +133,16 @@ class AuthController extends Controller
                 }
             } catch (\Exception $e) {
                 Log::warning('Failed to fetch admins for notification: ' . $e->getMessage());
+            }
+
+            if ($autoApprove) {
+                // Bez tego kroku osoba, która trafiła tu z reklamy, musiałaby
+                // logować się drugi raz zaraz po założeniu konta.
+                Auth::login($user);
+                $request->session()->regenerate();
+
+                return redirect()->intended(route('announcements.create'))
+                    ->with('success', 'Konto utworzone. Możesz od razu opisać swój projekt.');
             }
 
             return redirect()->route('login')->with('success', 'Konto utworzone! Sprawdź swoją skrzynkę email i czekaj na zatwierdzenie przez administratora.');

@@ -76,6 +76,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Automatyczna akceptacja zleceniodawców
+    |--------------------------------------------------------------------------
+    |
+    | Konta z rolą "client" są aktywne od razu po rejestracji. Bez tego każdy
+    | użytkownik z kampanii reklamowej utykał na komunikacie "konto oczekuje
+    | na zatwierdzenie" i nie mógł opublikować zlecenia.
+    |
+    | Konta "freelancer" zawsze wymagają ręcznej akceptacji - to oni składają
+    | oferty i piszą do klientów, więc moderacja ma tam sens.
+    |
+    | Ustaw false, jeśli chcesz wrócić do ręcznej weryfikacji wszystkich kont.
+    |
+    */
+
+    'auto_approve_clients' => env('AUTO_APPROVE_CLIENTS', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Upload plików
     |--------------------------------------------------------------------------
     |

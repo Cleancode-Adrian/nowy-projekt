@@ -155,6 +155,16 @@
                             </div>
                         @endif
 
+                        {{-- Ocena wykonawcy - widoczna dla zleceniodawcy po zaakceptowaniu oferty --}}
+                        @if($proposal->status === 'accepted' && $announcement->user_id === auth()->id())
+                            <div class="pt-4 border-t border-gray-200">
+                                <livewire:rate-user
+                                    :user="$proposal->freelancer"
+                                    :announcement="$announcement"
+                                    :key="'ocena-'.$proposal->id" />
+                            </div>
+                        @endif
+
                         <div class="text-xs text-gray-500 mt-4 pt-3 border-t border-gray-100">
                             Wysłana {{ $proposal->created_at->diffForHumans() }} ({{ $proposal->created_at->format('d.m.Y H:i') }})
                         </div>
