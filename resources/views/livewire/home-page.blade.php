@@ -277,7 +277,7 @@
                         <div class="text-blue-100">Aktywnych projektów czeka na Ciebie</div>
                     </div>
                     <div class="space-y-4">
-                        @if($stats['avg_budget'])
+                        @if(!empty($stats['avg_budget']))
                             <div class="bg-white/20 rounded-lg p-4">
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm">Średni budżet zlecenia</span>

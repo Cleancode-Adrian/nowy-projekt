@@ -13,19 +13,27 @@ class Announcement extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * Klucze cache'a strony głównej. Muszą być zgodne z App\Livewire\HomePage -
+     * rozjazd oznacza, że statystyki nie odświeżają się po dodaniu ogłoszenia.
+     */
+    public const HOME_CACHE_KEYS = [
+        'home.categories',
+        'home.featured',
+        'home.stats.v2',
+    ];
+
     protected static function booted()
     {
-        static::saved(function ($announcement) {
-            Cache::forget('home.categories');
-            Cache::forget('home.featured');
-            Cache::forget('home.stats');
-        });
+        static::saved(fn () => static::forgetHomeCache());
+        static::deleted(fn () => static::forgetHomeCache());
+    }
 
-        static::deleted(function ($announcement) {
-            Cache::forget('home.categories');
-            Cache::forget('home.featured');
-            Cache::forget('home.stats');
-        });
+    public static function forgetHomeCache(): void
+    {
+        foreach (self::HOME_CACHE_KEYS as $key) {
+            Cache::forget($key);
+        }
     }
 
     protected $fillable = [

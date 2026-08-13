@@ -40,7 +40,10 @@ class HomePage extends Component
                 ->get();
         });
 
-        $stats = Cache::remember('home.stats', 1800, function () {
+        // Klucz jest wersjonowany: dodanie nowego pola do tablicy statystyk
+        // przy starym kluczu wysypywało stronę główną, dopóki cache nie wygasł.
+        // Zmieniasz kształt tablicy - podbij wersję.
+        $stats = Cache::remember('home.stats.v2', 1800, function () {
             // Średni budżet liczony z realnych ogłoszeń. Przy małej próbce
             // nie pokazujemy go wcale - lepiej nic niż liczba wzięta z sufitu.
             $budgets = Announcement::published()
