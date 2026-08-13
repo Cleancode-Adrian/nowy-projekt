@@ -108,12 +108,12 @@ Scheduler wymaga wpisu w cronie — bez niego blog i maile cykliczne nie działa
 
 ---
 
-## Dokumentacja pomocnicza
+## Dokumentacja
 
-- [BEZPIECZENSTWO.md](BEZPIECZENSTWO.md) — wdrożenie, nginx, audyt (**zacznij tutaj**)
-- [DEPLOY_SERWER.md](DEPLOY_SERWER.md) — rozwiązywanie problemów z deployem
-- [SYNCHRONIZACJA_BAZY.md](SYNCHRONIZACJA_BAZY.md) — migracja danych między środowiskami
-- [DEBUG_500_ERROR.md](DEBUG_500_ERROR.md) — diagnostyka błędu 500
+Cała dokumentacja operacyjna jest w jednym miejscu:
+**[BEZPIECZENSTWO.md](BEZPIECZENSTWO.md)** — wdrożenie, konfiguracja nginx,
+audyt bezpieczeństwa, rozwiązywanie problemów (błąd 500, CSP, git, przenoszenie
+treści z produkcji na lokalne środowisko).
 
 ---
 

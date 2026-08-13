@@ -230,6 +230,85 @@ ale **nigdy** nie dodawaj `svg` ani niczego wykonywalnego.
 Sanitizer usunął tag spoza allowlisty. Lista dozwolonych tagów jest
 w `HtmlSanitizer::ALLOWED_TAGS`.
 
+### Błąd 500
+
+```bash
+cd /var/www/projekciarz.pl
+
+# 1. Co dokładnie się stało
+sudo tail -n 100 storage/logs/laravel.log
+sudo tail -n 50 /var/log/nginx/error.log
+sudo tail -n 50 /var/log/php8.2-fpm.log
+
+# 2. Najczęstsza przyczyna po deployu - nieaktualny cache
+sudo -u www-data php artisan optimize:clear
+sudo -u www-data composer dump-autoload
+sudo -u www-data php artisan config:cache
+sudo -u www-data php artisan route:cache
+sudo -u www-data php artisan view:cache
+sudo systemctl restart php8.2-fpm
+
+# 3. Błąd składni po ręcznej edycji na serwerze
+find app -name "*.php" -exec php -l {} \; | grep -v "No syntax errors"
+```
+
+> **Nigdy nie włączaj `APP_DEBUG=true` ani `APP_ENV=local` na produkcji.**
+> Debug wyświetla zawartość `.env` na stronie błędu, a `APP_ENV=local`
+> dodatkowo **wyłącza weryfikację reCAPTCHA** przy logowaniu i rejestracji
+> (`RecaptchaService` przepuszcza brak sekretu tylko w `local`/`testing`).
+> Przyczynę błędu znajdziesz w `storage/logs/laravel.log` — tam jest ten sam
+> stack trace, tylko bez pokazywania go całemu internetowi.
+
+### Git odmawia `pull`: „detected dubious ownership"
+
+```bash
+sudo chown -R www-data:www-data /var/www/projekciarz.pl
+sudo -u www-data git config --global --add safe.directory /var/www/projekciarz.pl
+```
+
+Nie ustawiaj `safe.directory '*'` — wyłącza tę ochronę dla wszystkich
+repozytoriów w systemie.
+
+### Przeniesienie treści z produkcji na lokalne środowisko
+
+Produkcja stoi na MySQL, lokalnie jest SQLite, więc zrzut `.sql` się nie przeniesie —
+najprościej przez JSON. Dotyczy stron CMS i wpisów blogowych.
+
+```bash
+# NA SERWERZE
+cd /var/www/projekciarz.pl
+sudo -u www-data php artisan tinker --execute="
+file_put_contents('/tmp/pages.json', \App\Models\Page::all()->toJson());
+file_put_contents('/tmp/posts.json', \App\Models\BlogPost::all()->toJson());
+echo \App\Models\Page::count() . ' stron, ' . \App\Models\BlogPost::count() . ' wpisów';
+"
+
+# LOKALNIE
+scp uzytkownik@projekciarz.pl:/tmp/pages.json .
+scp uzytkownik@projekciarz.pl:/tmp/posts.json .
+
+php artisan tinker --execute="
+foreach (json_decode(file_get_contents('pages.json'), true) as \$p) {
+    unset(\$p['id'], \$p['created_at'], \$p['updated_at']);
+    \App\Models\Page::updateOrCreate(['slug' => \$p['slug']], \$p);
+}
+foreach (json_decode(file_get_contents('posts.json'), true) as \$p) {
+    unset(\$p['id'], \$p['created_at'], \$p['updated_at']);
+    \App\Models\BlogPost::updateOrCreate(['slug' => \$p['slug']], \$p);
+}
+echo 'Zaimportowano';
+"
+```
+
+Pełna kopia bazy produkcyjnej (przed każdą ryzykowną zmianą):
+
+```bash
+mysqldump -u UZYTKOWNIK -p NAZWA_BAZY | gzip > backup_$(date +%Y%m%d_%H%M).sql.gz
+```
+
+> W projekcie **nie ma** komend `db:backup`, `db:export` ani `db:import` —
+> jedyne dostępne komendy zobaczysz przez `php artisan list`.
+
 ---
 
 ## 4. Do zrobienia w następnej kolejności
