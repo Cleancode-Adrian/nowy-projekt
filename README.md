@@ -1,172 +1,122 @@
-# Aplikacja Laravel - Backend
+# Projekciarz.pl
 
-Aplikacja Laravel z Livewire do zarządzania ogłoszeniami, propozycjami, wiadomościami i portfolio.
+Platforma ogłoszeń łącząca klientów z wykonawcami projektów. Publikowanie zleceń,
+zbieranie ofert, wiadomości, oceny i reputacja.
 
-## 📋 Wymagania
+Produkcja: **https://projekciarz.pl**
 
-- PHP >= 8.2
-- Composer
-- Node.js >= 18
-- MySQL/MariaDB
-- Git
+---
 
-## 🚀 Instalacja (Lokalna)
+## Stack
+
+- **Laravel 12** + **Livewire 3** (aplikacja full-stack, renderowanie po stronie serwera)
+- **MySQL 8** na produkcji, SQLite lokalnie
+- **Tailwind CSS 4** + **Alpine.js**, build przez **Vite 5**
+- **Laravel Sanctum** — tokeny dla `routes/api.php`
+- PHP 8.2+, nginx + php-fpm
+
+---
+
+## Uruchomienie lokalne
 
 ```bash
-# Sklonuj repozytorium
-git clone <URL_TWOJEGO_REPO>
-cd backend
-
-# Zainstaluj zależności PHP
 composer install
-
-# Zainstaluj zależności Node.js
 npm install
-
-# Skopiuj plik konfiguracyjny
-cp .env.example .env
-
-# Wygeneruj klucz aplikacji
-php artisan key:generate
-
-# Skonfiguruj bazę danych w pliku .env, następnie:
-php artisan migrate --seed
-
-# Zbuduj assety
 npm run build
 
-# Utwórz linki symboliczne dla storage
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
 php artisan storage:link
 
-# Uruchom serwer deweloperski
 php artisan serve
 ```
 
-## 🔧 Konfiguracja
+Aplikacja: http://127.0.0.1:8000
 
-1. Edytuj plik `.env` i ustaw:
-   - `APP_NAME` - nazwa Twojej aplikacji
-   - `APP_URL` - URL produkcyjny
-   - `DB_*` - dane dostępowe do bazy danych
-   - `MAIL_*` - konfiguracja poczty
+Konto administratora tworzy seeder na podstawie `ADMIN_EMAIL` / `ADMIN_PASSWORD`
+z pliku `.env`. Jeśli `ADMIN_PASSWORD` jest puste, seeder wygeneruje losowe hasło
+i wypisze je **jeden raz** w konsoli.
 
-2. Wygeneruj klucz aplikacji:
-```bash
-php artisan key:generate
-```
+Konta demonstracyjne (`client@example.com`, `freelancer@example.com`, `jan@example.com`,
+hasło `password`) powstają wyłącznie poza środowiskiem produkcyjnym.
 
-## 📦 Wdrożenie na VPS
-
-### Wymagania na serwerze:
-- Ubuntu 22.04 / Debian 12 (lub nowszy)
-- Nginx / Apache
-- PHP 8.2+ z rozszerzeniami: mbstring, xml, bcmath, pdo, mysql, zip, gd
-- MySQL/MariaDB
-- Composer
-- Node.js
-
-### Kroki wdrożenia:
+### Praca na żywo
 
 ```bash
-# 1. Sklonuj repozytorium na serwer
-cd /var/www
-git clone <URL_TWOJEGO_REPO> nazwa-projektu
-cd nazwa-projektu
-
-# 2. Zainstaluj zależności
-composer install --no-dev --optimize-autoloader
-npm install
-npm run build
-
-# 3. Skonfiguruj uprawnienia
-sudo chown -R www-data:www-data /var/www/nazwa-projektu
-sudo chmod -R 755 /var/www/nazwa-projektu
-sudo chmod -R 775 /var/www/nazwa-projektu/storage
-sudo chmod -R 775 /var/www/nazwa-projektu/bootstrap/cache
-
-# 4. Skonfiguruj .env
-cp .env.example .env
-nano .env  # Edytuj konfigurację
-
-# 5. Wygeneruj klucz i uruchom migracje
-php artisan key:generate
-php artisan migrate --force
-php artisan db:seed --force
-php artisan storage:link
-
-# 6. Optymalizacja dla produkcji
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+composer dev     # serwer + kolejka + logi + vite jednocześnie
 ```
 
-### Konfiguracja Nginx
+---
 
-Utwórz plik `/etc/nginx/sites-available/nazwa-projektu`:
-
-```nginx
-server {
-    listen 80;
-    server_name twoja-domena.pl;
-    root /var/www/nazwa-projektu/public;
-
-    add_header X-Frame-Options "SAMEORIGIN";
-    add_header X-Content-Type-Options "nosniff";
-
-    index index.php;
-
-    charset utf-8;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
-
-    error_page 404 /index.php;
-
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    location ~ /\.(?!well-known).* {
-        deny all;
-    }
-}
-```
-
-Aktywuj konfigurację:
-```bash
-sudo ln -s /etc/nginx/sites-available/nazwa-projektu /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-### SSL (Certbot)
+## Testy
 
 ```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d twoja-domena.pl
+php artisan test
 ```
 
-## 🔄 Aktualizacja na serwerze
+Testy bezpieczeństwa pilnują regresji, które kiedyś realnie wystąpiły:
+
+- `tests/Feature/AdminAccessTest.php` — panel admina niedostępny dla zwykłych kont
+- `tests/Feature/ApiPrivacyTest.php` — publiczne API nie zwraca e-maili ani telefonów
+- `tests/Feature/MediaUploadTest.php` — biblioteka mediów odrzuca pliki wykonywalne
+- `tests/Unit/HtmlSanitizerTest.php` — sanityzacja treści bloga i stron CMS
+
+---
+
+## Funkcje
+
+**Klient:** dodawanie i edycja ogłoszeń, przeglądanie ofert, akceptowanie
+i odrzucanie propozycji, wiadomości, wystawianie ocen.
+
+**Wykonawca:** przeglądanie i filtrowanie ogłoszeń, wysyłanie ofert, panel „Moje oferty”,
+portfolio, wiadomości.
+
+**Wspólne:** zapisane ogłoszenia, profil publiczny z portfolio i statystykami,
+oceny i opinie, wyszukiwarka zaawansowana, powiadomienia in-app i mailowe,
+zgłaszanie treści, FAQ, odznaki, załączniki do ogłoszeń, ranking wykonawców,
+weryfikacja adresu e-mail.
+
+**Panel administratora:** moderacja użytkowników, ogłoszeń i opinii, blog
+z generatorem AI, edytor stron, biblioteka mediów.
+
+**Blog:** wpisy generowane automatycznie (Gemini / OpenAI + Unsplash),
+publikowane przez Laravel Scheduler.
+
+---
+
+## Wdrożenie
+
+Procedura wdrożenia, konfiguracja nginx i checklista bezpieczeństwa:
+**[BEZPIECZENSTWO.md](BEZPIECZENSTWO.md)**
+
+W skrócie — repozytorium jest sklonowane bezpośrednio do `/var/www/projekciarz.pl`:
 
 ```bash
-cd /var/www/nazwa-projektu
-git pull origin main
-composer install --no-dev --optimize-autoloader
-npm install && npm run build
-php artisan migrate --force
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-sudo systemctl restart php8.2-fpm
+cd /var/www/projekciarz.pl
+sudo ./deploy.sh
 ```
 
-## 📝 Licencja
+Webroot nginx musi wskazywać na `/var/www/projekciarz.pl/public`, nigdy na korzeń
+repozytorium — inaczej `.env` i `.git` są publicznie dostępne.
 
-[Dodaj swoją licencję]
+Scheduler wymaga wpisu w cronie — bez niego blog i maile cykliczne nie działają:
 
+```cron
+* * * * * cd /var/www/projekciarz.pl && php artisan schedule:run >> /dev/null 2>&1
+```
+
+---
+
+## Dokumentacja pomocnicza
+
+- [BEZPIECZENSTWO.md](BEZPIECZENSTWO.md) — wdrożenie, nginx, audyt (**zacznij tutaj**)
+- [DEPLOY_SERWER.md](DEPLOY_SERWER.md) — rozwiązywanie problemów z deployem
+- [SYNCHRONIZACJA_BAZY.md](SYNCHRONIZACJA_BAZY.md) — migracja danych między środowiskami
+- [DEBUG_500_ERROR.md](DEBUG_500_ERROR.md) — diagnostyka błędu 500
+
+---
+
+## Licencja
+
+MIT

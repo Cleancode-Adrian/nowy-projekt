@@ -88,10 +88,13 @@
                 </label>
                 <input type="password"
                        name="openai_api_key"
-                       value="{{ $openaiKey }}"
-                       placeholder="sk-..."
+                       autocomplete="off"
+                       placeholder="{{ $openaiKey ?: 'sk-...' }}"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 <p class="text-xs text-gray-500 mt-1">
+                    @if($openaiKey)
+                        Klucz jest zapisany ({{ $openaiKey }}). Wpisz nowy tylko jeśli chcesz go podmienić.
+                    @endif
                     <a href="https://platform.openai.com/api-keys" target="_blank" class="text-blue-600 hover:underline">
                         Pobierz klucz z OpenAI →
                     </a>
@@ -104,8 +107,8 @@
                 </label>
                 <input type="password"
                        name="unsplash_access_key"
-                       value="{{ $unsplashKey }}"
-                       placeholder="..."
+                       autocomplete="off"
+                       placeholder="{{ $unsplashKey ?: '...' }}"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 <p class="text-xs text-gray-500 mt-1">
                     <a href="https://unsplash.com/developers" target="_blank" class="text-blue-600 hover:underline">

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
+use App\Rules\SafeUpload;
 
 class ProfileEdit extends Component
 {
@@ -94,7 +95,7 @@ class ProfileEdit extends Component
     public function updateAvatar()
     {
         $this->validate([
-            'avatar' => 'required|image|max:2048', // 2MB max
+            'avatar' => ['required', 'image', 'max:2048', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])], // 2MB max
         ]);
 
         $user = Auth::user();

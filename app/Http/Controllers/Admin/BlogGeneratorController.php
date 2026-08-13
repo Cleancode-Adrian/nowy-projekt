@@ -18,8 +18,9 @@ class BlogGeneratorController extends Controller
 {
     public function index()
     {
-        $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
-        $unsplashKey = Setting::where('key', 'unsplash_access_key')->value('value');
+        // Do widoku trafia wyłącznie maska - pełny klucz nigdy nie ląduje w HTML-u.
+        $openaiKey = Setting::maskedValue('openai_api_key');
+        $unsplashKey = Setting::maskedValue('unsplash_access_key');
 
         $categories = Category::orderBy('name')->get();
         $tags = Tag::forBlogs()->orderBy('name')->get();
@@ -127,15 +128,16 @@ class BlogGeneratorController extends Controller
             'unsplash_access_key' => 'nullable|string|max:255',
         ]);
 
-        Setting::updateOrCreate(
-            ['key' => 'openai_api_key'],
-            ['value' => $request->openai_api_key]
-        );
+        // Puste pole albo niezmieniona maska = zostaw dotychczasowy klucz.
+        foreach (['openai_api_key', 'unsplash_access_key'] as $key) {
+            $submitted = trim((string) $request->input($key));
 
-        Setting::updateOrCreate(
-            ['key' => 'unsplash_access_key'],
-            ['value' => $request->unsplash_access_key]
-        );
+            if ($submitted === '' || str_contains($submitted, '•')) {
+                continue;
+            }
+
+            Setting::setValue($key, $submitted);
+        }
 
         return back()->with('success', 'Klucze API zostały zapisane!');
     }
@@ -156,7 +158,7 @@ class BlogGeneratorController extends Controller
                 'topics.min' => 'Tematy muszą mieć minimum 3 znaki',
             ]);
 
-            $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
+            $openaiKey = Setting::getValue('openai_api_key');
 
             if (!$openaiKey) {
                 Log::warning('Próba generowania bez klucza OpenAI API');
@@ -481,7 +483,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
         $keywords = $this->extractKeywords($topic);
         $keyword = urlencode($keywords[0] ?? 'freelancer');
 
-        $unsplashKey = Setting::where('key', 'unsplash_access_key')->value('value');
+        $unsplashKey = Setting::getValue('unsplash_access_key');
 
         if ($unsplashKey) {
             try {
@@ -505,7 +507,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
 
     private function generateImageWithDalle3($topic)
     {
-        $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
+        $openaiKey = Setting::getValue('openai_api_key');
 
         if (!$openaiKey) {
             return null;

@@ -1,3 +1,7 @@
+> **Uwaga:** aktualna procedura wdrożenia i checklista bezpieczeństwa
+> znajdują się w [BEZPIECZENSTWO.md](BEZPIECZENSTWO.md).
+> Ten plik zostawiamy jako materiał pomocniczy do rozwiązywania problemów.
+
 # 🚀 Instrukcja wdrożenia zmian na serwer
 
 ## ⚠️ WAŻNE: Problem z uprawnieniami Git
@@ -32,7 +36,7 @@ sudo -u www-data git pull origin main
 ```bash
 # Jako root:
 git config --global --add safe.directory /var/www/projekciarz.pl
-git config --global --add safe.directory '*'
+# NIE ustawiaj safe.directory '*' - wyłącza ochronę dla WSZYSTKICH repozytoriów w systemie.
 
 # LUB dla konkretnego użytkownika:
 sudo -u www-data git config --global --add safe.directory /var/www/projekciarz.pl
@@ -135,9 +139,13 @@ sudo systemctl restart php-fpm
 ### Krok 9: Napraw uprawnienia (jeśli potrzebne)
 ```bash
 sudo chown -R www-data:www-data /var/www/projekciarz.pl
-sudo chmod -R 755 /var/www/projekciarz.pl
+# NIE używaj `chmod -R 755` na całym projekcie - nadaje bit wykonywalny plikom
+# i otwiera .env na odczyt dla każdego użytkownika systemu.
+sudo find /var/www/projekciarz.pl -type d -not -path "*/node_modules/*" -exec chmod 755 {} \;
+sudo find /var/www/projekciarz.pl -type f -not -path "*/node_modules/*" -exec chmod 644 {} \;
 sudo chmod -R 775 /var/www/projekciarz.pl/storage
 sudo chmod -R 775 /var/www/projekciarz.pl/bootstrap/cache
+sudo chmod 600 /var/www/projekciarz.pl/.env
 ```
 
 ---
@@ -256,7 +264,7 @@ sudo -u www-data git pull origin main
 
 # Opcja 3: Dodaj do safe.directory (dla root)
 git config --global --add safe.directory /var/www/projekciarz.pl
-git config --global --add safe.directory '*'
+# NIE ustawiaj safe.directory '*' - wyłącza ochronę dla WSZYSTKICH repozytoriów w systemie.
 ```
 
 ### Problem: "Your local changes would be overwritten by merge"
@@ -307,7 +315,13 @@ sudo -u www-data npm install  # To wygeneruje nowy package-lock.json
 **Rozwiązanie:**
 ```bash
 sudo chown -R www-data:www-data /var/www/projekciarz.pl
-sudo chmod -R 755 /var/www/projekciarz.pl
+# NIE używaj `chmod -R 755` na całym projekcie - nadaje bit wykonywalny plikom
+# i otwiera .env na odczyt dla każdego użytkownika systemu.
+sudo find /var/www/projekciarz.pl -type d -not -path "*/node_modules/*" -exec chmod 755 {} \;
+sudo find /var/www/projekciarz.pl -type f -not -path "*/node_modules/*" -exec chmod 644 {} \;
+sudo chmod -R 775 /var/www/projekciarz.pl/storage
+sudo chmod -R 775 /var/www/projekciarz.pl/bootstrap/cache
+sudo chmod 600 /var/www/projekciarz.pl/.env
 ```
 
 ### Problem: "Composer not found"

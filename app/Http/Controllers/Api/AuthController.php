@@ -19,6 +19,8 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
             'company' => 'nullable|string|max:255',
+            // Rola 'admin' nigdy nie może przyjść z requestu.
+            'role' => 'nullable|in:client,freelancer',
         ]);
 
         $user = User::create([
@@ -27,13 +29,13 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
             'company' => $validated['company'] ?? null,
-            'role' => 'user',
+            'role' => $validated['role'] ?? 'client',
             'is_approved' => false,
         ]);
 
         return response()->json([
             'message' => 'Rejestracja przebiegła pomyślnie. Twoje konto oczekuje na zatwierdzenie przez administratora.',
-            'user' => $user,
+            'user' => $user->withPrivateFields(),
         ], 201);
     }
 
@@ -62,7 +64,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Zalogowano pomyślnie',
-            'user' => $user,
+            'user' => $user->withPrivateFields(),
             'token' => $token,
         ]);
     }
@@ -75,7 +77,7 @@ class AuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
-        return response()->json(['user' => $request->user()]);
+        return response()->json(['user' => $request->user()->withPrivateFields()]);
     }
 }
 

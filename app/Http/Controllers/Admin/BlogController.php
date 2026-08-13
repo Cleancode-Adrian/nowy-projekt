@@ -9,6 +9,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use App\Rules\SafeUpload;
 
 class BlogController extends Controller
 {
@@ -34,7 +35,7 @@ class BlogController extends Controller
             'meta_title' => 'nullable|max:60',
             'meta_description' => 'nullable|max:160',
             'meta_keywords' => 'nullable|string',
-            'featured_image' => 'nullable|image|max:2048',
+            'featured_image' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])],
             'featured_image_existing' => 'nullable|string|max:255',
             'featured_image_alt' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
@@ -155,7 +156,7 @@ class BlogController extends Controller
             'meta_title' => 'nullable|max:60',
             'meta_description' => 'nullable|max:160',
             'meta_keywords' => 'nullable|string',
-            'featured_image' => 'nullable|image|max:2048',
+            'featured_image' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])],
             'featured_image_existing' => 'nullable|string|max:255',
             'featured_image_alt' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:categories,id',

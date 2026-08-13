@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="prose prose-lg max-w-none">
-                    {!! $post->content !!}
+                    {!! $post->safe_content !!}
                 </div>
             </div>
         </article>

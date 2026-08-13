@@ -1,11 +1,29 @@
+# Normalizacja końców linii - bez tego całe repo potrafi się pokazać
+# jako "zmodyfikowane" po przełączeniu między Windows a Linuksem.
 * text=auto eol=lf
 
 *.blade.php diff=html
-*.css diff=css
-*.html diff=html
-*.md diff=markdown
-*.php diff=php
+*.css       diff=css
+*.html      diff=html
+*.md        diff=markdown
+*.php       diff=php
 
-/.github export-ignore
-CHANGELOG.md export-ignore
-.styleci.yml export-ignore
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.avif binary
+*.ico  binary
+*.pdf  binary
+*.zip  binary
+*.woff binary
+*.woff2 binary
+
+/.github        export-ignore
+/tests          export-ignore
+/deploy         export-ignore
+CHANGELOG.md    export-ignore
+.styleci.yml    export-ignore
+.gitattributes  export-ignore
+.gitignore      export-ignore

@@ -1,46 +1,79 @@
 #!/bin/bash
+#
+# Wdrożenie aplikacji na serwer produkcyjny.
+# Repozytorium jest sklonowane bezpośrednio do PROJECT_DIR - artisan, public/
+# i storage/ leżą w jego korzeniu.
+#
+# Użycie: sudo ./deploy.sh
+#
+set -euo pipefail
 
-# Skrypt do aktualizacji aplikacji na serwerze produkcyjnym
-# Użycie: ./deploy.sh
+PROJECT_DIR="${PROJECT_DIR:-/var/www/projekciarz.pl}"
+WEB_USER="${WEB_USER:-www-data}"
+PHP_FPM_SERVICE="${PHP_FPM_SERVICE:-php8.2-fpm}"
 
-set -e  # Zatrzymaj przy błędzie
+run_as_web() {
+    sudo -u "$WEB_USER" "$@"
+}
 
-echo "🚀 Rozpoczynam aktualizację aplikacji..."
+if [ ! -f "$PROJECT_DIR/artisan" ]; then
+    echo "BŁĄD: nie znaleziono $PROJECT_DIR/artisan - sprawdź PROJECT_DIR." >&2
+    exit 1
+fi
 
-# Przejdź do katalogu projektu (zmień ścieżkę na swoją)
-PROJECT_DIR="/var/www/projekciarz.pl"
-cd "$PROJECT_DIR" || exit 1
+cd "$PROJECT_DIR"
+echo "Wdrożenie: $PROJECT_DIR (użytkownik: $WEB_USER)"
 
-echo "📥 Pobieram najnowsze zmiany z Git..."
-sudo -u www-data git pull origin main
+echo "[1/9] Tryb konserwacji..."
+run_as_web php artisan down --retry=60 || true
+# Zdejmij tryb konserwacji nawet jeśli dalsza część skryptu padnie.
+trap 'cd "$PROJECT_DIR" && run_as_web php artisan up || true' EXIT
 
-echo "🔧 Naprawiam uprawnienia..."
-sudo chown -R www-data:www-data "$PROJECT_DIR"
-sudo chmod -R 755 "$PROJECT_DIR"
-sudo chmod -R 775 "$PROJECT_DIR/storage"
-sudo chmod -R 775 "$PROJECT_DIR/bootstrap/cache"
+echo "[2/9] Pobieranie zmian z Git..."
+run_as_web git pull origin main
 
-echo "📦 Aktualizuję zależności PHP..."
-sudo -u www-data composer install --no-dev --optimize-autoloader
+echo "[3/9] Zależności PHP..."
+run_as_web composer install --no-dev --optimize-autoloader --no-interaction
 
-echo "📦 Aktualizuję zależności Node.js..."
-sudo -u www-data npm install
+echo "[4/9] Build frontendu..."
+run_as_web npm ci
+run_as_web npm run build
 
-echo "🏗️ Buduję assety produkcyjne..."
-sudo -u www-data npm run build
+echo "[5/9] Migracje..."
+run_as_web php artisan migrate --force
 
-echo "🗄️ Uruchamiam migracje bazy danych..."
-sudo -u www-data php artisan migrate --force
+echo "[6/9] Link do storage..."
+run_as_web php artisan storage:link || true
 
-echo "🔗 Sprawdzam link do storage..."
-sudo -u www-data php artisan storage:link || true
+echo "[7/9] Uprawnienia..."
+# Katalogi 755, pliki 644 - NIE chmod -R 755 na wszystkim, bo to nadaje
+# bit wykonywalny plikom i otwiera .env na odczyt dla całego systemu.
+chown -R "$WEB_USER:$WEB_USER" "$PROJECT_DIR"
+find "$PROJECT_DIR" -type d -not -path "*/node_modules/*" -exec chmod 755 {} \;
+find "$PROJECT_DIR" -type f -not -path "*/node_modules/*" -exec chmod 644 {} \;
+chmod -R 775 "$PROJECT_DIR/storage" "$PROJECT_DIR/bootstrap/cache"
+chmod 750 "$PROJECT_DIR/deploy.sh"
 
-echo "⚡ Zoptymalizuję cache..."
-sudo -u www-data php artisan config:cache
-sudo -u www-data php artisan route:cache
-sudo -u www-data php artisan view:cache
+# Sekrety wyłącznie dla właściciela.
+for secret in "$PROJECT_DIR/.env" "$PROJECT_DIR/.env.production"; do
+    [ -f "$secret" ] && chmod 600 "$secret"
+done
 
-echo "🔄 Restartuję PHP-FPM..."
-sudo systemctl restart php8.2-fpm || sudo systemctl restart php-fpm
+echo "[8/9] Cache konfiguracji..."
+run_as_web php artisan optimize:clear
+run_as_web php artisan config:cache
+run_as_web php artisan route:cache
+run_as_web php artisan view:cache
+run_as_web php artisan event:cache
 
-echo "✅ Aktualizacja zakończona pomyślnie!"
+echo "[9/9] Restart usług..."
+systemctl restart "$PHP_FPM_SERVICE" || systemctl restart php-fpm
+# Worker kolejki musi wystartować na nowym kodzie.
+run_as_web php artisan queue:restart || true
+
+echo
+echo "Audyt bezpieczeństwa:"
+run_as_web php artisan security:audit || true
+
+echo
+echo "Gotowe."

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\HtmlSanitizer;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,6 +38,27 @@ class Page extends Model
         'order' => 'integer',
         'menu_order' => 'integer',
     ];
+
+    /**
+     * Treść strony renderujemy przez {!! !!} - sanityzacja przy zapisie.
+     */
+    protected function content(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => app(HtmlSanitizer::class)->clean($value),
+        );
+    }
+
+    /**
+     * Do użycia w widokach zamiast {!! $page->content !!} - czyści również
+     * strony zapisane zanim sanityzacja została wprowadzona.
+     */
+    protected function safeContent(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => app(HtmlSanitizer::class)->clean($this->content),
+        )->shouldCache();
+    }
 
     protected static function boot()
     {

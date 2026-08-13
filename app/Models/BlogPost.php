@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\HtmlSanitizer;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +35,28 @@ class BlogPost extends Model
         'published_at' => 'datetime',
         'meta_keywords' => 'array',
     ];
+
+    /**
+     * Treść wpisu renderujemy przez {!! !!}, więc sanityzujemy ją przy zapisie -
+     * niezależnie od tego, czy przyszła z panelu admina, czy z generatora AI.
+     */
+    protected function content(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => app(HtmlSanitizer::class)->clean($value),
+        );
+    }
+
+    /**
+     * Do użycia w widokach zamiast {!! $post->content !!} - czyści również
+     * wpisy zapisane zanim sanityzacja została wprowadzona.
+     */
+    protected function safeContent(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => app(HtmlSanitizer::class)->clean($this->content),
+        )->shouldCache();
+    }
 
     protected static function boot()
     {

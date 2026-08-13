@@ -1,28 +1,43 @@
-*.log
-.DS_Store
+# === Sekrety ===
 .env
-.env.backup
-.env.production
-.env.temp
-*.sqlite
-*.db
-ogloszenia_db
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
+.env.*
+!.env.example
 /auth.json
+/storage/*.key
+*.pem
+
+# === Bazy danych i zrzuty ===
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.dump
+ogloszenia_db
+
+# === Zależności i build ===
 /node_modules
+/vendor
 /public/build
 /public/hot
 /public/storage
-/storage/*.key
+
+# === Cache / logi ===
+*.log
 /storage/pail
-/vendor
+/.phpunit.cache
+.phpunit.result.cache
+/bootstrap/cache/*.php
+
+# === Narzędzia ===
+.phpactor.json
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
 Homestead.json
 Homestead.yaml
+
+# === OS ===
+.DS_Store
 Thumbs.db

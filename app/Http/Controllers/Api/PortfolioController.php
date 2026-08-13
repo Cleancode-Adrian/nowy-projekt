@@ -7,6 +7,7 @@ use App\Models\PortfolioItem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Rules\SafeUpload;
 
 class PortfolioController extends Controller
 {
@@ -42,8 +43,8 @@ class PortfolioController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|max:5120', // 5MB
-            'images.*' => 'nullable|image|max:5120',
+            'image' => ['nullable', 'image', 'max:5120', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])], // 5MB
+            'images.*' => ['nullable', 'image', 'max:5120', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])],
             'url' => 'nullable|url',
             'technologies' => 'nullable|array',
             'completed_at' => 'nullable|date',
@@ -89,7 +90,7 @@ class PortfolioController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|max:5120',
+            'image' => ['nullable', 'image', 'max:5120', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])],
             'url' => 'nullable|url',
             'technologies' => 'nullable|array',
             'completed_at' => 'nullable|date',

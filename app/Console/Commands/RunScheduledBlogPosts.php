@@ -62,7 +62,7 @@ class RunScheduledBlogPosts extends Command
 
         $this->info("📝 Generuję " . count($selectedTopics) . " wpisów...");
 
-        $openaiKey = Setting::where('key', 'openai_api_key')->value('value');
+        $openaiKey = Setting::getValue('openai_api_key');
 
         if (!$openaiKey) {
             $this->error('❌ Brak klucza OpenAI API');

@@ -1,2 +1,20 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Panel i strefa zalogowanego użytkownika - nic tu po robotach.
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /wiadomosci
+Disallow: /powiadomienia
+Disallow: /moje-oferty
+Disallow: /zapisane
+Disallow: /profil
+Disallow: /statystyki
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /email/verify
+Disallow: /storage/
+
+Sitemap: https://projekciarz.pl/sitemap.xml

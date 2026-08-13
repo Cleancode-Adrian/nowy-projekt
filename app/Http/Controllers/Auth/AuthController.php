@@ -88,6 +88,18 @@ class AuthController extends Controller
                 ]);
             });
 
+            // Link weryfikacyjny - wysyłamy tylko, gdy weryfikacja jest egzekwowana,
+            // żeby nie zasypywać użytkowników mailem, który do niczego nie służy.
+            if (config('security.require_email_verification')) {
+                try {
+                    $user->sendEmailVerificationNotification();
+                } catch (\Exception $e) {
+                    Log::warning('Failed to send email verification link: ' . $e->getMessage(), [
+                        'user_id' => $user->id,
+                    ]);
+                }
+            }
+
             // Email do użytkownika - potwierdzenie rejestracji
             try {
                 Mail::to($user->email)->send(new UserRegisteredMail($user));

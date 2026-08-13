@@ -38,10 +38,32 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_views',
     ];
 
+    /**
+     * Pola ukrywane przy serializacji do JSON.
+     *
+     * UWAGA: publiczne endpointy API zwracają relację `user` przy ogłoszeniach,
+     * portfolio i opiniach. Wszystko, co jest daną osobową, musi być tutaj -
+     * w miejscach, gdzie użytkownik ogląda własne dane, odsłaniamy je jawnie
+     * przez makeVisible().
+     */
     protected $hidden = [
         'password',
         'remember_token',
+        'email',
+        'phone',
+        'verification_document',
+        'is_approved',
+        'email_verified_at',
+        'deleted_at',
     ];
+
+    /**
+     * Dane własne użytkownika - do użycia w /api/auth/me i edycji profilu.
+     */
+    public function withPrivateFields(): static
+    {
+        return $this->makeVisible(['email', 'phone', 'is_approved', 'email_verified_at']);
+    }
 
     protected function casts(): array
     {

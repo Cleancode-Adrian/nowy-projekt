@@ -25,6 +25,14 @@ class AppServiceProvider extends ServiceProvider
         // Ustawienie polskiej lokalizacji dla dat
         \Carbon\Carbon::setLocale('pl');
 
+        // Globalny limit dla całego /api - wymagany przez throttleApi('api')
+        // w bootstrap/app.php. Chroni publiczne endpointy przed scrapowaniem.
+        RateLimiter::for('api', function (Request $request) {
+            return $request->user()
+                ? Limit::perMinute(120)->by('api|user|' . $request->user()->id)
+                : Limit::perMinute(40)->by('api|ip|' . $request->ip());
+        });
+
         // Rate limiting for auth endpoints (brute-force protection)
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->input('email', '');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\MediaItem;
+use App\Rules\SafeUpload;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +13,8 @@ use Illuminate\Support\Str;
 
 class MediaController extends Controller
 {
-    private const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'avif'];
+    // SVG celowo pominięte - potrafi zawierać wykonywalny JavaScript.
+    private const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
 
     public function index(Request $request)
     {
@@ -73,10 +75,22 @@ class MediaController extends Controller
 
     public function store(Request $request)
     {
+        $allowed = array_merge(
+            config('security.uploads.image_mimes', []),
+            config('security.uploads.document_mimes', [])
+        );
+
         $validated = $request->validate([
             'folder' => ['nullable', 'regex:/^[A-Za-z0-9_\-\/]*$/'],
-            'files' => ['required', 'array'],
-            'files.*' => ['file', 'max:5120'],
+            'files' => ['required', 'array', 'max:20'],
+            'files.*' => [
+                'file',
+                'max:' . config('security.uploads.max_document_kb', 10240),
+                'mimes:' . implode(',', $allowed),
+                new SafeUpload($allowed),
+            ],
+        ], [
+            'files.*.mimes' => 'Dozwolone typy plików: ' . implode(', ', $allowed) . '.',
         ]);
 
         $folder = $this->sanitizeFolder($validated['folder'] ?? '');
@@ -85,9 +99,11 @@ class MediaController extends Controller
 
         foreach ($request->file('files') as $file) {
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $filename = time() . '-' . Str::slug($originalName ?: 'plik');
+            // Nazwa wyłącznie ze slugu + losowy sufiks: żadnych kropek z oryginału,
+            // brak kolizji przy wgrywaniu wielu plików w tej samej sekundzie.
+            $filename = now()->format('YmdHis') . '-' . Str::slug($originalName ?: 'plik') . '-' . Str::random(6);
             $extension = strtolower($file->getClientOriginalExtension());
-            $storedName = $filename . ($extension ? '.' . $extension : '');
+            $storedName = $filename . '.' . $extension;
             $storedPath = ltrim(trim($folder . '/' . $storedName, '/'), '/');
 
             $file->storeAs($folder, $storedName, 'public');
@@ -125,10 +141,16 @@ class MediaController extends Controller
     public function destroy(Request $request)
     {
         $validated = $request->validate([
-            'path' => ['required', 'string'],
+            // Bez "..", bez ukośników wiodących - kasujemy tylko wewnątrz dysku public.
+            'path' => ['required', 'string', 'max:1024', 'regex:/^[A-Za-z0-9_\-\/]+\.[A-Za-z0-9]+$/'],
         ]);
 
         $path = trim($validated['path'], '/');
+
+        if (str_contains($path, '..')) {
+            abort(422, 'Nieprawidłowa ścieżka.');
+        }
+
         $disk = Storage::disk('public');
 
         if (!$disk->exists($path)) {

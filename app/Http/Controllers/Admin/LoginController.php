@@ -11,9 +11,12 @@ class LoginController extends Controller
 {
     public function showLogin()
     {
-        if (Auth::check()) {
+        // Przekierowujemy tylko realnych adminów - inaczej zalogowany klient
+        // dostałby 403 zamiast formularza logowania.
+        if (Auth::check() && Auth::user()->isAdmin() && Auth::user()->is_approved) {
             return redirect()->route('admin.dashboard');
         }
+
         return view('admin.login');
     }
 

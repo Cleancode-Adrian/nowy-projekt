@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
+use App\Rules\SafeUpload;
 
 class UserController extends Controller
 {
@@ -24,7 +25,7 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'company' => 'nullable|string|max:255',
             'bio' => 'nullable|string|max:1000',
-            'avatar' => 'nullable|image|max:2048', // 2MB max
+            'avatar' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])], // 2MB max
         ]);
 
         // Handle avatar upload
@@ -42,7 +43,7 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Profil zaktualizowany',
-            'user' => $user,
+            'user' => $user->withPrivateFields(),
         ]);
     }
 

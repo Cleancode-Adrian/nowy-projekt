@@ -11,6 +11,7 @@ use App\Mail\NewAnnouncementMail;
 use App\Services\ProfanityFilter;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use App\Rules\SafeUpload;
 
 class CreateAnnouncement extends Component
 {
@@ -47,7 +48,7 @@ class CreateAnnouncement extends Component
             'location' => 'nullable|string|max:255',
             'selectedTags' => 'array|max:10',
             'selectedTags.*' => 'exists:tags,id',
-            'attachments.*' => 'nullable|file|max:10240|mimes:pdf,jpg,jpeg,png,zip,doc,docx',
+            'attachments.*' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,webp,zip,doc,docx', new SafeUpload(['pdf', 'jpg', 'jpeg', 'png', 'webp', 'zip', 'doc', 'docx'])],
         ];
     }
 

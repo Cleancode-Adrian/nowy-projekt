@@ -34,11 +34,17 @@ use App\Livewire\ProfileEdit;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BlogGeneratorController;
 
+// Wymuszenie weryfikacji e-maila jest sterowane configiem - patrz config/security.php.
+$authMiddleware = array_values(array_filter([
+    'auth',
+    config('security.require_email_verification') ? 'verified' : null,
+]));
+
 // Public pages
 Route::get('/', HomePage::class)->name('home');
 Route::get('/announcements', AnnouncementsList::class)->name('announcements.index');
 // Protected announcement create route (must be before /announcements/{id} to avoid route conflicts)
-Route::get('/announcements/create', CreateAnnouncement::class)->middleware('auth')->name('announcements.create');
+Route::get('/announcements/create', CreateAnnouncement::class)->middleware($authMiddleware)->name('announcements.create');
 // Public announcement show route (must be after /create and /edit routes)
 Route::get('/announcements/{id}', ShowAnnouncement::class)->name('announcements.show');
 Route::get('/szukaj', AdvancedSearch::class)->name('search.advanced');
@@ -103,10 +109,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])->middleware('throttle:password-reset')->name('password.update');
 });
 
-// Protected routes - announcements routes must be before public {id} route
-Route::middleware('auth')->group(function () {
-    Route::post('/logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
+// Wylogowanie musi działać także dla konta bez potwierdzonego e-maila,
+// inaczej niezweryfikowany użytkownik utknąłby na stronie weryfikacji.
+Route::post('/logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
 
+// Protected routes - announcements routes must be before public {id} route
+Route::middleware($authMiddleware)->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::get('/zapisane', SavedAnnouncements::class)->name('saved.index');
     Route::get('/profil', ProfileEdit::class)->name('profile.edit');
@@ -129,8 +139,10 @@ Route::get('/admin/login', [LoginController::class, 'showLogin'])->name('admin.l
 Route::post('/admin/login', [LoginController::class, 'login'])->middleware('throttle:admin-login')->name('admin.login.post');
 Route::post('/admin/logout', [LoginController::class, 'logout'])->name('admin.logout');
 
-// Admin Panel Routes (require authentication)
-Route::prefix('admin')->name('admin.')->middleware(['web', 'auth'])->group(function () {
+// Admin Panel Routes - wymagają zalogowania ORAZ roli admina.
+// Middleware 'admin' jest tu jedynym gwarantem autoryzacji: kontrolery w
+// App\Http\Controllers\Admin nie sprawdzają uprawnień samodzielnie.
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // Users Management - Full CRUD

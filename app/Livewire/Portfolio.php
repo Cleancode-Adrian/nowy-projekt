@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\PortfolioItem;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use App\Rules\SafeUpload;
 
 class Portfolio extends Component
 {
@@ -28,7 +29,7 @@ class Portfolio extends Component
             'title' => 'required|min:5|max:255',
             'description' => 'required|min:20',
             'url' => 'nullable|url',
-            'image' => 'nullable|image|max:2048',
+            'image' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])],
             'technologies' => 'nullable|string',
             'completed_at' => 'nullable|date',
         ];
