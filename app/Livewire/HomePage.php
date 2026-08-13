@@ -41,10 +41,19 @@ class HomePage extends Component
         });
 
         $stats = Cache::remember('home.stats', 1800, function () {
+            // Średni budżet liczony z realnych ogłoszeń. Przy małej próbce
+            // nie pokazujemy go wcale - lepiej nic niż liczba wzięta z sufitu.
+            $budgets = Announcement::published()
+                ->whereNotNull('budget_min')
+                ->whereNotNull('budget_max')
+                ->selectRaw('AVG((budget_min + budget_max) / 2) as srednia, COUNT(*) as ile')
+                ->first();
+
             return [
                 'announcements' => Announcement::published()->count(),
                 'freelancers' => \App\Models\User::where('role', 'freelancer')->where('is_approved', true)->count(),
                 'categories' => Category::where('is_active', true)->count(),
+                'avg_budget' => ($budgets && $budgets->ile >= 5) ? (int) round($budgets->srednia / 100) * 100 : null,
             ];
         });
 
@@ -53,8 +62,8 @@ class HomePage extends Component
             'featuredAnnouncements' => $featuredAnnouncements,
             'stats' => $stats,
         ])->layout('layouts.app', [
-            'title' => 'Projekciarz.pl - Znajdź najlepszego freelancera dla swojego projektu',
-            'description' => 'Platforma łącząca klientów z zweryfikowanymi freelancerami. Publikuj zlecenia i otrzymuj oferty od najlepszych specjalistów w branży.',
+            'title' => 'Szukasz wykonawcy strony WWW? Zbierz oferty - Projekciarz.pl',
+            'description' => 'Opisz projekt i otrzymaj oferty od wykonawców stron, sklepów i aplikacji. Porównaj wyceny, portfolio i opinie. Publikacja zlecenia jest bezpłatna.',
         ]);
     }
 }
