@@ -1,145 +1,96 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rejestracja - Projekciarz.pl</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @if(config('services.recaptcha.site_key'))
-    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}" async defer></script>
+<x-auth-layout title="Rejestracja" heading="Załóż bezpłatne konto" subheading="Publikuj zlecenia albo składaj oferty - wybierz, jak chcesz korzystać z platformy.">
+
+    @if($errors->any())
+        <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+            <ul class="list-inside list-disc space-y-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
-</head>
-<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen py-12">
 
-    <div class="w-full max-w-md mx-auto">
-        <div class="bg-white rounded-2xl shadow-xl p-8">
-            {{-- Header --}}
-            <div class="text-center mb-8">
-                <a href="{{ route('home') }}" class="inline-block mb-4">
-                    <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto">
-                        <i class="fa-solid fa-user-plus text-white text-2xl"></i>
-                    </div>
-                </a>
-                <h2 class="text-3xl font-bold text-gray-900 mb-2">Zarejestruj się</h2>
-                <p class="text-gray-600">Utwórz darmowe konto i zacznij publikować ogłoszenia</p>
+    <form method="POST" action="{{ route('register') }}" id="registerForm" class="group/form space-y-5">
+        @csrf
+        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+
+        {{-- Rola --}}
+        <fieldset>
+            <legend class="label">Chcę</legend>
+            <div class="grid grid-cols-2 gap-3">
+                @foreach([
+                    'client' => ['Zlecić projekt', 'Szukam wykonawcy'],
+                    'freelancer' => ['Realizować zlecenia', 'Oferuję usługi'],
+                ] as $value => [$label, $hint])
+                    <label class="relative flex cursor-pointer flex-col rounded-lg border border-ink-200 p-3.5 transition-colors hover:border-ink-300 has-checked:border-brand-500 has-checked:bg-brand-50/60 has-checked:ring-1 has-checked:ring-brand-500 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand-500">
+                        <input type="radio" id="role-{{ $value }}" name="role" value="{{ $value }}" class="sr-only" @checked(old('role', 'client') === $value) required>
+                        <span class="text-sm font-semibold text-ink-900">{{ $label }}</span>
+                        <span class="mt-0.5 text-xs text-ink-500">{{ $hint }}</span>
+                    </label>
+                @endforeach
             </div>
+        </fieldset>
 
-            {{-- Errors --}}
-            @if($errors->any())
-                <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                    <ul class="list-disc list-inside text-sm">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+        <div>
+            <label for="name" class="label">Imię i nazwisko</label>
+            <input id="name" type="text" name="name" value="{{ old('name') }}" required autocomplete="name"
+                   @class(['input', 'input-error' => $errors->has('name')]) placeholder="Jan Kowalski">
+        </div>
 
-            <form method="POST" action="{{ route('register') }}" class="space-y-4" id="registerForm">
-                @csrf
-                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+        <div>
+            <label for="email" class="label">Adres e-mail</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email"
+                   @class(['input', 'input-error' => $errors->has('email')]) placeholder="jan@firma.pl">
+        </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Imię i nazwisko *</label>
-                    <input type="text" name="name" value="{{ old('name') }}" required class="input" placeholder="Jan Kowalski">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                    <input type="email" name="email" value="{{ old('email') }}" required class="input" placeholder="jan@example.com">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
-                    <input type="tel" name="phone" value="{{ old('phone') }}" class="input" placeholder="+48 123 456 789">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Firma/Organizacja</label>
-                    <input type="text" name="company" value="{{ old('company') }}" class="input" placeholder="Nazwa firmy">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Hasło *</label>
-                    <input type="password" name="password" required minlength="8" class="input" placeholder="Minimum 8 znaków">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Potwierdź hasło *</label>
-                    <input type="password" name="password_confirmation" required minlength="8" class="input" placeholder="Powtórz hasło">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Zarejestruj się jako *</label>
-                    <select name="role" required class="input">
-                        <option value="client" {{ old('role') === 'client' ? 'selected' : '' }}>Klient (szukam freelancera)</option>
-                        <option value="freelancer" {{ old('role') === 'freelancer' ? 'selected' : '' }}>Freelancer (oferuję usługi)</option>
-                    </select>
-                </div>
-
-                {{-- Checkboxes --}}
-                <div class="space-y-3 pt-2">
-                    <label class="flex items-start cursor-pointer">
-                        <input type="checkbox" name="accept_privacy" value="1" required class="w-4 h-4 text-blue-600 border-gray-300 rounded mt-1">
-                        <span class="ml-3 text-sm text-gray-700">
-                            Akceptuję <a href="{{ route('privacy-policy') }}" target="_blank" class="text-blue-600 hover:text-blue-700 underline font-medium">politykę prywatności</a> i wyrażam zgodę na przetwarzanie moich danych osobowych *
-                        </span>
-                    </label>
-
-                    <label class="flex items-start cursor-pointer">
-                        <input type="checkbox" name="accept_terms" value="1" required class="w-4 h-4 text-blue-600 border-gray-300 rounded mt-1">
-                        <span class="ml-3 text-sm text-gray-700">
-                            Akceptuję <a href="{{ route('terms-of-service') }}" target="_blank" class="text-blue-600 hover:text-blue-700 underline font-medium">regulamin serwisu</a> *
-                        </span>
-                    </label>
-                </div>
-
-                <button type="submit" class="w-full btn btn-primary mt-6">
-                    <i class="fa-solid fa-user-plus mr-2"></i>
-                    Zarejestruj się
-                </button>
-            </form>
-
-            <div class="mt-6 text-center">
-                <p class="text-gray-600">
-                    Masz już konto? <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-700 font-semibold">Zaloguj się</a>
-                </p>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div>
+                <label for="phone" class="label">Telefon <span class="font-normal text-ink-400">(opcjonalnie)</span></label>
+                <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" autocomplete="tel" class="input" placeholder="+48 123 456 789">
+            </div>
+            <div>
+                <label for="company" class="label">Firma <span class="font-normal text-ink-400">(opcjonalnie)</span></label>
+                <input id="company" type="text" name="company" value="{{ old('company') }}" autocomplete="organization" class="input" placeholder="Nazwa firmy">
             </div>
         </div>
-    </div>
 
-    @if(config('services.recaptcha.site_key'))
-    <script>
-        const siteKey = '{{ config("services.recaptcha.site_key") }}';
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div>
+                <label for="password" class="label">Hasło</label>
+                <input id="password" type="password" name="password" required minlength="8" autocomplete="new-password"
+                       @class(['input', 'input-error' => $errors->has('password')]) placeholder="Min. 8 znaków">
+            </div>
+            <div>
+                <label for="password_confirmation" class="label">Powtórz hasło</label>
+                <input id="password_confirmation" type="password" name="password_confirmation" required minlength="8" autocomplete="new-password" class="input">
+            </div>
+        </div>
 
-        const form = document.getElementById('registerForm');
-        if (form) {
-            form.addEventListener('submit', function (e) {
-                if (typeof grecaptcha === 'undefined') {
-                    e.preventDefault();
-                    alert('Nie udało się załadować reCAPTCHA. Wyłącz blokowanie skryptów (np. AdBlock) i spróbuj ponownie.');
-                    return;
-                }
+        <p class="hidden group-has-[#role-freelancer:checked]/form:block rounded-lg bg-ink-50 px-3.5 py-3 text-xs leading-relaxed text-ink-600">
+            Konta wykonawców zatwierdza administrator. Logowanie i składanie ofert odblokuje się
+            po akceptacji - powiadomimy Cię o tym mailowo.
+        </p>
 
-                e.preventDefault();
-                grecaptcha.ready(function () {
-                    grecaptcha.execute(siteKey, { action: 'register' })
-                        .then(function (token) {
-                            const tokenInput = document.getElementById('g-recaptcha-response');
-                            if (tokenInput) {
-                                tokenInput.value = token;
-                            }
-                            form.submit();
-                        })
-                        .catch(function (error) {
-                            console.error('reCAPTCHA error:', error);
-                            alert('Weryfikacja reCAPTCHA nie powiodła się. Odśwież stronę i spróbuj ponownie.');
-                        });
-                });
-            });
-        }
-    </script>
-    @endif
-</body>
-</html>
+        <div class="space-y-3">
+            <label class="flex items-start gap-2.5 text-sm text-ink-600">
+                <input type="checkbox" name="accept_privacy" value="1" required @checked(old('accept_privacy')) class="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600 focus:ring-brand-500">
+                <span>Akceptuję <a href="{{ route('privacy-policy') }}" target="_blank" class="font-medium text-brand-600 underline underline-offset-2">politykę prywatności</a> i wyrażam zgodę na przetwarzanie danych osobowych.</span>
+            </label>
+            <label class="flex items-start gap-2.5 text-sm text-ink-600">
+                <input type="checkbox" name="accept_terms" value="1" required @checked(old('accept_terms')) class="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600 focus:ring-brand-500">
+                <span>Akceptuję <a href="{{ route('terms-of-service') }}" target="_blank" class="font-medium text-brand-600 underline underline-offset-2">regulamin serwisu</a>.</span>
+            </label>
+        </div>
 
+        <button type="submit" class="btn btn-primary w-full py-3">Załóż konto</button>
+    </form>
+
+    <p class="mt-8 text-center text-sm text-ink-500">
+        Masz już konto?
+        <a href="{{ route('login') }}" class="font-semibold text-brand-600 hover:text-brand-700">Zaloguj się</a>
+    </p>
+
+    <x-slot:scripts>
+        @include('auth.partials.recaptcha', ['formId' => 'registerForm', 'action' => 'register'])
+    </x-slot:scripts>
+</x-auth-layout>

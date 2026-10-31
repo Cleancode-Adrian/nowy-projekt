@@ -48,7 +48,7 @@ class AnnouncementsList extends Component
         $query = Announcement::select([
                 'id', 'user_id', 'category_id', 'title', 'description',
                 'budget_min', 'budget_max', 'budget_currency', 'location',
-                'deadline', 'is_urgent', 'created_at', 'views_count', 'proposals_count'
+                'deadline', 'is_urgent', 'status', 'created_at', 'views_count', 'proposals_count'
             ])
             ->with([
                 'user:id,name,avatar,is_verified',

@@ -12,8 +12,8 @@ class HomePage extends Component
     public function render()
     {
         // Cache dla performance
-        $categories = Cache::remember('home.categories', 3600, function () {
-            return Category::select('id', 'name', 'slug', 'icon', 'color')
+        $categories = Cache::remember('home.categories.v2', 3600, function () {
+            return Category::select('id', 'name', 'slug', 'icon', 'color', 'description')
                 ->withCount(['announcements' => function ($query) {
                     $query->whereIn('status', ['published', 'closed'])->where('is_approved', true);
                 }])
@@ -22,11 +22,11 @@ class HomePage extends Component
                 ->get();
         });
 
-        $featuredAnnouncements = Cache::remember('home.featured', 600, function () {
+        $featuredAnnouncements = Cache::remember('home.featured.v2', 600, function () {
             return Announcement::select([
                     'id', 'user_id', 'category_id', 'title', 'description',
                     'budget_min', 'budget_max', 'budget_currency', 'location',
-                    'is_urgent', 'created_at'
+                    'is_urgent', 'deadline', 'status', 'created_at'
                 ])
                 ->with([
                     'user:id,name,avatar,is_verified',

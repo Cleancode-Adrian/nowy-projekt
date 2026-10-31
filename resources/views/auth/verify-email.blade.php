@@ -1,54 +1,32 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weryfikacja Email - Projekciarz.pl</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body class="bg-gray-50">
-    @include('components.header')
+<x-auth-layout title="Weryfikacja e-mail" heading="Potwierdź adres e-mail" subheading="To ostatni krok przed korzystaniem z pełni platformy.">
 
-    <div class="min-h-screen flex items-center justify-center py-12 px-4">
-        <div class="max-w-md w-full">
-            <div class="card text-center">
-                <div class="text-6xl mb-6">📧</div>
-
-                <h1 class="text-2xl font-bold text-gray-900 mb-4">Zweryfikuj swój email</h1>
-
-                <p class="text-gray-600 mb-6">
-                    Wysłaliśmy link weryfikacyjny na adres:<br>
-                    <strong class="text-gray-900">{{ auth()->user()->email }}</strong>
-                </p>
-
-                @if(session('success'))
-                    <div class="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg mb-6">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                <p class="text-sm text-gray-600 mb-6">
-                    Kliknij w link w emailu aby aktywować konto. Jeśli nie otrzymałeś emaila, sprawdź folder SPAM.
-                </p>
-
-                <form method="POST" action="{{ route('verification.send') }}" class="mb-6">
-                    @csrf
-                    <button type="submit" class="btn btn-primary w-full">
-                        📨 Wyślij ponownie
-                    </button>
-                </form>
-
-                <div class="text-sm text-gray-500">
-                    <a href="{{ route('dashboard') }}" class="text-blue-600 hover:text-blue-700 font-medium">
-                        ← Powrót do dashboardu
-                    </a>
-                </div>
+    <div class="rounded-xl border border-ink-100 bg-ink-50/60 p-5">
+        <div class="flex items-start gap-3">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-brand-700">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>
+            </span>
+            <div class="text-sm">
+                <p class="text-ink-600">Wysłaliśmy link weryfikacyjny na adres:</p>
+                <p class="mt-0.5 font-semibold text-ink-900">{{ auth()->user()->email }}</p>
             </div>
         </div>
+        <p class="mt-4 text-sm text-ink-500">Kliknij link w wiadomości, aby aktywować konto. Jeśli jej nie widzisz, sprawdź folder SPAM.</p>
     </div>
 
-    @include('components.footer')
-</body>
-</html>
+    @if(session('success'))
+        <div class="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status">{{ session('success') }}</div>
+    @endif
 
+    <form method="POST" action="{{ route('verification.send') }}" class="mt-6">
+        @csrf
+        <button type="submit" class="btn btn-primary w-full py-3">Wyślij link ponownie</button>
+    </form>
+
+    <div class="mt-8 flex items-center justify-between text-sm">
+        <a href="{{ route('dashboard') }}" class="font-semibold text-brand-600 hover:text-brand-700">&larr; Przejdź do panelu</a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="text-ink-500 hover:text-ink-800">Wyloguj się</button>
+        </form>
+    </div>
+</x-auth-layout>

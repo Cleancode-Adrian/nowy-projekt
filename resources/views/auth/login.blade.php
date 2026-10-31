@@ -1,131 +1,50 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logowanie - Projekciarz.pl</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @if(config('services.recaptcha.site_key'))
-    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}" async defer></script>
-    @endif
-</head>
-<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen flex items-center justify-center">
+<x-auth-layout title="Logowanie" heading="Zaloguj się do konta" subheading="Witaj ponownie. Podaj e-mail i hasło, aby kontynuować.">
 
-    <div class="w-full max-w-md">
-        <div class="bg-white rounded-2xl shadow-xl p-8">
-            {{-- Header --}}
-            <div class="text-center mb-8">
-                <a href="{{ route('home') }}" class="inline-block mb-4">
-                    <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto">
-                        <i class="fa-solid fa-code text-white text-2xl"></i>
-                    </div>
-                </a>
-                <h2 class="text-3xl font-bold text-gray-900 mb-2">Zaloguj się</h2>
-                <p class="text-gray-600">Witaj ponownie! Zaloguj się do swojego konta</p>
-            </div>
-
-            {{-- Success Message --}}
-            @if(session('success'))
-                <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            {{-- Errors --}}
-            @error('email')
-                <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                    {{ $message }}
-                </div>
-            @enderror
-            @if(session('error'))
-                <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}" class="space-y-6" id="loginForm">
-                @csrf
-                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        required
-                        class="input"
-                        placeholder="jan@example.com">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Hasło</label>
-                    <input
-                        type="password"
-                        name="password"
-                        required
-                        class="input"
-                        placeholder="••••••••">
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" name="remember" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
-                        <span class="ml-2 text-sm text-gray-700">Zapamiętaj mnie</span>
-                    </label>
-                    <a href="{{ route('password.request') }}" class="text-sm text-blue-600 hover:text-blue-700">
-                        Zapomniałeś hasła?
-                    </a>
-                </div>
-
-                <button type="submit" class="w-full btn btn-primary">
-                    🔓 Zaloguj się
-                </button>
-            </form>
-
-            <div class="mt-6 text-center">
-                <p class="text-gray-600">
-                    Nie masz konta?
-                    <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-700 font-semibold ml-1">
-                        Zarejestruj się
-                    </a>
-                </p>
-            </div>
+    @if(session('success'))
+        <div class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status">
+            {{ session('success') }}
         </div>
-    </div>
-
-    @if(config('services.recaptcha.site_key'))
-    <script>
-        const siteKey = '{{ config("services.recaptcha.site_key") }}';
-
-        const form = document.getElementById('loginForm');
-        if (form) {
-            form.addEventListener('submit', function (e) {
-                if (typeof grecaptcha === 'undefined') {
-                    e.preventDefault();
-                    alert('Nie udało się załadować reCAPTCHA. Wyłącz blokowanie skryptów (np. AdBlock) i spróbuj ponownie.');
-                    return;
-                }
-
-                e.preventDefault();
-                grecaptcha.ready(function () {
-                    grecaptcha.execute(siteKey, { action: 'login' })
-                        .then(function (token) {
-                            const tokenInput = document.getElementById('g-recaptcha-response');
-                            if (tokenInput) {
-                                tokenInput.value = token;
-                            }
-                            form.submit();
-                        })
-                        .catch(function (error) {
-                            console.error('reCAPTCHA error:', error);
-                            alert('Weryfikacja reCAPTCHA nie powiodła się. Odśwież stronę i spróbuj ponownie.');
-                        });
-                });
-            });
-        }
-    </script>
     @endif
-</body>
-</html>
 
+    @error('email')
+        <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{{ $message }}</div>
+    @enderror
+    @if(session('error'))
+        <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{{ session('error') }}</div>
+    @endif
+
+    <form method="POST" action="{{ route('login') }}" class="space-y-5" id="loginForm">
+        @csrf
+        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+
+        <div>
+            <label for="email" class="label">Adres e-mail</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email"
+                   @class(['input', 'input-error' => $errors->has('email')]) placeholder="jan@firma.pl">
+        </div>
+
+        <div>
+            <div class="flex items-center justify-between">
+                <label for="password" class="label">Hasło</label>
+                <a href="{{ route('password.request') }}" class="mb-1.5 text-sm font-medium text-brand-600 hover:text-brand-700">Nie pamiętasz?</a>
+            </div>
+            <input id="password" type="password" name="password" required autocomplete="current-password" class="input" placeholder="••••••••">
+        </div>
+
+        <label class="flex items-center gap-2.5 text-sm text-ink-600">
+            <input type="checkbox" name="remember" class="h-4 w-4 rounded border-ink-300 text-brand-600 focus:ring-brand-500">
+            Zapamiętaj mnie na tym urządzeniu
+        </label>
+
+        <button type="submit" class="btn btn-primary w-full py-3">Zaloguj się</button>
+    </form>
+
+    <p class="mt-8 text-center text-sm text-ink-500">
+        Nie masz jeszcze konta?
+        <a href="{{ route('register') }}" class="font-semibold text-brand-600 hover:text-brand-700">Załóż je bezpłatnie</a>
+    </p>
+
+    <x-slot:scripts>
+        @include('auth.partials.recaptcha', ['formId' => 'loginForm', 'action' => 'login'])
+    </x-slot:scripts>
+</x-auth-layout>

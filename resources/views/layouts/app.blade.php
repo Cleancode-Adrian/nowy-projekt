@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="h-full">
 <head>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NXVNXNSM');</script>
@@ -16,6 +16,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#2f48e0">
+    @auth
+        <meta name="auth-user-id" content="{{ auth()->id() }}">
+    @endauth
 
     {{-- SEO Meta Tags --}}
     @php
@@ -26,17 +30,38 @@
         );
         ksort($canonicalQuery);
         $canonicalUrl = url()->current() . (empty($canonicalQuery) ? '' : '?' . http_build_query($canonicalQuery));
+
+        // Komponenty Livewire przekazują meta przez ->layout('layouts.app', [...]),
+        // czyli jako zmienne widoku - nie sekcje. Wcześniej layout czytał tylko @yield,
+        // więc każda podstrona miała domyślny tytuł i opis. Obsługujemy oba źródła.
+        $meta = function (string $key, string $default) use ($__data) {
+            $value = $__data[$key] ?? null;
+            if (is_string($value) && trim($value) !== '') {
+                return $value;
+            }
+            $section = trim(app('view')->yieldContent($key));
+            return $section !== '' ? $section : $default;
+        };
+
+        $metaTitle = $meta('title', 'Projekciarz.pl - Platforma ogłoszeń dla wykonawców projektów');
+        // Strony z CMS mają sufiks już w meta_title, a komponent dokleja drugi - zostawiamy jeden.
+        $metaTitle = preg_replace('/(\s*-\s*Projekciarz\.pl)+$/u', ' - Projekciarz.pl', $metaTitle);
+        $metaDescription = $meta('description', 'Znajdź idealnego wykonawcę dla swojego projektu. Opisz zlecenie i zbierz oferty od zweryfikowanych specjalistów.');
+        $metaKeywords = $meta('keywords', 'projekty, zlecenia, ogłoszenia, wykonawcy, specjaliści, freelancer');
+        $ogTitle = $meta('og_title', $metaTitle);
+        $ogDescription = $meta('og_description', $metaDescription);
+        $ogImage = $meta('og_image', asset('images/og-default.jpg'));
     @endphp
-    <title>@yield('title', 'Projekciarz.pl - Platforma ogłoszeń dla wykonawców projektów')</title>
-    <meta name="description" content="@yield('description', 'Znajdź idealnego wykonawcę dla swojego projektu. Tysiące zweryfikowanych specjalistów czeka na Twoje zlecenie.')">
-    <meta name="keywords" content="@yield('keywords', 'projekty, zlecenia, ogłoszenia, wykonawcy, specjaliści, freelancer')">
+    <title>{{ $metaTitle }}</title>
+    <meta name="description" content="{{ $metaDescription }}">
+    <meta name="keywords" content="{{ $metaKeywords }}">
     <meta name="author" content="Projekciarz.pl">
     <link rel="canonical" href="{{ $canonicalUrl }}">
 
     {{-- Open Graph (Facebook, LinkedIn) --}}
-    <meta property="og:title" content="@yield('og_title', 'Projekciarz.pl')">
-    <meta property="og:description" content="@yield('og_description', 'Platforma łącząca klientów z profesjonalnymi wykonawcami projektów')">
-    <meta property="og:image" content="@yield('og_image', asset('images/og-default.jpg'))">
+    <meta property="og:title" content="{{ $ogTitle }}">
+    <meta property="og:description" content="{{ $ogDescription }}">
+    <meta property="og:image" content="{{ $ogImage }}">
     <meta property="og:url" content="{{ $canonicalUrl }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Projekciarz.pl">
@@ -44,15 +69,20 @@
 
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('twitter_title', 'Projekciarz.pl')">
-    <meta name="twitter:description" content="@yield('twitter_description', 'Platforma łącząca klientów z profesjonalnymi wykonawcami projektów')">
-    <meta name="twitter:image" content="@yield('twitter_image', asset('images/og-default.jpg'))">
+    <meta name="twitter:title" content="{{ $meta('twitter_title', $ogTitle) }}">
+    <meta name="twitter:description" content="{{ $meta('twitter_description', $ogDescription) }}">
+    <meta name="twitter:image" content="{{ $meta('twitter_image', $ogImage) }}">
 
     {{-- Favicon --}}
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ asset('favicon.svg') }}">
 
-    {{-- Font Awesome --}}
+    {{-- Fonty --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+
+    {{-- Font Awesome (ikony w widokach treści) --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     {{-- Vite Assets --}}
@@ -64,66 +94,71 @@
     {{-- Additional Head Content --}}
     @stack('head')
 </head>
-<body class="antialiased">
+<body class="flex min-h-full flex-col antialiased">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXVNXNSM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+
+    <a href="#tresc" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:shadow-lg">
+        Przejdź do treści
+    </a>
 
     {{-- Navigation --}}
     @include('components.header')
 
     {{-- Main Content --}}
-    <main>
+    <main id="tresc" class="flex-1">
         {{ $slot }}
     </main>
 
-    {{-- Newsletter Form --}}
-    <section class="bg-gray-50 py-12 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="max-w-md mx-auto">
-                <div id="mlb2-16123980" class="ml-form-embedContainer ml-subscribe-form ml-subscribe-form-16123980">
-                    <div class="ml-form-align-center">
-                        <div class="ml-form-embedWrapper embedForm">
-                            <div class="ml-form-embedBody ml-form-embedBodyDefault row-form">
-                                <div class="ml-form-embedContent" style="margin-bottom: 0px;">
-                                    <h4 class="text-2xl font-bold text-gray-900 mb-2 text-center">Zapisz się do newslettera</h4>
-                                    <p class="text-gray-600 text-center mb-6">Otrzymuj najnowsze informacje o projektach i możliwościach</p>
+    {{-- Newsletter (MailerLite) - klasy ml-* i struktura są wymagane przez skrypt webforms --}}
+    <section class="border-t border-ink-100 bg-white" aria-labelledby="newsletter-heading">
+        <div class="container-page py-12 lg:py-14">
+            <div id="mlb2-16123980" class="ml-form-embedContainer ml-subscribe-form ml-subscribe-form-16123980">
+                <div class="ml-form-embedWrapper embedForm">
+                    <div class="ml-form-embedBody row-form grid items-center gap-8 lg:grid-cols-2">
+                        <div>
+                            <p class="eyebrow">Newsletter</p>
+                            <h2 id="newsletter-heading" class="mt-2 text-2xl font-bold text-ink-900">Nowe zlecenia i poradniki raz w tygodniu</h2>
+                            <p class="mt-2 text-ink-500">Przegląd świeżych projektów, orientacyjne stawki i praktyczne wskazówki. Bez spamu, wypisujesz się jednym kliknięciem.</p>
+                        </div>
+
+                        <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/1010939/forms/125829502731289626/subscribe" data-code="" method="post" target="_blank" id="newsletter-form">
+                            <div class="ml-form-formContent">
+                                <div class="ml-form-fieldRow flex flex-col gap-2 sm:flex-row">
+                                    <div class="ml-field-group ml-field-email ml-validate-email ml-validate-required flex-1">
+                                        <label for="newsletter-email" class="sr-only">Adres e-mail</label>
+                                        <input id="newsletter-email" aria-required="true" type="email" class="input py-3" data-inputmask="" name="fields[email]" placeholder="twoj@email.pl" autocomplete="email" required>
+                                    </div>
+                                    <div class="ml-form-embedSubmit">
+                                        <button type="submit" class="primary btn btn-primary w-full py-3 sm:w-auto" id="newsletter-submit-btn">Zapisz się</button>
+                                        <button disabled="disabled" style="display: none;" type="button" class="loading btn btn-primary w-full py-3 sm:w-auto">
+                                            <span class="ml-form-embedSubmitLoad"></span>
+                                            <span class="sr-only">Wysyłanie…</span>
+                                        </button>
+                                    </div>
                                 </div>
-                                <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/1010939/forms/125829502731289626/subscribe" data-code="" method="post" target="_blank" id="newsletter-form">
-                                    <div class="ml-form-formContent">
-                                        <div class="ml-form-fieldRow">
-                                            <div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
-                                                <input aria-label="email" aria-required="true" type="email" class="form-control w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-inputmask="" name="fields[email]" placeholder="Twój adres email" autocomplete="email" required>
-                                            </div>
-                                        </div>
-                                        <div class="ml-form-checkboxRow mt-4">
-                                            <label class="flex items-start">
-                                                <input type="checkbox" name="privacy_consent" value="1" required class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" id="privacy-consent-checkbox">
-                                                <span class="text-sm text-gray-700">
-                                                    Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z
-                                                    <a href="{{ route('privacy-policy') }}" target="_blank" class="text-blue-600 hover:text-blue-700 underline font-medium">polityką prywatności</a> *
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="ml-submit" value="1">
-                                    <div class="ml-form-embedSubmit mt-4">
-                                        <button type="submit" class="primary w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" id="newsletter-submit-btn">
-                                            Zapisz się
-                                        </button>
-                                        <button disabled="disabled" style="display: none;" type="button" class="loading">
-                                            <div class="ml-form-embedSubmitLoad"></div>
-                                            <span class="sr-only">Loading...</span>
-                                        </button>
-                                    </div>
-                                    <input type="hidden" name="anticsrf" value="true">
-                                </form>
+                                <div class="ml-form-checkboxRow mt-3">
+                                    <label class="flex items-start gap-2.5 text-sm text-ink-500">
+                                        <input type="checkbox" name="privacy_consent" value="1" required class="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600 focus:ring-brand-500" id="privacy-consent-checkbox">
+                                        <span>
+                                            Wyrażam zgodę na przetwarzanie danych osobowych zgodnie z
+                                            <a href="{{ route('privacy-policy') }}" target="_blank" class="font-medium text-brand-600 underline underline-offset-2 hover:text-brand-700">polityką prywatności</a>.
+                                        </span>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="ml-form-successBody row-success" style="display: none">
-                                <div class="ml-form-successContent">
-                                    <h4 class="text-2xl font-bold text-green-600 mb-2">Dziękujemy!</h4>
-                                    <p class="text-gray-600">Zostałeś pomyślnie zapisany do naszego newslettera.</p>
-                                </div>
+                            <input type="hidden" name="ml-submit" value="1">
+                            <input type="hidden" name="anticsrf" value="true">
+                        </form>
+                    </div>
+
+                    <div class="ml-form-successBody row-success" style="display: none">
+                        <div class="ml-form-successContent flex items-center gap-4 rounded-xl border border-emerald-200 bg-emerald-50 p-6">
+                            <svg class="h-8 w-8 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd"/></svg>
+                            <div>
+                                <h4 class="font-semibold text-emerald-900">Dziękujemy za zapis!</h4>
+                                <p class="text-sm text-emerald-800">Sprawdź skrzynkę i potwierdź adres e-mail.</p>
                             </div>
                         </div>
                     </div>
@@ -135,28 +170,45 @@
     {{-- Footer --}}
     @include('components.footer')
 
-    {{-- Notifications --}}
+    {{-- Powiadomienia (toast) --}}
     <div x-data="{
              show: false,
              message: '',
              type: 'info',
+             timer: null,
              notify(msg, t = 'info') {
                  this.message = msg;
                  this.type = t;
                  this.show = true;
-                 setTimeout(() => this.show = false, 3000);
+                 clearTimeout(this.timer);
+                 this.timer = setTimeout(() => this.show = false, 4000);
              }
          }"
-         x-show="show"
-         x-transition
+         x-show="show" x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
          @notify.window="notify($event.detail.message, $event.detail.type)"
-         class="fixed top-4 right-4 z-50 max-w-sm">
-        <div :class="{
-            'bg-green-50 border-green-500 text-green-900': type === 'success',
-            'bg-red-50 border-red-500 text-red-900': type === 'error',
-            'bg-blue-50 border-blue-500 text-blue-900': type === 'info'
-        }" class="border-l-4 p-4 rounded-lg shadow-lg">
-            <p x-text="message"></p>
+         class="fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] max-w-sm"
+         role="status" aria-live="polite">
+        <div class="flex items-start gap-3 rounded-xl border border-ink-100 bg-white p-4 shadow-xl">
+            <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                  :class="{
+                      'bg-emerald-100 text-emerald-600': type === 'success',
+                      'bg-red-100 text-red-600': type === 'error',
+                      'bg-brand-100 text-brand-600': type !== 'success' && type !== 'error'
+                  }">
+                <svg x-show="type === 'success'" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
+                <svg x-show="type === 'error'" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+                <svg x-show="type !== 'success' && type !== 'error'" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg>
+            </span>
+            <p class="flex-1 text-sm text-ink-800" x-text="message"></p>
+            <button type="button" @click="show = false" class="text-ink-400 hover:text-ink-700" aria-label="Zamknij">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+            </button>
         </div>
     </div>
 
@@ -166,200 +218,17 @@
     {{-- Additional Scripts --}}
     @stack('scripts')
 
-    {{-- MailerLite Newsletter Scripts --}}
-    <style type="text/css">
-        @import url("https://assets.mlcdn.com/fonts.css?version=1762785");
-
+    {{-- MailerLite - tylko style wymagane przez skrypt (stan ładowania, błędy walidacji) --}}
+    <style>
+        .ml-form-embedSubmit button.loading { display: none; }
         .ml-form-embedSubmitLoad {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
+            display: inline-block; width: 18px; height: 18px; border-radius: 9999px;
+            border: 3px solid #fff; border-right-color: transparent;
+            animation: ml-spin 0.9s linear infinite;
         }
-
-        .g-recaptcha {
-            transform: scale(1);
-            -webkit-transform: scale(1);
-            transform-origin: 0 0;
-            -webkit-transform-origin: 0 0;
-        }
-
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0,0,0,0);
-            border: 0;
-        }
-
-        .ml-form-embedSubmitLoad:after {
-            content: " ";
-            display: block;
-            width: 11px;
-            height: 11px;
-            margin: 1px;
-            border-radius: 50%;
-            border: 4px solid #fff;
-            border-color: #ffffff #ffffff #ffffff transparent;
-            animation: ml-form-embedSubmitLoad 1.2s linear infinite;
-        }
-
-        @keyframes ml-form-embedSubmitLoad {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #mlb2-16123980.ml-form-embedContainer {
-            box-sizing: border-box;
-            display: table;
-            margin: 0 auto;
-            position: static;
-            width: 100% !important;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedWrapper {
-            background-color: transparent;
-            border-width: 0px;
-            border-color: transparent;
-            border-radius: 4px;
-            border-style: solid;
-            box-sizing: border-box;
-            display: inline-block !important;
-            margin: 0;
-            padding: 0;
-            position: relative;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedWrapper.embedForm {
-            max-width: 400px;
-            width: 100%;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedContent h4 {
-            color: #000000;
-            font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-            font-size: 30px;
-            font-weight: 400;
-            margin: 0 0 10px 0;
-            text-align: left;
-            word-break: break-word;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedContent p {
-            color: #000000;
-            font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 20px;
-            margin: 0 0 10px 0;
-            text-align: left;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-fieldRow input {
-            background-color: #ffffff !important;
-            color: #333333 !important;
-            border-color: #cccccc;
-            border-radius: 25px !important;
-            border-style: solid !important;
-            border-width: 1px !important;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px !important;
-            height: auto;
-            line-height: 21px !important;
-            margin-bottom: 0;
-            margin-top: 0;
-            padding: 10px 10px !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-            max-width: 100% !important;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedSubmit button {
-            background-color: #2563eb !important;
-            border: none !important;
-            border-radius: 25px !important;
-            box-shadow: none !important;
-            color: #ffffff !important;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif !important;
-            font-size: 14px !important;
-            font-weight: 700 !important;
-            line-height: 21px !important;
-            height: auto;
-            padding: 10px !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedSubmit button:hover {
-            background-color: #1d4ed8 !important;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-embedSubmit button.loading {
-            display: none;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow {
-            margin: 0 0 20px 0;
-            width: 100%;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label {
-            font-weight: normal;
-            margin: 0;
-            padding: 0;
-            position: relative;
-            display: flex;
-            align-items: flex-start;
-            cursor: pointer;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow input[type="checkbox"] {
-            box-sizing: border-box;
-            padding: 0;
-            position: relative;
-            z-index: 1;
-            opacity: 1;
-            margin-top: 4px;
-            margin-right: 12px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label span {
-            color: #333333;
-            font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-            font-size: 14px;
-            line-height: 20px;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label a {
-            color: #2563eb;
-            text-decoration: underline;
-        }
-
-        #mlb2-16123980.ml-form-embedContainer .ml-form-embedBody .ml-form-checkboxRow label a:hover {
-            color: #1d4ed8;
-        }
-
-        .ml-error input {
-            border-color: red !important;
-        }
-
-        .ml-error .ml-form-checkboxRow {
-            border: 1px solid red !important;
-            border-radius: 4px;
-            padding: 10px;
-        }
-
-        @media only screen and (max-width: 400px) {
-            .ml-form-embedWrapper.embedDefault,
-            .ml-form-embedWrapper.embedPopup {
-                width: 100% !important;
-            }
-        }
+        @keyframes ml-spin { to { transform: rotate(360deg); } }
+        .ml-error input[type="email"] { border-color: #f87171 !important; }
+        .ml-error .ml-form-checkboxRow label { color: #b91c1c; }
     </style>
 
     <script>
@@ -369,30 +238,21 @@
             $('.ml-subscribe-form-16123980 .row-form').hide();
         }
 
-        // Walidacja checkboxa przed wysłaniem formularza
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('newsletter-form');
-            const checkbox = document.getElementById('privacy-consent-checkbox');
-            const submitBtn = document.getElementById('newsletter-submit-btn');
+        // Przycisk aktywny dopiero po zaznaczeniu zgody RODO
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('newsletter-form');
+            var checkbox = document.getElementById('privacy-consent-checkbox');
+            var submitBtn = document.getElementById('newsletter-submit-btn');
+            if (!form || !checkbox || !submitBtn) return;
 
-            if (form && checkbox && submitBtn) {
-                form.addEventListener('submit', function(e) {
-                    if (!checkbox.checked) {
-                        e.preventDefault();
-                        alert('Musisz wyrazić zgodę na przetwarzanie danych osobowych, aby zapisać się do newslettera.');
-                        checkbox.focus();
-                        return false;
-                    }
-                });
-
-                // Aktualizacja stanu przycisku w zależności od checkboxa
-                checkbox.addEventListener('change', function() {
-                    submitBtn.disabled = !this.checked;
-                });
-
-                // Początkowy stan przycisku
-                submitBtn.disabled = !checkbox.checked;
-            }
+            form.addEventListener('submit', function (e) {
+                if (!checkbox.checked) {
+                    e.preventDefault();
+                    checkbox.focus();
+                }
+            });
+            checkbox.addEventListener('change', function () { submitBtn.disabled = !this.checked; });
+            submitBtn.disabled = !checkbox.checked;
         });
     </script>
 
@@ -402,4 +262,3 @@
     </script>
 </body>
 </html>
-

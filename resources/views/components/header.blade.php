@@ -1,267 +1,211 @@
-<header class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50" x-data="{ userMenuOpen: false, mobileMenuOpen: false }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
+@php
+    // Strony CMS w menu - jedno zapytanie dla wersji desktop i mobile.
+    $headerPages = \App\Models\Page::inMenu('header')->with('children')->get();
 
-            {{-- Logo --}}
-            <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    <a href="{{ route('home') }}" class="flex items-center">
-                        <div class="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-sm">
-                            <i class="fa-solid fa-code text-white text-base"></i>
-                        </div>
-                        <span class="ml-2 text-lg sm:text-xl font-bold text-gray-900">Projekciarz.pl</span>
-                    </a>
-                </div>
+    $navItems = [
+        ['label' => 'Zlecenia', 'route' => 'announcements.index', 'active' => 'announcements.index'],
+        ['label' => 'Szukaj', 'route' => 'search.advanced', 'active' => 'search.advanced'],
+        ['label' => 'Ranking wykonawców', 'route' => 'leaderboard', 'active' => 'leaderboard'],
+        ['label' => 'Poradnik', 'route' => 'blog.index', 'active' => 'blog.*'],
+    ];
 
-                {{-- Desktop Navigation --}}
-                <nav class="hidden md:ml-10 lg:flex md:space-x-6">
-                    <a href="{{ route('announcements.index') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        Ogłoszenia
-                    </a>
-                    <a href="{{ route('leaderboard') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        Ranking
-                    </a>
-                    @php
-                        $headerPages = \App\Models\Page::inMenu('header')->with('children')->get();
-                    @endphp
+    if (auth()->check()) {
+        $user = auth()->user();
+        $unreadMessages = \App\Models\Message::where('receiver_id', $user->id)->where('is_read', false)->count();
+        $unreadNotifications = \App\Models\Notification::where('user_id', $user->id)->where('is_read', false)->count();
+        $extraBadge = 0;
+
+        if ($user->isClient()) {
+            // Nowe oferty do ogłoszeń zleceniodawcy
+            $extraBadge = \App\Models\Proposal::whereHas('announcement', fn ($q) => $q->where('user_id', $user->id))
+                ->where('status', 'pending')
+                ->count();
+        } elseif ($user->isFreelancer()) {
+            // Dopasowania zapisanych wyszukiwań są kosztowne (pętla po wyszukiwaniach),
+            // a nagłówek renderuje się na każdej stronie - stąd krótki cache per użytkownik.
+            $extraBadge = \Illuminate\Support\Facades\Cache::remember("header.matches.{$user->id}", 300, function () use ($user) {
+                $count = 0;
+                foreach ($user->savedSearches()->where('notify_on_match', true)->get() as $search) {
+                    $matching = $search->findMatchingAnnouncements();
+                    if ($search->last_notified_at) {
+                        $matching = $matching->filter(fn ($a) => $a->created_at > $search->last_notified_at);
+                    }
+                    $count += $matching->count();
+                }
+                return $count;
+            });
+        }
+
+        $totalBadge = $unreadNotifications + $extraBadge;
+        $initial = mb_strtoupper(mb_substr($user->name, 0, 1));
+    }
+@endphp
+
+<header class="sticky top-0 z-40 border-b border-ink-100 bg-white/85 backdrop-blur-md supports-[backdrop-filter]:bg-white/75"
+        x-data="{ userMenuOpen: false, mobileMenuOpen: false }"
+        @keydown.escape.window="userMenuOpen = false; mobileMenuOpen = false">
+    <div class="container-page">
+        <div class="flex h-16 items-center justify-between gap-4">
+
+            {{-- Logo + nawigacja --}}
+            <div class="flex items-center gap-8">
+                <a href="{{ route('home') }}" class="rounded-md" aria-label="Projekciarz.pl - strona główna">
+                    <x-logo />
+                </a>
+
+                <nav class="hidden items-center gap-1 lg:flex" aria-label="Główna nawigacja">
+                    @foreach($navItems as $item)
+                        <a href="{{ route($item['route']) }}"
+                           @class(['nav-link', 'nav-link-active' => request()->routeIs($item['active'])])
+                           @if(request()->routeIs($item['active'])) aria-current="page" @endif>
+                            {{ $item['label'] }}
+                        </a>
+                    @endforeach
                     @foreach($headerPages as $page)
                         <x-menu-item :page="$page" />
                     @endforeach
                 </nav>
             </div>
 
-            {{-- Mobile Menu Button --}}
-            <button @click="mobileMenuOpen = !mobileMenuOpen"
-                    class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-                    aria-label="Toggle menu">
-                <i class="fa-solid fa-bars text-xl" x-show="!mobileMenuOpen"></i>
-                <i class="fa-solid fa-times text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
-            </button>
-
-            {{-- User Menu --}}
-            <div class="flex items-center gap-2 sm:gap-3 md:gap-4">
+            {{-- Akcje --}}
+            <div class="flex items-center gap-1 sm:gap-2">
                 @auth
-                    {{-- Quick Actions (role-based) --}}
-                    @if(auth()->user()->isClient())
-                        <a href="{{ route('announcements.create') }}"
-                           class="hidden lg:flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            <i class="fa-solid fa-plus"></i>
-                            Dodaj ogłoszenie
+                    @if($user->isClient())
+                        <a href="{{ route('announcements.create') }}" class="btn btn-primary hidden lg:inline-flex">
+                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+                            Dodaj zlecenie
                         </a>
-                    @elseif(auth()->user()->isFreelancer())
-                        <a href="{{ route('proposals.index') }}"
-                           class="hidden lg:flex items-center gap-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            <i class="fa-solid fa-briefcase"></i>
+                    @elseif($user->isFreelancer())
+                        <a href="{{ route('proposals.index') }}" @class(['nav-link hidden lg:inline-flex', 'nav-link-active' => request()->routeIs('proposals.*')])>
                             Moje oferty
                         </a>
                     @endif
 
-                    {{-- Messages Icon --}}
-                    <a href="{{ route('messages.index') }}" class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <i class="fa-solid fa-envelope text-base sm:text-lg md:text-xl"></i>
-                        @php
-                            $unreadMessages = \App\Models\Message::where('receiver_id', auth()->id())->where('is_read', false)->count();
-                        @endphp
-                        @if($unreadMessages > 0)
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                                {{ $unreadMessages > 9 ? '9+' : $unreadMessages }}
-                            </span>
-                        @endif
+                    {{-- Wiadomości --}}
+                    <a href="{{ route('messages.index') }}"
+                       class="relative rounded-lg p-2 text-ink-500 transition-colors hover:bg-ink-50 hover:text-ink-900"
+                       x-data="{ count: {{ (int) $unreadMessages }} }"
+                       x-init="window.liveNotifications?.addEventListener('new_message', () => count++)"
+                       :aria-label="'Wiadomości' + (count ? ', nieprzeczytane: ' + count : '')"
+                       aria-label="Wiadomości">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>
+                        <span x-show="count > 0" x-cloak x-text="count > 9 ? '9+' : count"
+                              class="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white"></span>
                     </a>
 
-                    {{-- Notifications Icon --}}
-                    <a href="{{ route('notifications') }}" class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <i class="fa-solid fa-bell text-base sm:text-lg md:text-xl"></i>
-                        @php
-                            $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count();
-
-                            // Dla klientów: liczba nowych ofert do ich ogłoszeń
-                            if (auth()->user()->isClient()) {
-                                $newProposals = \App\Models\Proposal::whereHas('announcement', function($q) {
-                                    $q->where('user_id', auth()->id());
-                                })->where('status', 'pending')->count();
-                                $totalBadge = $unreadNotifications + $newProposals;
-                            }
-                            // Dla freelancerów: liczba nowych ogłoszeń pasujących do zapisanych wyszukiwań
-                            elseif (auth()->user()->isFreelancer()) {
-                                $newMatchingAnnouncements = 0;
-                                $savedSearches = auth()->user()->savedSearches()->where('notify_on_match', true)->get();
-                                foreach ($savedSearches as $search) {
-                                    $matching = $search->findMatchingAnnouncements();
-                                    if ($search->last_notified_at) {
-                                        $matching = $matching->filter(function($announcement) use ($search) {
-                                            return $announcement->created_at > $search->last_notified_at;
-                                        });
-                                    }
-                                    $newMatchingAnnouncements += $matching->count();
-                                }
-                                $totalBadge = $unreadNotifications + $newMatchingAnnouncements;
-                            } else {
-                                $totalBadge = $unreadNotifications;
-                            }
-                        @endphp
-                        @if($totalBadge > 0)
-                            <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                                {{ $totalBadge > 9 ? '9+' : $totalBadge }}
-                            </span>
-                        @endif
+                    {{-- Powiadomienia --}}
+                    <a href="{{ route('notifications') }}"
+                       class="relative rounded-lg p-2 text-ink-500 transition-colors hover:bg-ink-50 hover:text-ink-900"
+                       x-data="{ count: {{ (int) $totalBadge }} }"
+                       x-init="window.liveNotifications?.addEventListener('notification', () => count++)"
+                       aria-label="Powiadomienia">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/></svg>
+                        <span x-show="count > 0" x-cloak x-text="count > 9 ? '9+' : count"
+                              class="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white"></span>
                     </a>
 
-                    {{-- User Dropdown --}}
-                    <div class="relative" @click.away="userMenuOpen = false">
-                        <button @click="userMenuOpen = !userMenuOpen"
-                                class="flex items-center gap-2 text-gray-700 hover:text-gray-900 focus:outline-none">
-                            @if(auth()->user()->avatar)
-                                <img src="{{ asset('storage/' . auth()->user()->avatar) }}"
-                                     alt="{{ auth()->user()->name }}"
-                                     class="w-9 h-9 rounded-full object-cover border-2 border-gray-200">
+                    {{-- Menu użytkownika --}}
+                    <div class="relative ml-1" @click.outside="userMenuOpen = false">
+                        <button type="button" @click="userMenuOpen = !userMenuOpen"
+                                class="flex items-center gap-2 rounded-full p-0.5 pr-2 transition-colors hover:bg-ink-50"
+                                :aria-expanded="userMenuOpen" aria-haspopup="true" aria-label="Menu konta">
+                            @if($user->avatar)
+                                <img src="{{ asset('storage/' . $user->avatar) }}" alt=""
+                                     class="h-8 w-8 rounded-full object-cover ring-1 ring-ink-200">
                             @else
-                                <div class="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold border-2 border-gray-200">
-                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                                </div>
+                                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-ink-900 text-sm font-semibold text-white">{{ $initial }}</span>
                             @endif
-                            <i class="fa-solid fa-chevron-down text-xs hidden sm:block"></i>
+                            <svg class="hidden h-4 w-4 text-ink-400 sm:block" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
                         </button>
 
-                        {{-- Dropdown Menu --}}
-                        <div x-show="userMenuOpen"
+                        <div x-show="userMenuOpen" x-cloak
                              x-transition:enter="transition ease-out duration-100"
-                             x-transition:enter-start="opacity-0 scale-95"
-                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
                              x-transition:leave="transition ease-in duration-75"
-                             x-transition:leave-start="opacity-100 scale-100"
-                             x-transition:leave-end="opacity-0 scale-95"
-                             class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
-                             style="display: none;">
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="absolute right-0 mt-2 w-64 origin-top-right rounded-xl border border-ink-100 bg-white p-1.5 shadow-xl">
 
-                            {{-- User Info --}}
-                            <div class="px-4 py-3 border-b border-gray-100">
-                                <p class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</p>
-                                <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
-                                <span class="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-                                    {{ auth()->user()->isClient() ? '👤 Klient' : '💼 Freelancer' }}
-                                </span>
+                            <div class="flex items-center gap-3 px-3 py-3">
+                                <div class="min-w-0">
+                                    <p class="truncate text-sm font-semibold text-ink-900">{{ $user->name }}</p>
+                                    <p class="truncate text-xs text-ink-500">{{ $user->email }}</p>
+                                </div>
+                                <span class="badge badge-brand ml-auto shrink-0">{{ $user->isClient() ? 'Zleceniodawca' : 'Wykonawca' }}</span>
                             </div>
 
-                            {{-- Menu Items --}}
-                            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fa-solid fa-gauge w-5"></i>
-                                Dashboard
-                            </a>
+                            <div class="my-1 h-px bg-ink-100"></div>
 
-                            @if(auth()->user()->isClient())
-                                <a href="{{ route('announcements.create') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 lg:hidden">
-                                    <i class="fa-solid fa-plus w-5"></i>
-                                    Dodaj ogłoszenie
-                                </a>
+                            <a href="{{ route('dashboard') }}" class="dropdown-item"><i class="fa-solid fa-gauge w-4 text-ink-400"></i>Panel</a>
+                            <a href="{{ route('contracts.index') }}" class="dropdown-item"><i class="fa-solid fa-list-check w-4 text-ink-400"></i>Moje kontrakty</a>
+
+                            @if($user->isClient())
+                                <a href="{{ route('announcements.create') }}" class="dropdown-item lg:hidden"><i class="fa-solid fa-plus w-4 text-ink-400"></i>Dodaj zlecenie</a>
                             @endif
 
-                            @if(auth()->user()->isFreelancer())
-                                <a href="{{ route('proposals.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                    <i class="fa-solid fa-briefcase w-5"></i>
-                                    Moje oferty
-                                </a>
-                                <a href="{{ route('portfolio.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                    <i class="fa-solid fa-folder-open w-5"></i>
-                                    Portfolio
-                                </a>
+                            @if($user->isFreelancer())
+                                <a href="{{ route('proposals.index') }}" class="dropdown-item"><i class="fa-solid fa-briefcase w-4 text-ink-400"></i>Moje oferty</a>
+                                <a href="{{ route('portfolio.index') }}" class="dropdown-item"><i class="fa-solid fa-folder-open w-4 text-ink-400"></i>Portfolio</a>
                             @endif
 
-                            <a href="{{ route('saved.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fa-solid fa-bookmark w-5"></i>
-                                Zapisane
-                            </a>
+                            <a href="{{ route('saved.index') }}" class="dropdown-item"><i class="fa-solid fa-bookmark w-4 text-ink-400"></i>Zapisane</a>
+                            <a href="{{ route('stats') }}" class="dropdown-item"><i class="fa-solid fa-chart-line w-4 text-ink-400"></i>Statystyki</a>
 
-                            <a href="{{ route('stats') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fa-solid fa-chart-line w-5"></i>
-                                Statystyki
-                            </a>
+                            <div class="my-1 h-px bg-ink-100"></div>
 
-                            <div class="border-t border-gray-100 my-2"></div>
-
-                            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fa-solid fa-gear w-5"></i>
-                                Ustawienia
-                            </a>
+                            <a href="{{ route('profile.edit') }}" class="dropdown-item"><i class="fa-solid fa-gear w-4 text-ink-400"></i>Ustawienia konta</a>
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                    <i class="fa-solid fa-right-from-bracket w-5"></i>
-                                    Wyloguj się
+                                <button type="submit" class="dropdown-item text-red-600 hover:bg-red-50 hover:text-red-700">
+                                    <i class="fa-solid fa-right-from-bracket w-4"></i>Wyloguj się
                                 </button>
                             </form>
                         </div>
                     </div>
-
                 @else
-                    {{-- Login and Register - Hidden on mobile, shown on desktop --}}
-                    <a href="{{ route('login') }}" class="hidden lg:inline-block text-gray-600 hover:text-gray-900 text-sm font-medium px-3 py-2">
-                        Zaloguj
-                    </a>
-                    <a href="{{ route('register') }}" class="hidden lg:inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
-                        Rejestracja
-                    </a>
+                    <a href="{{ route('login') }}" class="nav-link hidden lg:inline-flex">Zaloguj się</a>
+                    <a href="{{ route('register') }}" class="btn btn-primary hidden lg:inline-flex">Załóż konto</a>
                 @endauth
+
+                {{-- Przycisk menu mobilnego --}}
+                <button type="button" @click="mobileMenuOpen = !mobileMenuOpen"
+                        class="rounded-lg p-2 text-ink-600 hover:bg-ink-50 hover:text-ink-900 lg:hidden"
+                        :aria-expanded="mobileMenuOpen" aria-controls="mobile-menu" aria-label="Otwórz menu">
+                    <svg x-show="!mobileMenuOpen" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+                    <svg x-show="mobileMenuOpen" x-cloak class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+                </button>
             </div>
         </div>
+    </div>
 
-        {{-- Mobile Menu --}}
-        <div x-show="mobileMenuOpen"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 scale-95"
-             x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-95"
-             class="lg:hidden border-t border-gray-200 py-4"
-             style="display: none;">
-            <nav class="flex flex-col space-y-2">
-                <a href="{{ route('announcements.index') }}"
-                   class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                    Ogłoszenia
-                </a>
-                <a href="{{ route('leaderboard') }}"
-                   class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                    Ranking
-                </a>
-                @php
-                    $headerPages = \App\Models\Page::inMenu('header')->with('children')->get();
-                @endphp
-                @foreach($headerPages as $page)
-                    <x-menu-item :page="$page" />
-                @endforeach
+    {{-- Menu mobilne --}}
+    <div id="mobile-menu" x-show="mobileMenuOpen" x-cloak
+         x-transition:enter="transition ease-out duration-150"
+         x-transition:enter-start="opacity-0 -translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         class="border-t border-ink-100 bg-white lg:hidden">
+        <nav class="container-page flex flex-col gap-1 py-4" aria-label="Nawigacja mobilna">
+            @foreach($navItems as $item)
+                <a href="{{ route($item['route']) }}" @class(['nav-link', 'nav-link-active' => request()->routeIs($item['active'])])>{{ $item['label'] }}</a>
+            @endforeach
+            @foreach($headerPages as $page)
+                <x-menu-item :page="$page" />
+            @endforeach
 
-                @auth
-                    @if(auth()->user()->isClient())
-                        <a href="{{ route('announcements.create') }}"
-                           class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors mt-2">
-                            <i class="fa-solid fa-plus"></i>
-                            Dodaj ogłoszenie
-                        </a>
-                    @elseif(auth()->user()->isFreelancer())
-                        <a href="{{ route('proposals.index') }}"
-                           class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            <i class="fa-solid fa-briefcase mr-2"></i>
-                            Moje oferty
-                        </a>
-                    @endif
-                @else
-                    {{-- Login and Register in mobile menu --}}
-                    <div class="border-t border-gray-200 pt-4 mt-4">
-                        <a href="{{ route('login') }}"
-                           class="block text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors mb-2">
-                            <i class="fa-solid fa-right-to-bracket mr-2"></i>
-                            Zaloguj
-                        </a>
-                        <a href="{{ route('register') }}"
-                           class="block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center">
-                            <i class="fa-solid fa-user-plus mr-2"></i>
-                            Rejestracja
-                        </a>
-                    </div>
-                @endauth
-            </nav>
-        </div>
+            @auth
+                @if($user->isClient())
+                    <a href="{{ route('announcements.create') }}" class="btn btn-primary mt-3">Dodaj zlecenie</a>
+                @elseif($user->isFreelancer())
+                    <a href="{{ route('proposals.index') }}" class="nav-link">Moje oferty</a>
+                @endif
+            @else
+                <div class="mt-3 grid grid-cols-2 gap-2 border-t border-ink-100 pt-4">
+                    <a href="{{ route('login') }}" class="btn btn-secondary">Zaloguj się</a>
+                    <a href="{{ route('register') }}" class="btn btn-primary">Załóż konto</a>
+                </div>
+            @endauth
+        </nav>
     </div>
 </header>

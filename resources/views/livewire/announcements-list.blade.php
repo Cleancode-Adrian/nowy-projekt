@@ -1,28 +1,44 @@
-<div class="min-h-screen bg-gray-50 py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {{-- Header --}}
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Przeglądaj ogłoszenia</h1>
-            <p class="text-gray-600">{{ $announcements->total() }} aktywnych projektów</p>
+<div>
+    {{-- Nagłówek strony --}}
+    <div class="border-b border-ink-100 bg-white">
+        <div class="container-page py-10">
+            <nav class="text-sm text-ink-400" aria-label="Okruszki">
+                <a href="{{ route('home') }}" class="hover:text-ink-700">Strona główna</a>
+                <span class="mx-1.5">/</span>
+                <span class="text-ink-600">Zlecenia</span>
+            </nav>
+            <div class="mt-3 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight">Zlecenia</h1>
+                    <p class="mt-1 text-ink-500">
+                        <span class="font-semibold text-ink-800">{{ number_format($announcements->total(), 0, ',', ' ') }}</span>
+                        {{ $announcements->total() === 1 ? 'aktywny projekt' : 'aktywnych projektów' }} czeka na oferty
+                    </p>
+                </div>
+                @auth
+                    @if(auth()->user()->isClient())
+                        <a href="{{ route('announcements.create') }}" class="btn btn-primary">Dodaj zlecenie</a>
+                    @endif
+                @else
+                    <a href="{{ route('announcements.create') }}" class="btn btn-primary">Dodaj zlecenie</a>
+                @endauth
+            </div>
         </div>
+    </div>
 
-        {{-- Filters --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-                {{-- Search --}}
-                <div class="md:col-span-2">
-                    <input
-                        type="text"
-                        wire:model.live.debounce.300ms="search"
-                        placeholder="🔍 Szukaj ogłoszeń..."
-                        class="input">
+    <div class="container-page py-8">
+        {{-- Filtry --}}
+        <div class="rounded-xl border border-ink-100 bg-white p-4 shadow-sm" x-data="{ showAdvanced: @js(filled($minBudget) || filled($maxBudget)) }">
+            <div class="grid grid-cols-1 gap-3 md:grid-cols-12">
+                <div class="relative md:col-span-6">
+                    <label for="search" class="sr-only">Szukaj zleceń</label>
+                    <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd"/></svg>
+                    <input id="search" type="search" wire:model.live.debounce.300ms="search" placeholder="Szukaj po tytule lub opisie…" class="input pl-10">
                 </div>
 
-                {{-- Category --}}
-                <div>
-                    <select wire:model.live="category" class="input">
+                <div class="md:col-span-3">
+                    <label for="category" class="sr-only">Kategoria</label>
+                    <select id="category" wire:model.live="category" class="input">
                         <option value="">Wszystkie kategorie</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
@@ -30,119 +46,126 @@
                     </select>
                 </div>
 
-                {{-- Clear Filters --}}
-                <div>
-                    <button wire:click="clearFilters" type="button" class="w-full input text-center cursor-pointer hover:bg-gray-50">
-                        ✖ Wyczyść filtry
+                <div class="flex gap-2 md:col-span-3">
+                    <button type="button" @click="showAdvanced = !showAdvanced" :aria-expanded="showAdvanced"
+                            class="btn btn-secondary flex-1" :class="showAdvanced && 'ring-brand-300 bg-brand-50 text-brand-700'">
+                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3.75a2 2 0 1 0-4 0 2 2 0 0 0 4 0ZM17.25 4.5a.75.75 0 0 0 0-1.5h-5.5a.75.75 0 0 0 0 1.5h5.5ZM5 3.75a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75ZM4.25 17a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5h1.5ZM17.25 17a.75.75 0 0 0 0-1.5h-5.5a.75.75 0 0 0 0 1.5h5.5ZM9 10a.75.75 0 0 1-.75.75h-5.5a.75.75 0 0 1 0-1.5h5.5A.75.75 0 0 1 9 10ZM17.25 10.75a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5h1.5ZM14 10a2 2 0 1 0-4 0 2 2 0 0 0 4 0ZM10 16.25a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/></svg>
+                        Budżet
                     </button>
+                    @if(filled($search) || filled($category) || filled($minBudget) || filled($maxBudget))
+                        <button wire:click="clearFilters" type="button" class="btn btn-ghost" title="Wyczyść filtry">
+                            Wyczyść
+                        </button>
+                    @endif
                 </div>
             </div>
 
-            {{-- Advanced Filters (collapsible) --}}
-            <div x-data="{ showAdvanced: false }" class="mt-4">
-                <button @click="showAdvanced = !showAdvanced" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                    <span x-show="!showAdvanced">+ Filtry zaawansowane</span>
-                    <span x-show="showAdvanced">- Ukryj filtry</span>
-                </button>
-
-                <div x-show="showAdvanced" x-transition class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {{-- Budget Range --}}
+            <div x-show="showAdvanced" x-collapse x-cloak>
+                <div class="mt-4 grid grid-cols-1 gap-3 border-t border-ink-100 pt-4 sm:grid-cols-2 md:max-w-xl">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Budżet minimalny</label>
-                        <input type="number" wire:model.live.debounce.500ms="minBudget" placeholder="np. 1000" class="input">
+                        <label for="minBudget" class="label">Budżet od (PLN)</label>
+                        <input id="minBudget" type="number" min="0" step="100" wire:model.live.debounce.500ms="minBudget" placeholder="np. 1000" class="input">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Budżet maksymalny</label>
-                        <input type="number" wire:model.live.debounce.500ms="maxBudget" placeholder="np. 10000" class="input">
+                        <label for="maxBudget" class="label">Budżet do (PLN)</label>
+                        <input id="maxBudget" type="number" min="0" step="100" wire:model.live.debounce.500ms="maxBudget" placeholder="np. 10 000" class="input">
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Loading Indicator --}}
-        <div wire:loading class="text-center py-4">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p class="text-gray-600 mt-2">Ładowanie...</p>
+        <div class="mt-3 flex items-center justify-between text-sm text-ink-500">
+            <a href="{{ route('search.advanced') }}" class="font-medium text-brand-600 hover:text-brand-700">Wyszukiwanie zaawansowane &rarr;</a>
         </div>
 
-        {{-- Announcements Grid --}}
-        <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {{-- Wyniki: szkielet podczas ładowania zamiast znikającej siatki --}}
+        <div wire:loading.delay class="mt-6 grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+            @for($i = 0; $i < 6; $i++)
+                <div class="h-64 animate-pulse rounded-xl border border-ink-100 bg-white p-5">
+                    <div class="h-4 w-24 rounded bg-ink-100"></div>
+                    <div class="mt-5 h-5 w-3/4 rounded bg-ink-100"></div>
+                    <div class="mt-3 h-3 w-full rounded bg-ink-50"></div>
+                    <div class="mt-2 h-3 w-5/6 rounded bg-ink-50"></div>
+                    <div class="mt-10 h-8 w-full rounded bg-ink-50"></div>
+                </div>
+            @endfor
+        </div>
+
+        <div wire:loading.delay.remove class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             @forelse($announcements as $announcement)
-                <x-announcement-card :announcement="$announcement" />
+                <x-announcement-card :announcement="$announcement" wire:key="a-{{ $announcement->id }}" />
             @empty
-                <div class="col-span-full text-center py-12">
-                    <div class="text-6xl mb-4">🔍</div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Brak ogłoszeń</h3>
-                    <p class="text-gray-600 mb-6">Nie znaleźliśmy ogłoszeń spełniających Twoje kryteria</p>
-                    <button wire:click="clearFilters" class="btn btn-primary">
-                        Wyczyść filtry
-                    </button>
+                <div class="col-span-full rounded-xl border border-dashed border-ink-200 bg-white px-6 py-16 text-center">
+                    <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-ink-50 text-ink-400">
+                        <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd"/></svg>
+                    </span>
+                    <h3 class="mt-4 font-semibold">Brak zleceń dla wybranych filtrów</h3>
+                    <p class="mt-1 text-sm text-ink-500">Spróbuj innej frazy, kategorii albo szerszego zakresu budżetu.</p>
+                    <button wire:click="clearFilters" type="button" class="btn btn-secondary mt-6">Wyczyść filtry</button>
                 </div>
             @endforelse
         </div>
 
-        {{-- Pagination --}}
-        <div class="mt-8">
+        <div class="mt-10">
             {{ $announcements->links() }}
         </div>
     </div>
-</div>
 
-{{-- Schema.org for Job Listings --}}
+{{-- Schema.org: lista ofert. Budujemy tablicę w PHP i kodujemy json_encode -
+     wcześniejsze addslashes() dawało niepoprawny JSON (\' i surowe nowe linie). --}}
 @if($announcements->count() > 0)
 @push('head')
-<script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "ItemList",
-    "itemListElement": [
-        @foreach($announcements as $index => $announcement)
-        @php
-            $isRemote = !$announcement->location || strtolower(trim($announcement->location)) === 'zdalna' || strtolower(trim($announcement->location)) === 'zdalnie';
-            $location = $announcement->location ?? 'Zdalna';
-            $validThroughDate = $announcement->deadline
-                ? \Carbon\Carbon::parse($announcement->deadline)
-                : $announcement->created_at->copy()->addDays(30);
-            $validThrough = $validThroughDate->toIso8601String();
-        @endphp
-        {
-            "@@type": "ListItem",
-            "position": {{ $index + 1 }},
-            "item": {
-                "@@type": "JobPosting",
-                "title": "{{ addslashes($announcement->title) }}",
-                "description": "{{ addslashes(strip_tags(Str::limit($announcement->description, 200))) }}",
-                "datePosted": "{{ $announcement->created_at->toIso8601String() }}",
-                "validThrough": "{{ $validThrough }}",
-                "hiringOrganization": {
-                    "@@type": "Organization",
-                    "name": "{{ addslashes($announcement->user->company ?? $announcement->user->name) }}"
-                },
-                "jobLocation": {
-                    "@@type": "Place",
-                    "address": {
-                        "@@type": "PostalAddress",
-                        "addressLocality": "{{ $isRemote ? 'Zdalna' : addslashes($location) }}",
-                        "streetAddress": "",
-                        "addressCountry": "PL"
-                    }
-                },
-                "baseSalary": {
-                    "@@type": "MonetaryAmount",
-                    "currency": "{{ $announcement->budget_currency ?? 'PLN' }}",
-                    "value": {
-                        "@@type": "QuantitativeValue",
-                        "minValue": {{ $announcement->budget_min ?? 0 }},
-                        "maxValue": {{ $announcement->budget_max ?? ($announcement->budget_min ?? 0) }},
-                        "unitText": "TOTAL"
-                    }
-                }
+@php
+    $jsonLd = [
+        '@context' => 'https://schema.org',
+        '@type' => 'ItemList',
+        'itemListElement' => $announcements->values()->map(function ($a, $index) {
+            $location = trim((string) $a->location);
+            $isRemote = $location === '' || in_array(mb_strtolower($location), ['zdalna', 'zdalnie'], true);
+            try {
+                $validThrough = $a->deadline ? \Carbon\Carbon::parse($a->deadline) : $a->created_at->copy()->addDays(30);
+            } catch (\Throwable $e) {
+                $validThrough = $a->created_at->copy()->addDays(30);
             }
-        }{{ $loop->last ? '' : ',' }}
-        @endforeach
-    ]
-}
-</script>
+
+            return [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'item' => [
+                    '@type' => 'JobPosting',
+                    'title' => $a->title,
+                    'description' => \Illuminate\Support\Str::limit(strip_tags($a->description), 200),
+                    'datePosted' => $a->created_at->toIso8601String(),
+                    'validThrough' => $validThrough->toIso8601String(),
+                    'url' => route('announcements.show', $a),
+                    'hiringOrganization' => [
+                        '@type' => 'Organization',
+                        'name' => $a->user->company ?: $a->user->name,
+                    ],
+                    'jobLocation' => [
+                        '@type' => 'Place',
+                        'address' => [
+                            '@type' => 'PostalAddress',
+                            'addressLocality' => $isRemote ? 'Zdalna' : $location,
+                            'addressCountry' => 'PL',
+                        ],
+                    ],
+                    'baseSalary' => [
+                        '@type' => 'MonetaryAmount',
+                        'currency' => $a->budget_currency ?: 'PLN',
+                        'value' => [
+                            '@type' => 'QuantitativeValue',
+                            'minValue' => (float) ($a->budget_min ?? 0),
+                            'maxValue' => (float) ($a->budget_max ?? $a->budget_min ?? 0),
+                            'unitText' => 'TOTAL',
+                        ],
+                    ],
+                ],
+            ];
+        })->all(),
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
 @endpush
 @endif
-
+</div>

@@ -283,45 +283,40 @@
 {{-- Schema.org for this announcement --}}
 @push('head')
 @php
-    $isRemote = !$announcement->location || strtolower(trim($announcement->location)) === 'zdalna' || strtolower(trim($announcement->location)) === 'zdalnie';
-    $location = $announcement->location ?? 'Zdalna';
-    $validThroughDate = $announcement->deadline
-        ? \Carbon\Carbon::parse($announcement->deadline)
-        : $announcement->created_at->copy()->addDays(30);
-    $validThrough = $validThroughDate->toIso8601String();
-@endphp
-<script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "JobPosting",
-    "title": "{{ addslashes($announcement->title) }}",
-    "description": "{{ addslashes(strip_tags($announcement->description)) }}",
-    "datePosted": "{{ $announcement->created_at->toIso8601String() }}",
-    "validThrough": "{{ $validThrough }}",
-    "hiringOrganization": {
-        "@@type": "Organization",
-        "name": "{{ addslashes($announcement->user->company ?? $announcement->user->name) }}"
-    },
-    "jobLocation": {
-        "@@type": "Place",
-        "address": {
-            "@@type": "PostalAddress",
-            "addressLocality": "{{ $isRemote ? 'Zdalna' : addslashes($location) }}",
-            "streetAddress": "{{ $isRemote ? '' : '' }}",
-            "addressCountry": "{{ $isRemote ? 'PL' : 'PL' }}"
-        }
-    },
-    "baseSalary": {
-        "@@type": "MonetaryAmount",
-        "currency": "{{ $announcement->budget_currency ?? 'PLN' }}",
-        "value": {
-            "@@type": "QuantitativeValue",
-            "minValue": {{ $announcement->budget_min ?? 0 }},
-            "maxValue": {{ $announcement->budget_max ?? ($announcement->budget_min ?? 0) }},
-            "unitText": "TOTAL"
-        }
+    // json_encode zamiast ręcznego składania JSON-a: addslashes() dawało niepoprawny JSON
+    // przy apostrofach, a {{ }} w <script> zamieniało znaki na encje HTML.
+    $ldLocation = trim((string) $announcement->location);
+    $ldRemote = $ldLocation === '' || in_array(mb_strtolower($ldLocation), ['zdalna', 'zdalnie'], true);
+    try {
+        $ldValidThrough = $announcement->deadline ? \Carbon\Carbon::parse($announcement->deadline) : $announcement->created_at->copy()->addDays(30);
+    } catch (\Throwable $e) {
+        $ldValidThrough = $announcement->created_at->copy()->addDays(30);
     }
-}
-</script>
+    $jsonLd = [
+        '@context' => 'https://schema.org',
+        '@type' => 'JobPosting',
+        'title' => $announcement->title,
+        'description' => strip_tags($announcement->description),
+        'datePosted' => $announcement->created_at->toIso8601String(),
+        'validThrough' => $ldValidThrough->toIso8601String(),
+        'url' => route('announcements.show', $announcement),
+        'hiringOrganization' => ['@type' => 'Organization', 'name' => $announcement->user->company ?: $announcement->user->name],
+        'jobLocation' => [
+            '@type' => 'Place',
+            'address' => ['@type' => 'PostalAddress', 'addressLocality' => $ldRemote ? 'Zdalna' : $ldLocation, 'addressCountry' => 'PL'],
+        ],
+        'baseSalary' => [
+            '@type' => 'MonetaryAmount',
+            'currency' => $announcement->budget_currency ?: 'PLN',
+            'value' => [
+                '@type' => 'QuantitativeValue',
+                'minValue' => (float) ($announcement->budget_min ?? 0),
+                'maxValue' => (float) ($announcement->budget_max ?? $announcement->budget_min ?? 0),
+                'unitText' => 'TOTAL',
+            ],
+        ],
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
 @endpush
 
