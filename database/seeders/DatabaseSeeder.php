@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             BlogPostPricingSeeder::class,
             BlogPostBriefSeeder::class,
             BlogPostClientGuidesSeeder::class,
+            BlogPostTechAndMaintenanceSeeder::class,
             BlogScheduleSeeder::class,
         ]);
     }
