@@ -46,6 +46,8 @@ class CreateAnnouncement extends Component
             'hourly_rate_max' => 'nullable|numeric|min:0|gte:hourly_rate_min',
             'deadline' => 'nullable|date|after:today',
             'location' => 'nullable|string|max:255',
+            'budget_currency' => 'required|in:PLN,EUR,USD,GBP',
+            'is_urgent' => 'nullable|boolean',
             'selectedTags' => 'array|max:10',
             'selectedTags.*' => 'exists:tags,id',
             'attachments.*' => ['nullable', 'file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,webp,zip,doc,docx', new SafeUpload(['pdf', 'jpg', 'jpeg', 'png', 'webp', 'zip', 'doc', 'docx'])],

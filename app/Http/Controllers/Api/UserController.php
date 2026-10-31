@@ -39,7 +39,17 @@ class UserController extends Controller
             $validated['avatar'] = $path;
         }
 
-        $user->update($validated);
+        $emailChanged = isset($validated['email'])
+            && strcasecmp((string) $user->email, (string) $validated['email']) !== 0;
+
+        $user->fill($validated);
+
+        // Zmieniony adres wymaga ponownego potwierdzenia.
+        if ($emailChanged) {
+            $user->forceFill(['email_verified_at' => null]);
+        }
+
+        $user->save();
 
         return response()->json([
             'message' => 'Profil zaktualizowany',

@@ -34,9 +34,15 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Rate limiting for auth endpoints (brute-force protection)
+        // Dwa limity naraz: per e-mail+IP (zgadywanie hasła jednego konta) oraz
+        // per IP (credential stuffing - rotowanie adresów e-mail z jednego IP
+        // omijało sam limit e-mail+IP).
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->input('email', '');
-            return Limit::perMinute(10)->by(strtolower($email) . '|' . $request->ip());
+            return [
+                Limit::perMinute(10)->by(strtolower($email) . '|' . $request->ip()),
+                Limit::perMinute(30)->by('login-ip|' . $request->ip()),
+            ];
         });
 
         RateLimiter::for('register', function (Request $request) {
@@ -45,7 +51,10 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('admin-login', function (Request $request) {
             $email = (string) $request->input('email', '');
-            return Limit::perMinute(5)->by('admin|' . strtolower($email) . '|' . $request->ip());
+            return [
+                Limit::perMinute(5)->by('admin|' . strtolower($email) . '|' . $request->ip()),
+                Limit::perMinute(15)->by('admin-ip|' . $request->ip()),
+            ];
         });
 
         RateLimiter::for('password-reset', function (Request $request) {
@@ -53,8 +62,12 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('api-login', function (Request $request) {
+            // API nie ma reCAPTCHA, więc limity są ostrzejsze niż na stronie.
             $email = (string) $request->input('email', '');
-            return Limit::perMinute(20)->by('api|' . strtolower($email) . '|' . $request->ip());
+            return [
+                Limit::perMinute(5)->by('api|' . strtolower($email) . '|' . $request->ip()),
+                Limit::perMinute(20)->by('api-login-ip|' . $request->ip()),
+            ];
         });
 
         RateLimiter::for('api-register', function (Request $request) {

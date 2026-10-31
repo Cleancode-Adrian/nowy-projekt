@@ -3,15 +3,21 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Console\ConfirmableTrait;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class ResetAdminAndCleanup extends Command
 {
+    use ConfirmableTrait;
+
     /**
      * The name and signature of the console command.
+     *
+     * Hasło celowo NIE jest opcją wiersza poleceń - trafiałoby do historii
+     * powłoki i listy procesów (ps). Zawsze pytamy o nie interaktywnie.
      */
-    protected $signature = 'admin:reset {--email=} {--password=} {--name=}';
+    protected $signature = 'admin:reset {--email=} {--name=} {--force : Pomiń potwierdzenie (także na produkcji)}';
 
     /**
      * The console command description.
@@ -23,13 +29,32 @@ class ResetAdminAndCleanup extends Command
      */
     public function handle()
     {
+        $others = User::where('role', '!=', 'admin')->count();
+
+        $this->warn("⚠️  Ta komenda USUNIE wszystkich użytkowników poza jednym administratorem ({$others} kont innych niż admin).");
+
+        // Na produkcji wymaga --force albo potwierdzenia, lokalnie pyta zawsze (poniżej).
+        if (!$this->confirmToProceed('Usunięcie wszystkich użytkowników')) {
+            return 1;
+        }
+
+        if (!$this->option('force') && !$this->confirm('Na pewno kontynuować?', false)) {
+            $this->info('Operacja anulowana.');
+            return 1;
+        }
+
         $this->info('🔧 Resetowanie administratora i czyszczenie użytkowników...');
         $this->newLine();
 
         // Pobierz dane z opcji lub zapytaj
         $email = $this->option('email') ?: $this->ask('📧 Podaj nowy email administratora');
-        $password = $this->option('password') ?: $this->secret('🔒 Podaj nowe hasło administratora');
+        $password = $this->secret('🔒 Podaj nowe hasło administratora');
         $name = $this->option('name') ?: $this->ask('👤 Podaj imię/nazwę administratora', 'Administrator');
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen((string) $password) < 12) {
+            $this->error('Nieprawidłowy e-mail albo hasło krótsze niż 12 znaków.');
+            return 1;
+        }
 
         // Znajdź obecnego administratora lub utwórz nowego
         $admin = User::where('role', 'admin')->first();
@@ -43,7 +68,6 @@ class ResetAdminAndCleanup extends Command
                 'email' => $email,
                 'password' => Hash::make($password),
                 'is_approved' => true,
-                'email_verified_at' => now(),
             ]);
         } else {
             $this->info("⚠️  Nie znaleziono administratora, tworzę nowego...");
@@ -54,9 +78,11 @@ class ResetAdminAndCleanup extends Command
                 'password' => Hash::make($password),
                 'role' => 'admin',
                 'is_approved' => true,
-                'email_verified_at' => now(),
             ]);
         }
+
+        // email_verified_at nie jest w $fillable - ustawiamy jawnie.
+        $admin->forceFill(['email_verified_at' => now()])->save();
 
         $this->newLine();
         $this->info('✅ Administrator zaktualizowany:');
@@ -82,4 +108,3 @@ class ResetAdminAndCleanup extends Command
         return 0;
     }
 }
-

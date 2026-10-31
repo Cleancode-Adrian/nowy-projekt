@@ -33,6 +33,11 @@ class ProfileEdit extends Component
     public $avatar;
     public $currentAvatar;
 
+    // Weryfikacja konta (freelancer)
+    public $verificationDocument;
+    public $verificationStatus;
+    public $verificationNote;
+
     // Zmiana hasła
     public $current_password;
     public $new_password;
@@ -55,6 +60,8 @@ class ProfileEdit extends Component
             $this->skills = $user->skills ?? [];
             $this->selectedSkills = is_array($user->skills) ? implode(', ', $user->skills) : '';
             $this->experience_level = $user->experience_level;
+            $this->verificationStatus = $user->verification_status;
+            $this->verificationNote = $user->verification_note;
         }
     }
 
@@ -66,9 +73,9 @@ class ProfileEdit extends Component
             'phone' => 'nullable|string|max:20',
             'company' => 'nullable|string|max:255',
             'bio' => 'nullable|string|max:1000',
-            'website' => 'nullable|url|max:255',
-            'linkedin_url' => 'nullable|url|max:255',
-            'github_url' => 'nullable|url|max:255',
+            'website' => 'nullable|url:http,https|max:255',
+            'linkedin_url' => 'nullable|url:http,https|max:255',
+            'github_url' => 'nullable|url:http,https|max:255',
         ];
 
         if (Auth::user()->isFreelancer()) {
@@ -84,7 +91,25 @@ class ProfileEdit extends Component
             $validated['skills'] = array_filter($skillsArray);
         }
 
-        $user->update($validated);
+        $emailChanged = strcasecmp((string) $user->email, (string) $validated['email']) !== 0;
+
+        $user->fill($validated);
+
+        // Nowy adres nie jest potwierdzony - inaczej zmiana e-maila omijałaby
+        // weryfikację (i link resetu hasła trafiałby na niezweryfikowaną skrzynkę).
+        if ($emailChanged) {
+            $user->forceFill(['email_verified_at' => null]);
+        }
+
+        $user->save();
+
+        if ($emailChanged && config('security.require_email_verification')) {
+            try {
+                $user->sendEmailVerificationNotification();
+            } catch (\Exception $e) {
+                \Log::warning('Nie udało się wysłać linku weryfikacyjnego po zmianie e-maila: ' . $e->getMessage());
+            }
+        }
 
         $this->dispatch('notify',
             message: 'Profil zaktualizowany pomyślnie!',
@@ -132,6 +157,47 @@ class ProfileEdit extends Component
                 type: 'success'
             );
         }
+    }
+
+    public function submitVerification()
+    {
+        $user = Auth::user();
+
+        if (!$user->isFreelancer()) {
+            return;
+        }
+
+        if (in_array($user->verification_status, ['pending', 'approved'])) {
+            return;
+        }
+
+        $this->validate([
+            'verificationDocument' => [
+                'required',
+                'file',
+                'max:5120',
+                'mimes:jpg,jpeg,png,pdf',
+                new SafeUpload(['jpg', 'jpeg', 'png', 'pdf']),
+            ],
+        ]);
+
+        // Dokument tożsamości trzymamy na dysku "local" (poza webrootem) - nigdy "public".
+        $path = $this->verificationDocument->store('verification', 'local');
+
+        $user->update([
+            'verification_document' => $path,
+            'verification_status' => 'pending',
+            'verification_note' => null,
+        ]);
+
+        $this->verificationDocument = null;
+        $this->verificationStatus = 'pending';
+        $this->verificationNote = null;
+
+        $this->dispatch('notify',
+            message: 'Wniosek o weryfikację wysłany! Administrator sprawdzi go wkrótce.',
+            type: 'success'
+        );
     }
 
     public function changePassword()

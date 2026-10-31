@@ -55,7 +55,15 @@ class ProposalController extends Controller
             'description' => 'required|string|min:50',
         ]);
 
-        $announcement = Announcement::findOrFail($validated['announcement_id']);
+        // Oferty tylko do opublikowanych i otwartych ogłoszeń (nie do oczekujących,
+        // odrzuconych ani zamkniętych).
+        $announcement = Announcement::where('status', 'published')
+            ->where('is_approved', true)
+            ->find($validated['announcement_id']);
+
+        if (!$announcement) {
+            return response()->json(['message' => 'To ogłoszenie nie przyjmuje ofert'], 422);
+        }
 
         // Can't propose to own announcement
         if ($announcement->user_id === $request->user()->id) {

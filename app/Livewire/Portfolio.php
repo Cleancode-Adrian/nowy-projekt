@@ -28,7 +28,7 @@ class Portfolio extends Component
         return [
             'title' => 'required|min:5|max:255',
             'description' => 'required|min:20',
-            'url' => 'nullable|url',
+            'url' => 'nullable|url:http,https|max:255',
             'image' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])],
             'technologies' => 'nullable|string',
             'completed_at' => 'nullable|date',

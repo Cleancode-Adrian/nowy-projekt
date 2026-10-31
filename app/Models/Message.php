@@ -54,10 +54,14 @@ class Message extends Model
 
     public function scopeBetween($query, $userId1, $userId2)
     {
-        return $query->where(function($q) use ($userId1, $userId2) {
-            $q->where('sender_id', $userId1)->where('receiver_id', $userId2);
-        })->orWhere(function($q) use ($userId1, $userId2) {
-            $q->where('sender_id', $userId2)->where('receiver_id', $userId1);
+        // Całość w jednym nawiasie: gołe orWhere() na najwyższym poziomie
+        // "przeciekałoby" przez każdy kolejny warunek doklejony do zapytania.
+        return $query->where(function ($outer) use ($userId1, $userId2) {
+            $outer->where(function ($q) use ($userId1, $userId2) {
+                $q->where('sender_id', $userId1)->where('receiver_id', $userId2);
+            })->orWhere(function ($q) use ($userId1, $userId2) {
+                $q->where('sender_id', $userId2)->where('receiver_id', $userId1);
+            });
         });
     }
 }

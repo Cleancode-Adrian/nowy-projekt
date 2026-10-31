@@ -45,7 +45,7 @@ class PortfolioController extends Controller
             'description' => 'required|string',
             'image' => ['nullable', 'image', 'max:5120', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])], // 5MB
             'images.*' => ['nullable', 'image', 'max:5120', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])],
-            'url' => 'nullable|url',
+            'url' => 'nullable|url:http,https|max:255',
             'technologies' => 'nullable|array',
             'completed_at' => 'nullable|date',
             'is_featured' => 'boolean',
@@ -91,7 +91,7 @@ class PortfolioController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => ['nullable', 'image', 'max:5120', 'mimes:jpg,jpeg,png,gif,webp,avif', new SafeUpload(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'])],
-            'url' => 'nullable|url',
+            'url' => 'nullable|url:http,https|max:255',
             'technologies' => 'nullable|array',
             'completed_at' => 'nullable|date',
             'is_featured' => 'boolean',

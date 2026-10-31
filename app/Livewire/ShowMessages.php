@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Events\MessageSent;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 class ShowMessages extends Component
@@ -14,23 +16,37 @@ class ShowMessages extends Component
 
     public function mount(User $user)
     {
+        if ($user->id === auth()->id()) {
+            abort(404);
+        }
+
         $this->otherUser = $user;
         $this->loadMessages();
         $this->markAsRead();
+    }
+
+    public function getListeners()
+    {
+        $ids = [auth()->id(), $this->otherUser->id];
+        sort($ids);
+
+        return [
+            "echo-private:conversation.{$ids[0]}.{$ids[1]},message.sent" => 'handleIncomingMessage',
+        ];
+    }
+
+    public function handleIncomingMessage(): void
+    {
+        $this->loadMessages();
+        $this->markAsRead();
+        $this->dispatch('scroll-to-bottom');
     }
 
     public function loadMessages()
     {
         $userId = auth()->id();
 
-        $this->messages = Message::where(function($query) use ($userId) {
-                $query->where('sender_id', $userId)
-                      ->where('receiver_id', $this->otherUser->id);
-            })
-            ->orWhere(function($query) use ($userId) {
-                $query->where('sender_id', $this->otherUser->id)
-                      ->where('receiver_id', $userId);
-            })
+        $this->messages = Message::between($userId, $this->otherUser->id)
             ->with(['sender', 'receiver'])
             ->orderBy('created_at', 'asc')
             ->get();
@@ -56,11 +72,26 @@ class ShowMessages extends Component
             'content.max' => 'Wiadomość może mieć maksymalnie 1000 znaków',
         ]);
 
+        // Każda wiadomość wysyła e-mail do odbiorcy - bez limitu jedno konto
+        // mogło zasypać skrzynkę dowolnego użytkownika (i limit SMTP serwera).
+        $rateKey = 'send-message:' . auth()->id();
+        if (RateLimiter::tooManyAttempts($rateKey, 10)) {
+            $this->addError('content', 'Wysyłasz wiadomości zbyt szybko. Spróbuj ponownie za ' . RateLimiter::availableIn($rateKey) . ' s.');
+            return;
+        }
+        RateLimiter::hit($rateKey, 60);
+
         $message = Message::create([
             'sender_id' => auth()->id(),
             'receiver_id' => $this->otherUser->id,
             'content' => $this->content,
         ]);
+
+        try {
+            event(new MessageSent($message->load('sender')));
+        } catch (\Exception $e) {
+            \Log::warning('Nie udało się wysłać wiadomości na żywo: ' . $e->getMessage());
+        }
 
         // Wysłanie powiadomień
         \App\Models\Notification::createNotification(

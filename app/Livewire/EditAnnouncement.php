@@ -38,6 +38,8 @@ class EditAnnouncement extends Component
             'hourly_rate_max' => 'nullable|numeric|min:0|gte:hourly_rate_min',
             'deadline' => 'nullable|date',
             'location' => 'nullable|string|max:255',
+            'budget_currency' => 'nullable|in:PLN,EUR,USD,GBP',
+            'is_urgent' => 'nullable|boolean',
             'selectedTags' => 'array|max:10',
             'selectedTags.*' => 'exists:tags,id',
         ];

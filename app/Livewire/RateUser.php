@@ -35,8 +35,18 @@ class RateUser extends Component
             'comment' => 'nullable|string|max:500',
         ]);
 
-        if ($this->announcement->user_id !== auth()->id() && auth()->id() !== $this->ratedUser->id) {
+        if (!$this->canRate()) {
             $this->dispatch('notify', message: 'Możesz wystawiać oceny tylko dla projektów, w których brałeś udział', type: 'error');
+            return;
+        }
+
+        // $hasRated pochodzi od klienta - duplikat sprawdzamy w bazie.
+        if (Rating::where('announcement_id', $this->announcement->id)
+            ->where('rater_id', auth()->id())
+            ->where('rated_id', $this->ratedUser->id)
+            ->exists()) {
+            $this->hasRated = true;
+            $this->dispatch('notify', message: 'Ta osoba została już przez Ciebie oceniona w tym projekcie', type: 'error');
             return;
         }
 
@@ -71,6 +81,33 @@ class RateUser extends Component
 
         $this->hasRated = true;
         $this->dispatch('notify', message: 'Dziękujemy za wystawienie oceny! Zostanie ona wyświetlona po weryfikacji przez administratora.', type: 'success');
+    }
+
+    /**
+     * Ocenić można wyłącznie drugą stronę współpracy: zleceniodawca ocenia
+     * wykonawcę z zaakceptowaną ofertą, a wykonawca - zleceniodawcę.
+     */
+    private function canRate(): bool
+    {
+        $userId = auth()->id();
+
+        if (!$userId || $userId === $this->ratedUser->id) {
+            return false;
+        }
+
+        $acceptedFreelancer = fn (int $freelancerId) => $this->announcement->proposals()
+            ->where('user_id', $freelancerId)
+            ->where('status', 'accepted')
+            ->exists();
+
+        // Zleceniodawca ocenia wykonawcę
+        if ($this->announcement->user_id === $userId) {
+            return $acceptedFreelancer($this->ratedUser->id);
+        }
+
+        // Wykonawca ocenia zleceniodawcę
+        return $this->announcement->user_id === $this->ratedUser->id
+            && $acceptedFreelancer($userId);
     }
 
     // Metoda usunięta - średnia jest teraz liczona automatycznie przez model Rating

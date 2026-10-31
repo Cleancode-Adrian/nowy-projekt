@@ -2,10 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Models\Announcement;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class SaveButton extends Component
 {
+    #[Locked]
     public $announcementId;
     public $full = false; // full width button or icon only
     public $isSaved = false;
@@ -32,12 +35,23 @@ class SaveButton extends Component
             return;
         }
 
-        if ($this->isSaved) {
+        // Stan liczymy z bazy, nie z $isSaved przysłanego przez klienta.
+        $alreadySaved = auth()->user()
+            ->savedAnnouncements()
+            ->where('announcement_id', $this->announcementId)
+            ->exists();
+
+        if ($alreadySaved) {
             auth()->user()->savedAnnouncements()->detach($this->announcementId);
             $this->isSaved = false;
             $this->dispatch('notify', message: 'Usunięto z zapisanych');
         } else {
-            auth()->user()->savedAnnouncements()->attach($this->announcementId);
+            if (!Announcement::published()->whereKey($this->announcementId)->exists()) {
+                $this->dispatch('notify', message: 'Ogłoszenie jest niedostępne', type: 'error');
+                return;
+            }
+
+            auth()->user()->savedAnnouncements()->syncWithoutDetaching([$this->announcementId]);
             $this->isSaved = true;
             $this->dispatch('notify', message: 'Dodano do zapisanych');
         }
@@ -48,4 +62,3 @@ class SaveButton extends Component
         return view('livewire.save-button');
     }
 }
-

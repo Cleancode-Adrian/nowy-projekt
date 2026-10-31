@@ -31,8 +31,27 @@ class ProposalForm extends Component
 
     public function submit()
     {
+        if (!auth()->check()) {
+            $this->dispatch('notify', message: 'Zaloguj się, aby złożyć ofertę', type: 'error');
+            return;
+        }
+
         if (auth()->id() === $this->announcement->user_id) {
             $this->dispatch('notify', message: 'Nie możesz złożyć oferty do własnego ogłoszenia', type: 'error');
+            return;
+        }
+
+        // Oferty tylko do opublikowanych, otwartych ogłoszeń - stan bierzemy z bazy.
+        $this->announcement->refresh();
+        if (!$this->announcement->is_approved || $this->announcement->status !== 'published') {
+            $this->dispatch('notify', message: 'To ogłoszenie nie przyjmuje już ofert', type: 'error');
+            return;
+        }
+
+        // $hasProposal pochodzi od klienta - duplikat sprawdzamy w bazie.
+        $this->checkExistingProposal();
+        if ($this->hasProposal) {
+            $this->dispatch('notify', message: 'Już złożyłeś ofertę do tego ogłoszenia', type: 'error');
             return;
         }
 

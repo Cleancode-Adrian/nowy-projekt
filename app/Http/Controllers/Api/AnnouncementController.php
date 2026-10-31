@@ -54,7 +54,8 @@ class AnnouncementController extends Controller
             'deadline' => 'nullable|string|max:100',
             'location' => 'nullable|string|max:255',
             'is_urgent' => 'boolean',
-            'tags' => 'nullable|array',
+            'tags' => 'nullable|array|max:10',
+            'tags.*' => 'integer|exists:tags,id',
         ]);
 
         $announcement = $request->user()->announcements()->create([

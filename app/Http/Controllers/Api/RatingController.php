@@ -15,7 +15,9 @@ class RatingController extends Controller
      */
     public function index($userId): JsonResponse
     {
+        // Tylko opinie zaakceptowane przez moderację (tak jak na stronie profilu).
         $ratings = Rating::where('rated_id', $userId)
+            ->where('is_approved', true)
             ->with(['rater', 'announcement'])
             ->latest()
             ->paginate(10);
@@ -36,21 +38,16 @@ class RatingController extends Controller
         ]);
 
         $announcement = Announcement::findOrFail($validated['announcement_id']);
+        $raterId = (int) $request->user()->id;
+        $ratedId = (int) $validated['rated_id'];
 
-        // Check if user is involved in this announcement
-        $isOwner = $announcement->user_id === $request->user()->id;
-        $hasProposal = $announcement->proposals()
-            ->where('user_id', $request->user()->id)
-            ->where('status', 'accepted')
-            ->exists();
-
-        if (!$isOwner && !$hasProposal) {
-            return response()->json(['message' => 'Możesz ocenić tylko osoby z którymi współpracowałeś'], 422);
+        // Can't rate yourself (rated_id z requestu jest stringiem - porównujemy jako int)
+        if ($ratedId === $raterId) {
+            return response()->json(['message' => 'Nie możesz ocenić samego siebie'], 422);
         }
 
-        // Can't rate yourself
-        if ($validated['rated_id'] === $request->user()->id) {
-            return response()->json(['message' => 'Nie możesz ocenić samego siebie'], 422);
+        if (!$this->isCounterparty($announcement, $raterId, $ratedId)) {
+            return response()->json(['message' => 'Możesz ocenić tylko osoby z którymi współpracowałeś'], 422);
         }
 
         // Check if already rated
@@ -68,7 +65,8 @@ class RatingController extends Controller
             'rater_id' => $request->user()->id,
             'rated_id' => $validated['rated_id'],
             'rating' => $validated['rating'],
-            'comment' => $validated['comment'],
+            'comment' => $validated['comment'] ?? null,
+            'is_approved' => false, // wymaga akceptacji admina
         ]);
 
         return response()->json([
@@ -84,13 +82,8 @@ class RatingController extends Controller
     {
         $announcement = Announcement::findOrFail($announcementId);
 
-        $isOwner = $announcement->user_id === $request->user()->id;
-        $hasProposal = $announcement->proposals()
-            ->where('user_id', $request->user()->id)
-            ->where('status', 'accepted')
-            ->exists();
-
-        $canRate = ($isOwner || $hasProposal) && $userId != $request->user()->id;
+        $canRate = (int) $userId !== (int) $request->user()->id
+            && $this->isCounterparty($announcement, (int) $request->user()->id, (int) $userId);
 
         $alreadyRated = Rating::where('announcement_id', $announcementId)
             ->where('rater_id', $request->user()->id)
@@ -101,6 +94,24 @@ class RatingController extends Controller
             'can_rate' => $canRate && !$alreadyRated,
             'already_rated' => $alreadyRated,
         ]);
+    }
+
+    /**
+     * Ocenić można tylko drugą stronę współpracy: właściciel ogłoszenia ocenia
+     * wykonawcę z zaakceptowaną ofertą, a ten wykonawca - właściciela.
+     */
+    private function isCounterparty(Announcement $announcement, int $raterId, int $ratedId): bool
+    {
+        $accepted = fn (int $freelancerId) => $announcement->proposals()
+            ->where('user_id', $freelancerId)
+            ->where('status', 'accepted')
+            ->exists();
+
+        if ((int) $announcement->user_id === $raterId) {
+            return $accepted($ratedId);
+        }
+
+        return (int) $announcement->user_id === $ratedId && $accepted($raterId);
     }
 }
 

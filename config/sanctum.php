@@ -47,7 +47,8 @@ return [
     |
     */
 
-    'expiration' => null,
+    // Tokeny API wygasają po 30 dniach (wcześniej null = ważne bezterminowo).
+    'expiration' => (int) env('SANCTUM_EXPIRATION', 60 * 24 * 30),
 
     /*
     |--------------------------------------------------------------------------
