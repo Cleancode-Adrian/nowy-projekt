@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RatingController as AdminRatingController;
+use App\Http\Controllers\Admin\VerificationController as AdminVerificationController;
 use App\Http\Controllers\Admin\MediaController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,7 @@ use App\Livewire\SavedAnnouncements;
 use App\Livewire\ProfileEdit;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BlogGeneratorController;
+use App\Http\Controllers\SitemapController;
 
 // Wymuszenie weryfikacji e-maila jest sterowane configiem - patrz config/security.php.
 $authMiddleware = array_values(array_filter([
@@ -41,6 +43,7 @@ $authMiddleware = array_values(array_filter([
 ]));
 
 // Public pages
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/', HomePage::class)->name('home');
 Route::get('/announcements', AnnouncementsList::class)->name('announcements.index');
 // Protected announcement create route (must be before /announcements/{id} to avoid route conflicts)
@@ -132,6 +135,9 @@ Route::middleware($authMiddleware)->group(function () {
     Route::get('/wiadomosci/{user}', ShowMessages::class)->name('messages.show');
 
     Route::get('/portfolio', Portfolio::class)->name('portfolio.index');
+
+    Route::get('/kontrakty', \App\Livewire\ContractsList::class)->name('contracts.index');
+    Route::get('/kontrakty/{contract}', \App\Livewire\ContractShow::class)->name('contracts.show');
 });
 
 // Admin Login
@@ -195,4 +201,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/ratings', [AdminRatingController::class, 'index'])->name('ratings.index');
     Route::post('/ratings/{id}/approve', [AdminRatingController::class, 'approve'])->name('ratings.approve');
     Route::delete('/ratings/{id}/reject', [AdminRatingController::class, 'reject'])->name('ratings.reject');
+
+    // Weryfikacja tożsamości wykonawców
+    Route::get('/verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
+    Route::get('/verifications/{id}/document', [AdminVerificationController::class, 'document'])->name('verifications.document');
+    Route::post('/verifications/{id}/approve', [AdminVerificationController::class, 'approve'])->name('verifications.approve');
+    Route::post('/verifications/{id}/reject', [AdminVerificationController::class, 'reject'])->name('verifications.reject');
 });

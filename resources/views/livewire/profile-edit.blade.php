@@ -213,6 +213,57 @@
             </form>
         </div>
 
+        {{-- Weryfikacja konta --}}
+        @if(auth()->user()->isFreelancer())
+            <div class="card mb-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-2">🛡️ Weryfikacja konta</h2>
+                <p class="text-gray-600 text-sm mb-6">
+                    Zweryfikowani wykonawcy dostają odznakę widoczną w rankingu, ofertach i na profilu -
+                    to podnosi zaufanie klientów.
+                </p>
+
+                @if($verificationStatus === 'approved')
+                    <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg font-medium">
+                        ✅ Twoje konto jest zweryfikowane.
+                    </div>
+                @elseif($verificationStatus === 'pending')
+                    <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg font-medium">
+                        ⏳ Wniosek czeka na weryfikację przez administratora.
+                    </div>
+                @else
+                    @if($verificationStatus === 'rejected')
+                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+                            ❌ Wniosek odrzucony.
+                            @if($verificationNote)
+                                <p class="text-sm mt-1">Powód: {{ $verificationNote }}</p>
+                            @endif
+                            Możesz spróbować ponownie.
+                        </div>
+                    @endif
+
+                    <form wire:submit.prevent="submitVerification" class="space-y-3">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Dokument potwierdzający tożsamość (dowód, paszport, prawo jazdy) - JPG, PNG lub PDF, max 5MB
+                        </label>
+                        <input type="file"
+                               wire:model="verificationDocument"
+                               accept="image/jpeg,image/png,application/pdf"
+                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        @error('verificationDocument')
+                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        @enderror
+                        <p class="text-xs text-gray-500">
+                            Dokument widzi tylko administrator w trakcie weryfikacji. Nigdy nie jest publicznie dostępny.
+                        </p>
+                        <button type="submit" wire:loading.attr="disabled" class="btn btn-primary">
+                            <span wire:loading.remove wire:target="submitVerification">📤 Wyślij do weryfikacji</span>
+                            <span wire:loading wire:target="submitVerification">⏳ Wysyłanie...</span>
+                        </button>
+                    </form>
+                @endif
+            </div>
+        @endif
+
         {{-- Change Password --}}
         <div class="card mb-6">
             <h2 class="text-xl font-bold text-gray-900 mb-6">🔒 Zmiana hasła</h2>

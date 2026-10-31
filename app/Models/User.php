@@ -31,6 +31,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'github_url',
         'website',
         'verification_document',
+        'verification_status',
+        'verification_note',
         'verified_at',
         'average_rating',
         'ratings_count',
@@ -52,6 +54,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'phone',
         'verification_document',
+        'verification_status',
+        'verification_note',
         'is_approved',
         'email_verified_at',
         'deleted_at',
@@ -62,7 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function withPrivateFields(): static
     {
-        return $this->makeVisible(['email', 'phone', 'is_approved', 'email_verified_at']);
+        return $this->makeVisible(['email', 'phone', 'is_approved', 'email_verified_at', 'verification_status', 'verification_note']);
     }
 
     protected function casts(): array
@@ -136,6 +140,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function contractsAsClient()
+    {
+        return $this->hasMany(Contract::class, 'client_id');
+    }
+
+    public function contractsAsFreelancer()
+    {
+        return $this->hasMany(Contract::class, 'freelancer_id');
     }
 
     public function unreadNotifications()

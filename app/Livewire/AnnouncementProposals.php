@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\Announcement;
+use App\Models\Contract;
+use App\Models\ContractMilestone;
 use App\Models\Proposal;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -37,7 +39,7 @@ class AnnouncementProposals extends Component
             ->with(['freelancer' => function($query) {
                 $query->withCount('ratingsReceived')
                       ->withAvg('ratingsReceived', 'rating');
-            }])
+            }, 'contract'])
             ->latest()
             ->get();
     }
@@ -67,13 +69,28 @@ class AnnouncementProposals extends Component
             ->where('status', 'pending')
             ->update(['status' => 'rejected', 'rejected_at' => now()]);
 
+        $contract = Contract::create([
+            'announcement_id' => $this->announcement->id,
+            'proposal_id' => $proposal->id,
+            'client_id' => $this->announcement->user_id,
+            'freelancer_id' => $proposal->user_id,
+            'status' => 'active',
+        ]);
+
+        $contract->milestones()->create([
+            'title' => 'Realizacja zlecenia: ' . Str::limit($this->announcement->title, 80),
+            'description' => $proposal->description,
+            'position' => 1,
+            'due_date' => $proposal->delivery_days ? now()->addDays($proposal->delivery_days) : null,
+        ]);
+
         // Wysłanie powiadomień
         \App\Models\Notification::createNotification(
             $proposal->user_id,
             'proposal_accepted',
             'Oferta zaakceptowana! ✅',
-            'Twoja oferta do "' . $this->announcement->title . '" została zaakceptowana!',
-            route('proposals.index')
+            'Twoja oferta do "' . $this->announcement->title . '" została zaakceptowana! Możesz teraz zarządzać kamieniami milowymi.',
+            route('contracts.show', $contract->id)
         );
 
         // Email notification

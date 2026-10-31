@@ -288,6 +288,8 @@
                     <select name="frequency" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="daily" {{ ($schedule->frequency ?? 'daily') === 'daily' ? 'selected' : '' }}>Codziennie</option>
                         <option value="twice_daily" {{ ($schedule->frequency ?? '') === 'twice_daily' ? 'selected' : '' }}>2x dziennie</option>
+                        <option value="every_2_days" {{ ($schedule->frequency ?? '') === 'every_2_days' ? 'selected' : '' }}>Co 2 dni</option>
+                        <option value="every_3_days" {{ ($schedule->frequency ?? '') === 'every_3_days' ? 'selected' : '' }}>Co 3 dni</option>
                         <option value="weekdays" {{ ($schedule->frequency ?? '') === 'weekdays' ? 'selected' : '' }}>Dni robocze</option>
                         <option value="weekly" {{ ($schedule->frequency ?? '') === 'weekly' ? 'selected' : '' }}>Raz w tygodniu</option>
                     </select>

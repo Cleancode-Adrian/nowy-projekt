@@ -14,6 +14,13 @@ class Notifications extends Component
         $this->loadNotifications();
     }
 
+    public function getListeners()
+    {
+        return [
+            'echo-private:notifications.' . auth()->id() . ',notification.created' => 'loadNotifications',
+        ];
+    }
+
     public function loadNotifications()
     {
         $this->notifications = auth()->user()->notifications()->latest()->limit(20)->get();

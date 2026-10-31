@@ -27,16 +27,8 @@ class RunScheduledBlogPosts extends Command
 
         $this->info("📅 Uruchamiam harmonogram: {$schedule->frequency} o {$schedule->time}");
 
-        // Sprawdź czy to właściwy czas
-        $now = now();
-        $scheduleTime = now()->setTimeFromTimeString($schedule->time);
-
-        // Dla daily - sprawdź czy to właściwa godzina
-        if ($schedule->frequency === 'daily') {
-            if ($now->format('H:i') !== $scheduleTime->format('H:i')) {
-                $this->info("⏰ Nie jest jeszcze czas (aktualnie: {$now->format('H:i')}, zaplanowane: {$schedule->time})");
-                return 0;
-            }
+        if (!$this->isDue($schedule)) {
+            return 0;
         }
 
         // Przygotuj tematy
@@ -111,6 +103,41 @@ class RunScheduledBlogPosts extends Command
 
         $this->info("✅ Harmonogram wykonany pomyślnie!");
         return 0;
+    }
+
+    /**
+     * Komenda leci co minutę (patrz routes/console.php), więc każda częstotliwość
+     * musi mieć tu jawną blokadę - inaczej "raz w tygodniu" wygenerowałoby wpis
+     * co minutę przez cały dzień, aż ktoś by to zauważył w rachunku za OpenAI.
+     */
+    private function isDue(BlogSchedule $schedule): bool
+    {
+        $now = now();
+        $time = $schedule->time ?: '09:00';
+
+        $matchesTime = $now->format('H:i') === $time;
+
+        $secondSlotTime = \Illuminate\Support\Carbon::parse($time)->addHours(12)->format('H:i');
+        $matchesSecondSlot = $now->format('H:i') === $secondSlotTime;
+
+        $daysSinceLastRun = $schedule->last_run_at
+            ? $schedule->last_run_at->diffInDays($now)
+            : null;
+
+        $due = match ($schedule->frequency) {
+            'twice_daily' => $matchesTime || $matchesSecondSlot,
+            'weekdays' => $matchesTime && $now->isWeekday(),
+            'weekly' => $matchesTime && ($daysSinceLastRun === null || $daysSinceLastRun >= 7),
+            'every_2_days' => $matchesTime && ($daysSinceLastRun === null || $daysSinceLastRun >= 2),
+            'every_3_days' => $matchesTime && ($daysSinceLastRun === null || $daysSinceLastRun >= 3),
+            default => $matchesTime, // 'daily' i nieznane wartości - bezpieczny domyślny wariant
+        };
+
+        if (!$due) {
+            $this->info("⏰ Nie jest jeszcze czas (aktualnie: {$now->format('H:i')}, zaplanowane: {$time}, częstotliwość: {$schedule->frequency})");
+        }
+
+        return $due;
     }
 }
 

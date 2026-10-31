@@ -159,6 +159,45 @@ sudo crontab -u www-data -e
 * * * * * cd /var/www/projekciarz.pl && php artisan schedule:run >> /dev/null 2>&1
 ```
 
+### Krok 6b — Reverb (powiadomienia i czat na żywo)
+
+Dzwoneczek, licznik nieprzeczytanych wiadomości i czat aktualizują się na żywo przez
+Laravel Reverb — własny serwer WebSocket, bez zewnętrznych usług (Pusher itp.) i bez
+dodatkowych kosztów. Jeśli nic z tego nie zrobisz, strona działa dokładnie tak samo,
+tylko bez odświeżania na żywo (funkcje wciąż działają po ręcznym przeładowaniu).
+
+1. Wygeneruj `REVERB_APP_ID`/`REVERB_APP_KEY`/`REVERB_APP_SECRET` w `.env` (dowolne
+   losowe ciągi — nie muszą być tajne poza serwerem, ale nie kopiuj wartości z tego
+   repo do produkcji). Ustaw `REVERB_HOST=projekciarz.pl`, `REVERB_PORT=443`,
+   `REVERB_SCHEME=https` oraz te same wartości w `VITE_REVERB_*`, potem
+   `npm run build`.
+2. Reverb musi działać jako stały proces (nie jednorazowa komenda) — najprościej
+   przez systemd:
+
+   ```ini
+   # /etc/systemd/system/reverb.service
+   [Unit]
+   Description=Laravel Reverb
+   After=network.target
+
+   [Service]
+   User=www-data
+   WorkingDirectory=/var/www/projekciarz.pl
+   ExecStart=/usr/bin/php artisan reverb:start --host=127.0.0.1 --port=8080
+   Restart=always
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+   ```bash
+   sudo systemctl enable --now reverb
+   ```
+
+3. Nginx musi przekierowywać `wss://projekciarz.pl/app/...` do lokalnego Reverba —
+   blok `location /app/` jest już w [deploy/nginx/projekciarz.pl.conf](deploy/nginx/projekciarz.pl.conf).
+4. Po zmianach w `.env`: `php artisan config:cache` i `sudo systemctl restart reverb`.
+
 ### Krok 7 — weryfikacja
 
 ```bash
@@ -315,15 +354,69 @@ mysqldump -u UZYTKOWNIK -p NAZWA_BAZY | gzip > backup_$(date +%Y%m%d_%H%M).sql.g
 
 Rzeczy, które nie blokują wdrożenia, ale warto je domknąć:
 
-1. **Aktualizacja zależności** — `composer update && composer audit`,
-   `npm update && npm audit`. Wersje w lockfile są z listopada 2025.
-2. **Skrypty z CDN** — `cdn.tailwindcss.com` i `unpkg.com` w layoutach to
-   wersje deweloperskie ładowane z cudzych serwerów. Projekt ma już Vite,
-   więc warto je zbundlować i usunąć CDN-y (mniej ryzyka i szybsze ładowanie).
-3. **Weryfikacja e-mail** — po backfillu `users.email_verified_at`
+1. **Aktualizacja zależności (composer)** — `composer update && composer audit`.
+   Lockfile jest z 2025-10-29 (np. `laravel/framework` 12.36.1, najnowsze 12.x
+   to 12.69.2 — same poprawki w obrębie tej samej wersji głównej, bez
+   przełomowych zmian). To repo nie ma lokalnie PHP/Composer, więc nie dało
+   się tego uruchomić — zrób to tam, gdzie jest PHP (serwer albo lokalnie po
+   doinstalowaniu PHP), zanim wdrożysz.
+   Do rozważania osobno, bo to już realna migracja wymagająca testów: Laravel 13
+   (wymaga PHP ^8.3 — serwer ma teraz PHP 8.2), Livewire 4, PHPUnit 12/13.
+   Nie rób tego "przy okazji" — to osobne zadanie z własnym planem testów.
+2. **Aktualizacja zależności (npm)** — zrobione: `npm audit` (8 podatności,
+   głównie stare Vite/esbuild/PostCSS/rollup) naprawione, Vite podbity do 8.x
+   z laravel-vite-plugin 3.x, Tailwind/PostCSS/Alpine do najnowszych wersji.
+   `npm run build` przechodzi bez błędów, 0 podatności w `npm audit`.
+3. ~~**Skrypty z CDN**~~ — zrobione: `cdn.tailwindcss.com` i `unpkg.com`
+   w `admin/layout.blade.php` i `admin/login.blade.php` zastąpione przez
+   `@vite` (Alpine dociągnięty jako `resources/js/admin.js`, zbudowany razem
+   z resztą assetów). Font Awesome i Google Fonts zostały na CDN — to tylko
+   statyczne CSS z pinowanej wersji, niskie ryzyko.
+4. **Weryfikacja e-mail** — po backfillu `users.email_verified_at`
    ustaw `REQUIRE_EMAIL_VERIFICATION=true`.
-4. **API** — aplikacja jest full-stack (Livewire), a `routes/api.php`
+5. **API** — aplikacja jest full-stack (Livewire), a `routes/api.php`
    wygląda na pozostałość po osobnym froncie. Jeśli nic z niego nie korzysta,
    najbezpieczniej wyciąć plik w całości.
-5. **Sitemap** — `robots.txt` wskazuje na `/sitemap.xml`, którego jeszcze nie ma.
-6. **Kopie zapasowe bazy** — na razie brak jakiejkolwiek automatyzacji.
+6. ~~**Sitemap**~~ — zrobione: `GET /sitemap.xml` (`SitemapController`)
+   generuje mapę z ogłoszeń, wpisów blogowych i stron CMS (cache 1h). Profile
+   użytkowników celowo pominięte — `robots.txt` i tak ma na nie `Disallow`.
+7. ~~**Kopie zapasowe bazy**~~ — zrobione: `php artisan db:backup` (MySQL przez
+   `mysqldump`, SQLite przez kopię pliku), gzip, zapis do
+   `storage/app/private/backups` (poza webrootem, w `.gitignore`), rotacja
+   `--keep` dni (domyślnie 14). Zaplanowane w `routes/console.php` codziennie
+   o 3:30 — działa automatycznie razem z resztą harmonogramu, bez dodatkowego
+   wpisu w cronie.
+8. **Blog — domyślny harmonogram** — `BlogScheduleSeeder` ustawia gotową listę
+   tematów (mix poradników dla freelancerów/klientów i tematów wprost o
+   Projekciarz.pl — jak dodać ogłoszenie, jak działa ranking, jak wybrać
+   wykonawcę), żeby wpisy realnie odsyłały do platformy, a nie tylko o niej
+   wspominały. Harmonogram zostaje wyłączony (`is_enabled=false`) — admin włącza
+   go świadomie w `/admin/blog/generator` po dodaniu klucza OpenAI, żeby uniknąć
+   niezamierzonych kosztów API.
+
+---
+
+## 5. Nowe funkcje
+
+**Kontrakty i kamienie milowe** — po zaakceptowaniu oferty (`AnnouncementProposals::accept`)
+powstaje automatycznie `Contract` z jednym domyślnym kamieniem milowym. Obie strony
+zarządzają etapami na `/kontrakty/{id}`: wykonawca oznacza etap jako w trakcie/zgłoszony
+do odbioru, klient zatwierdza albo odsyła do poprawy. Kontrakt kończy się automatycznie,
+gdy wszystkie etapy są zatwierdzone (`Contract::refreshStatus()`). Brak jakiejkolwiek
+obsługi płatności — to celowo poza zakresem tej zmiany.
+
+**Weryfikacja wykonawców** — kolumny `is_verified`/`verification_document` istniały już
+w bazie i froncie (odznaka ✓ w rankingu/profilu), ale nie było jak ich ustawić poza
+ręcznym checkboksem w adminie. Doszła kolumna `verification_status` (none/pending/
+approved/rejected) i pełny obieg: wykonawca wgrywa dokument w `/profil` (dysk `local`,
+poza webrootem, nigdy publiczny), admin przegląda i zatwierdza/odrzuca w
+`/admin/verifications`.
+
+**Powiadomienia i czat na żywo (Laravel Reverb)** — `Notification::createNotification()`
+i wysyłka wiadomości (`ShowMessages`) rozgłaszają teraz zdarzenie przez Reverb na
+prywatne kanały `notifications.{id}` i `conversation.{id}.{id}` (autoryzacja w
+`routes/channels.php`). Dzwoneczek, licznik wiadomości w headerze i otwarty czat
+aktualizują się bez odświeżania strony. Rozgłaszanie jest owinięte w `try/catch` —
+jeśli Reverb nie działa (np. lokalnie bez `php artisan reverb:start`), reszta aplikacji
+działa normalnie, po prostu bez aktualizacji na żywo. Wymaga stałego procesu na
+serwerze — patrz Krok 6b wyżej.

@@ -53,7 +53,7 @@ class BlogGeneratorController extends Controller
             $request->validate([
                 'is_enabled' => 'nullable|boolean',
                 'time' => ['required', 'string', 'regex:/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/'],
-                'frequency' => 'required|in:daily,twice_daily,weekly,weekdays',
+                'frequency' => 'required|in:daily,twice_daily,every_2_days,every_3_days,weekly,weekdays',
                 'count' => 'required|integer|min:1|max:10',
                 'topics' => 'required|string|min:3',
                 'category_id' => 'nullable|exists:categories,id',

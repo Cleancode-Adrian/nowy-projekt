@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\NotificationCreated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,13 +41,21 @@ class Notification extends Model
 
     public static function createNotification(int $userId, string $type, string $title, string $content, ?string $link = null): self
     {
-        return self::create([
+        $notification = self::create([
             'user_id' => $userId,
             'type' => $type,
             'title' => $title,
             'content' => $content,
             'link' => $link,
         ]);
+
+        try {
+            event(new NotificationCreated($notification));
+        } catch (\Exception $e) {
+            \Log::warning('Nie udało się wysłać powiadomienia na żywo: ' . $e->getMessage());
+        }
+
+        return $notification;
     }
 }
 

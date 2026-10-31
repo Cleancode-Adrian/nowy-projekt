@@ -20,8 +20,9 @@ class BlogPostSeeder extends Seeder
 
         // Tagi blogowe - tworzymy lub pobieramy
         $blogTags = [
-            'Freelancing', 'Kariera', 'Poradnik', 'SEO', 'Marketing', 
-            'WordPress', 'Laravel', 'PHP', 'JavaScript', 'Web Development'
+            'Freelancing', 'Kariera', 'Poradnik', 'SEO', 'Marketing',
+            'WordPress', 'Laravel', 'PHP', 'JavaScript', 'Web Development', 'UI/UX',
+            'Tailwind CSS', 'Responsive Design'
         ];
         
         $tagsToAttach = [];
@@ -45,6 +46,9 @@ class BlogPostSeeder extends Seeder
         $seoTag = Tag::where('name', 'SEO')->where('type', 'blog')->first();
         $wordpressTag = Tag::where('name', 'WordPress')->where('type', 'blog')->first();
         $laravelTag = Tag::where('name', 'Laravel')->where('type', 'blog')->first();
+        $uiuxTag = Tag::where('name', 'UI/UX')->where('type', 'blog')->first();
+        $tailwindTag = Tag::where('name', 'Tailwind CSS')->where('type', 'blog')->first();
+        $responsiveTag = Tag::where('name', 'Responsive Design')->where('type', 'blog')->first();
 
         // Artykuł 1: Jak rozpocząć karierę freelancera
         $post1 = BlogPost::updateOrCreate(

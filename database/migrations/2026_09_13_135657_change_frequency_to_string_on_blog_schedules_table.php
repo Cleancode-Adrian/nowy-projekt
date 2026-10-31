@@ -7,22 +7,20 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Zamiana enum -> string, żeby dodawanie nowych częstotliwości (np. "co 2 dni")
+     * nie wymagało kolejnej migracji przebudowującej CHECK constraint.
      */
     public function up(): void
     {
         Schema::table('blog_schedules', function (Blueprint $table) {
-            $table->enum('image_source', ['unsplash', 'dalle3'])->default('unsplash')->after('download_image');
+            $table->string('frequency')->default('daily')->change();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('blog_schedules', function (Blueprint $table) {
-            $table->dropColumn('image_source');
+            $table->enum('frequency', ['daily', 'twice_daily', 'weekly', 'weekdays'])->default('daily')->change();
         });
     }
 };

@@ -38,3 +38,11 @@ Schedule::command('users:send-weekly-summary')
 Schedule::command('projects:remind-inactive')
     ->dailyAt('10:00')
     ->timezone('Europe/Warsaw');
+
+// 💾 Kopia zapasowa bazy danych (codziennie o 3:30, w nocy)
+Schedule::command('db:backup')
+    ->dailyAt('03:30')
+    ->timezone('Europe/Warsaw')
+    ->onFailure(function () {
+        info('❌ Backup bazy danych nie powiódł się');
+    });

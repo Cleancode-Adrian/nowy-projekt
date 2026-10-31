@@ -155,6 +155,15 @@
                             </div>
                         @endif
 
+                        @if($proposal->status === 'accepted' && $proposal->contract)
+                            <div class="pt-4 border-t border-gray-200">
+                                <a href="{{ route('contracts.show', $proposal->contract->id) }}"
+                                   class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold transition-colors shadow-md">
+                                    📋 Przejdź do kontraktu i kamieni milowych
+                                </a>
+                            </div>
+                        @endif
+
                         {{-- Ocena wykonawcy - widoczna dla zleceniodawcy po zaakceptowaniu oferty --}}
                         @if($proposal->status === 'accepted' && $announcement->user_id === auth()->id())
                             <div class="pt-4 border-t border-gray-200">

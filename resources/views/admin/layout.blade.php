@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admina - Projekciarz.pl</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/admin.js'])
     <style>
         body { font-family: 'Inter', sans-serif; }
         .card { background: white; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; }
@@ -88,6 +87,18 @@
                     @endphp
                     @if($pendingRatings > 0)
                         <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $pendingRatings }}</span>
+                    @endif
+                </a>
+
+                <a href="{{ route('admin.verifications.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all {{ request()->routeIs('admin.verifications*') ? 'bg-gradient-to-r from-blue-600 to-cyan-600 shadow-lg' : 'hover:bg-gray-800 hover:translate-x-1' }}">
+                    <i class="fa-solid fa-shield-halved w-5"></i>
+                    <span class="font-medium">Weryfikacje</span>
+                    @php
+                        $pendingVerifications = \App\Models\User::where('verification_status', 'pending')->count();
+                    @endphp
+                    @if($pendingVerifications > 0)
+                        <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $pendingVerifications }}</span>
                     @endif
                 </a>
             </nav>

@@ -11,8 +11,9 @@ Produkcja: **https://projekciarz.pl**
 
 - **Laravel 12** + **Livewire 3** (aplikacja full-stack, renderowanie po stronie serwera)
 - **MySQL 8** na produkcji, SQLite lokalnie
-- **Tailwind CSS 4** + **Alpine.js**, build przez **Vite 5**
+- **Tailwind CSS 4** + **Alpine.js**, build przez **Vite 8**
 - **Laravel Sanctum** — tokeny dla `routes/api.php`
+- **Laravel Reverb** — powiadomienia i czat na żywo (własny serwer WebSocket)
 - PHP 8.2+, nginx + php-fpm
 
 ---
@@ -30,6 +31,7 @@ php artisan migrate --seed
 php artisan storage:link
 
 php artisan serve
+php artisan reverb:start   # w osobnym terminalu - powiadomienia/czat na żywo
 ```
 
 Aplikacja: http://127.0.0.1:8000

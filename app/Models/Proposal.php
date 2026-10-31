@@ -40,6 +40,11 @@ class Proposal extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function contract()
+    {
+        return $this->hasOne(Contract::class);
+    }
+
     public function getFormattedPriceAttribute(): string
     {
         return number_format($this->price, 2) . ' ' . $this->currency;

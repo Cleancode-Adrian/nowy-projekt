@@ -75,7 +75,11 @@ class MediaUploadTest extends TestCase
             ])
             ->assertSessionHasNoErrors();
 
-        $this->assertCount(1, Storage::disk('public')->files());
+        // MediaController generuje też wersję .webp obok oryginału - liczymy tylko oryginały.
+        $originals = collect(Storage::disk('public')->files())
+            ->filter(fn ($file) => str_ends_with($file, '.jpg'));
+
+        $this->assertCount(1, $originals);
     }
 
     public function test_zwykly_uzytkownik_nie_wgrywa_plikow(): void
