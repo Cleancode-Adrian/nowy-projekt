@@ -143,6 +143,8 @@ class CreateAnnouncement extends Component
         }
 
         session()->flash('success', 'Ogłoszenie zostało dodane pomyślnie! Zostanie opublikowane po weryfikacji przez administratora.');
+        // Konwersja dla GTM - push do dataLayer renderuje layout po redirectcie.
+        session()->flash('dl_event', ['event' => 'generate_lead', 'lead_type' => 'zlecenie']);
 
         return redirect()->route('dashboard');
     }

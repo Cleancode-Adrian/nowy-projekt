@@ -1,18 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl" class="h-full">
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NXVNXNSM');</script>
-    <!-- End Google Tag Manager -->
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XY55LLSQMQ"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XY55LLSQMQ');
-    </script>
+    <x-gtm-head />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -95,9 +84,7 @@
     @stack('head')
 </head>
 <body class="flex min-h-full flex-col antialiased">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXVNXNSM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+<x-gtm-body />
 
     <a href="#tresc" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:shadow-lg">
         Przejdź do treści
@@ -232,10 +219,14 @@
     </style>
 
     <script>
+        // Callback sukcesu wywoływany przez webforms.min.js po zapisie przez AJAX.
         function ml_webform_success_16123980() {
             var $ = ml_jQuery || jQuery;
             $('.ml-subscribe-form-16123980 .row-success').show();
             $('.ml-subscribe-form-16123980 .row-form').hide();
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ event: 'newsletter_signup' });
         }
 
         // Przycisk aktywny dopiero po zaznaczeniu zgody RODO

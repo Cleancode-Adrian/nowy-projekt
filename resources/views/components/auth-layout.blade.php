@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="pl" class="h-full bg-white">
 <head>
+    <x-gtm-head />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
@@ -17,6 +18,7 @@
     @endif
 </head>
 <body class="h-full bg-white">
+<x-gtm-body />
 <div class="flex min-h-full">
     {{-- Formularz --}}
     <div class="flex flex-1 flex-col justify-center px-6 py-12 sm:px-10 lg:flex-none lg:px-20 xl:px-24">

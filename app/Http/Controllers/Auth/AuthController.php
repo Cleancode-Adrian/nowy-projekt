@@ -41,7 +41,8 @@ class AuthController extends Controller
                 return back()->withErrors(['email' => 'Twoje konto oczekuje na zatwierdzenie przez administratora.']);
             }
 
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended(route('dashboard'))
+                ->with('dl_event', ['event' => 'login']);
         }
 
         return back()->withErrors([
@@ -135,6 +136,13 @@ class AuthController extends Controller
                 Log::warning('Failed to fetch admins for notification: ' . $e->getMessage());
             }
 
+            // Zdarzenie konwersji dla GTM - wysyłane po redirectcie, więc trafia
+            // do dataLayer dokładnie raz, po faktycznym zapisie konta.
+            $dlEvent = [
+                'event' => 'sign_up',
+                'user_role' => $validated['role'] === 'client' ? 'klient' : 'wykonawca',
+            ];
+
             if ($autoApprove) {
                 // Bez tego kroku osoba, która trafiła tu z reklamy, musiałaby
                 // logować się drugi raz zaraz po założeniu konta.
@@ -142,10 +150,13 @@ class AuthController extends Controller
                 $request->session()->regenerate();
 
                 return redirect()->intended(route('announcements.create'))
-                    ->with('success', 'Konto utworzone. Możesz od razu opisać swój projekt.');
+                    ->with('success', 'Konto utworzone. Możesz od razu opisać swój projekt.')
+                    ->with('dl_event', $dlEvent);
             }
 
-            return redirect()->route('login')->with('success', 'Konto utworzone! Sprawdź swoją skrzynkę email i czekaj na zatwierdzenie przez administratora.');
+            return redirect()->route('login')
+                ->with('success', 'Konto utworzone! Sprawdź swoją skrzynkę email i czekaj na zatwierdzenie przez administratora.')
+                ->with('dl_event', $dlEvent);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Re-throw validation exceptions to show proper error messages
