@@ -44,7 +44,7 @@
             <div class="md:col-span-2">
                 <h3 class="text-sm font-semibold text-white">Wiedza</h3>
                 <ul class="mt-4 space-y-3 text-sm">
-                    <li><a href="{{ route('blog.index') }}" class="transition-colors hover:text-white">Poradnik</a></li>
+                    <li><a href="{{ route('blog.index') }}" class="transition-colors hover:text-white">Blog</a></li>
                     <li><a href="{{ route('faq') }}" class="transition-colors hover:text-white">Częste pytania</a></li>
                     <li><a href="{{ route('home') }}#zakres-uslugi" class="transition-colors hover:text-white">Zakres usługi</a></li>
                 </ul>

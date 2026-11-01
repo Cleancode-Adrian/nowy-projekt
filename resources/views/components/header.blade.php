@@ -1,13 +1,17 @@
 @php
-    // Strony CMS w menu - jedno zapytanie dla wersji desktop i mobile.
-    $headerPages = \App\Models\Page::inMenu('header')->with('children')->get();
-
     $navItems = [
         ['label' => 'Zlecenia', 'route' => 'announcements.index', 'active' => 'announcements.index'],
         ['label' => 'Szukaj', 'route' => 'search.advanced', 'active' => 'search.advanced'],
         ['label' => 'Ranking wykonawców', 'route' => 'leaderboard', 'active' => 'leaderboard'],
-        ['label' => 'Poradnik', 'route' => 'blog.index', 'active' => 'blog.*'],
+        ['label' => 'Blog', 'route' => 'blog.index', 'active' => 'blog.*'],
     ];
+
+    // Strony CMS w menu - jedno zapytanie dla wersji desktop i mobile.
+    // Pozycja z CMS prowadząca pod ten sam adres co stała pozycja menu (np. "Blog"
+    // z route_name = blog.index) byłaby duplikatem - pomijamy ją.
+    $navUrls = array_map(fn ($item) => route($item['route']), $navItems);
+    $headerPages = \App\Models\Page::inMenu('header')->with('children')->get()
+        ->reject(fn ($page) => in_array($page->url, $navUrls, true));
 
     if (auth()->check()) {
         $user = auth()->user();
