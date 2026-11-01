@@ -22,11 +22,17 @@ return [
     | Każdy nowy skrypt/CDN trzeba tu dopisać, inaczej przeglądarka go zablokuje.
     */
     'csp_sources' => [
+        // Google: wildcardy, bo GA4 dla ruchu z UE używa subdomen regionalnych
+        // (region1.google-analytics.com), a GTM z włączonym server-side/consent
+        // potrafi doładować skrypty z innych hostów niż www. Wpisy doubleclick /
+        // googleadservices są pod przyszłe Google Ads (konwersje, remarketing).
         'script' => [
-            'https://www.googletagmanager.com',
-            'https://www.google-analytics.com',
+            'https://*.googletagmanager.com',
+            'https://*.google-analytics.com',
             'https://www.google.com',
             'https://www.gstatic.com',
+            'https://googleads.g.doubleclick.net',
+            'https://www.googleadservices.com',
             'https://cdnjs.cloudflare.com',
             'https://groot.mailerlite.com',
             'https://assets.mailerlite.com',
@@ -45,15 +51,18 @@ return [
             'https://assets.mlcdn.com',
         ],
         'connect' => [
-            'https://www.google-analytics.com',
-            'https://www.googletagmanager.com',
-            'https://analytics.google.com',
+            'https://*.google-analytics.com',
+            'https://*.analytics.google.com',
+            'https://*.googletagmanager.com',
+            'https://*.g.doubleclick.net',
+            'https://*.google.com',
             'https://assets.mailerlite.com',
             'https://groot.mailerlite.com',
         ],
         'frame' => [
             'https://www.google.com',
-            'https://www.googletagmanager.com',
+            'https://*.googletagmanager.com',
+            'https://td.doubleclick.net',
         ],
     ],
 
