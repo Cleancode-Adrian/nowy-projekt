@@ -27,10 +27,18 @@ class SitemapController extends Controller
             ->limit(5000)
             ->get(['id', 'updated_at']);
 
+        // Dla wpisów liczy się zmiana treści (content_updated_at) albo publikacja -
+        // updated_at bywa podbijane przez rzeczy niewidoczne dla czytelnika.
         $posts = BlogPost::published()
-            ->orderByDesc('updated_at')
+            ->orderByDesc('published_at')
             ->limit(5000)
-            ->get(['slug', 'updated_at']);
+            ->get(['slug', 'published_at', 'content_updated_at'])
+            ->map(function ($post) {
+                $post->updated_at = max($post->content_updated_at, $post->published_at);
+                return $post;
+            })
+            ->sortByDesc('updated_at')
+            ->values();
 
         $pages = Page::active()
             ->whereNull('route_name')

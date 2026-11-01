@@ -46,6 +46,18 @@
                 <p class="text-xs text-gray-500 mt-2">💡 Użyj 1-2 zdań aby zachęcić do czytania</p>
             </div>
 
+            {{-- TL;DR --}}
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-gray-700 mb-2">
+                    <i class="fa-solid fa-list-check text-purple-600"></i>
+                    TL;DR - najważniejsze punkty (opcjonalnie)
+                </label>
+                <textarea name="tldr" rows="4"
+                          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 @error('tldr') border-red-500 @enderror"
+                          placeholder="Jeden punkt w jednej linii, 3-4 punkty. Wyświetlane w ramce nad treścią.">{{ old('tldr') }}</textarea>
+                @error('tldr') <p class="text-red-600 text-sm mt-2">{{ $message }}</p> @enderror
+            </div>
+
             {{-- Content --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <label class="block text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">

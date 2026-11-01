@@ -31,6 +31,7 @@ class BlogController extends Controller
         $validated = $request->validate([
             'title' => 'required|min:10|max:255',
             'excerpt' => 'nullable|max:500',
+            'tldr' => 'nullable|string|max:1000',
             'content' => 'required|min:50',
             'meta_title' => 'nullable|max:60',
             'meta_description' => 'nullable|max:160',
@@ -77,6 +78,7 @@ class BlogController extends Controller
             'title' => $validated['title'],
             'slug' => $slug,
             'excerpt' => $validated['excerpt'],
+            'tldr' => $validated['tldr'] ?? null,
             'content' => $validated['content'],
             'meta_title' => $validated['meta_title'],
             'meta_description' => $validated['meta_description'],
@@ -152,6 +154,7 @@ class BlogController extends Controller
         $validated = $request->validate([
             'title' => 'required|min:10|max:255',
             'excerpt' => 'nullable|max:500',
+            'tldr' => 'nullable|string|max:1000',
             'content' => 'required|min:50',
             'meta_title' => 'nullable|max:60',
             'meta_description' => 'nullable|max:160',
@@ -199,6 +202,7 @@ class BlogController extends Controller
         $data = [
             'title' => $validated['title'],
             'excerpt' => $validated['excerpt'],
+            'tldr' => $validated['tldr'] ?? null,
             'content' => $validated['content'],
             'meta_title' => $validated['meta_title'],
             'meta_description' => $validated['meta_description'],

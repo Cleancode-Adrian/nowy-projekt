@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             BlogPostBriefSeeder::class,
             BlogPostClientGuidesSeeder::class,
             BlogPostTechAndMaintenanceSeeder::class,
+            BlogTldrSeeder::class,
             BlogScheduleSeeder::class,
         ]);
     }

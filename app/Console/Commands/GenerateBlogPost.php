@@ -73,6 +73,7 @@ class GenerateBlogPost extends Command
             'title' => $content['title'],
             'slug' => Str::slug($content['title']),
             'excerpt' => $content['excerpt'],
+            'tldr' => is_array($content['tldr'] ?? null) ? implode("\n", $content['tldr']) : ($content['tldr'] ?? null),
             'content' => $content['body'],
             'meta_title' => $content['meta_title'],
             'meta_description' => $content['meta_description'],
@@ -118,6 +119,7 @@ Zwróć odpowiedź w formacie JSON:
 {
     \"title\": \"...\",
     \"excerpt\": \"...\",
+    \"tldr\": [\"3-4 najważniejsze wnioski z artykułu, każdy jako jedno konkretne zdanie do 140 znaków\"],
     \"body\": \"<h2>...</h2><p>...</p>...\",
     \"meta_title\": \"...\",
     \"meta_description\": \"...\",

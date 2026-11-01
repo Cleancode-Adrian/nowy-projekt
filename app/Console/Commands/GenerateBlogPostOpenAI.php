@@ -110,6 +110,7 @@ class GenerateBlogPostOpenAI extends Command
                 'title' => $content['title'],
                 'slug' => $slug,
                 'excerpt' => $content['excerpt'],
+                'tldr' => is_array($content['tldr'] ?? null) ? implode("\n", $content['tldr']) : ($content['tldr'] ?? null),
                 'content' => $content['body'],
                 'meta_title' => $content['meta_title'],
                 'meta_description' => $content['meta_description'],
@@ -172,6 +173,7 @@ ZWRÓĆ TYLKO JSON (bez markdown, bez dodatkowych komentarzy):
 {
     \"title\": \"...\",
     \"excerpt\": \"...\",
+    \"tldr\": [\"3-4 najważniejsze wnioski z artykułu, każdy jako jedno konkretne zdanie do 140 znaków\"],
     \"body\": \"<h2>...</h2><p>...</p>...\",
     \"meta_title\": \"...\",
     \"meta_description\": \"...\",
