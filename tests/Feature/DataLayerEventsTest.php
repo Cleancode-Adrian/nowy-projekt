@@ -153,6 +153,34 @@ class DataLayerEventsTest extends TestCase
             ->assertSee('data-phone-location="faq"', false);
     }
 
+    public function test_cookiebot_jest_pierwszym_skryptem_przed_gtm(): void
+    {
+        config(['services.cookiebot.cbid' => 'fc720780-9d1c-4e63-a0c4-204d38173953']);
+
+        foreach (['/', '/login'] as $url) {
+            $html = $this->get($url)->assertOk()->getContent();
+
+            $cookiebot = strpos($html, '<script id="Cookiebot"');
+            $gtm = strpos($html, 'googletagmanager.com/gtm.js');
+            $this->assertNotFalse($cookiebot, "Brak Cookiebota na {$url}");
+            $this->assertLessThan($gtm, $cookiebot, "Cookiebot musi być przed GTM na {$url}");
+            $this->assertSame($cookiebot, strpos($html, '<script'), "Cookiebot nie jest pierwszym skryptem na {$url}");
+            $this->assertStringContainsString('data-cbid="fc720780-9d1c-4e63-a0c4-204d38173953"', $html);
+        }
+
+        $this->get('/')->assertSee('Cookiebot.renew()', false);
+    }
+
+    public function test_bez_cbid_cookiebot_jest_wylaczony(): void
+    {
+        config(['services.cookiebot.cbid' => null]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('id="Cookiebot"', false)
+            ->assertDontSee('Ustawienia cookies');
+    }
+
     public function test_flash_z_nieprawidlowa_struktura_jest_ignorowany(): void
     {
         $this->withSession(['dl_event' => 'generate_lead'])

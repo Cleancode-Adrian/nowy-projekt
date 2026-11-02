@@ -84,7 +84,13 @@
 
     <div class="border-t border-ink-800/80">
         <div class="container-page flex flex-col items-center justify-between gap-3 py-6 text-xs text-ink-500 sm:flex-row">
-            <p>&copy; {{ date('Y') }} Projekciarz.pl. Wszelkie prawa zastrzeżone.</p>
+            <p>
+                &copy; {{ date('Y') }} Projekciarz.pl. Wszelkie prawa zastrzeżone.
+                @if(config('services.cookiebot.cbid'))
+                    <span class="mx-1.5 text-ink-700">·</span>
+                    <button type="button" onclick="window.Cookiebot && Cookiebot.renew()" class="underline-offset-2 transition-colors hover:text-white hover:underline">Ustawienia cookies</button>
+                @endif
+            </p>
             <p>
                 Projekt i realizacja:
                 <a href="https://cleancodeas.pl" target="_blank" rel="noopener" class="font-medium text-ink-300 transition-colors hover:text-white">CleanCode</a>

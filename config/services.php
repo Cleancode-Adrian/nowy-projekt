@@ -35,6 +35,11 @@ return [
         ],
     ],
 
+    // Baner zgód na cookies (Cookiebot CMP). Pusta wartość wyłącza skrypt.
+    'cookiebot' => [
+        'cbid' => env('COOKIEBOT_CBID', 'fc720780-9d1c-4e63-a0c4-204d38173953'),
+    ],
+
     'recaptcha' => [
         'site_key' => env('RECAPTCHA_SITE_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),

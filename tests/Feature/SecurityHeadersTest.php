@@ -61,6 +61,16 @@ class SecurityHeadersTest extends TestCase
         $this->assertStringContainsString('https://td.doubleclick.net', $frame);
     }
 
+    public function test_csp_dopuszcza_cookiebot(): void
+    {
+        $csp = $this->csp();
+
+        $this->assertStringContainsString('https://consent.cookiebot.com', $this->directive($csp, 'script-src'));
+        $this->assertStringContainsString('https://consentcdn.cookiebot.com', $this->directive($csp, 'script-src'));
+        $this->assertStringContainsString('https://consentcdn.cookiebot.com', $this->directive($csp, 'connect-src'));
+        $this->assertStringContainsString('https://consentcdn.cookiebot.com', $this->directive($csp, 'frame-src'));
+    }
+
     public function test_csp_nie_jest_wysylane_dla_odpowiedzi_innych_niz_html(): void
     {
         config(['security.csp_enabled' => true]);

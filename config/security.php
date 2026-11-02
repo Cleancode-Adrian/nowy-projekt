@@ -37,6 +37,9 @@ return [
             'https://groot.mailerlite.com',
             'https://assets.mailerlite.com',
             'https://assets.mlcdn.com',
+            // Cookiebot CMP (uc.js + skrypty banera i deklaracji)
+            'https://consent.cookiebot.com',
+            'https://consentcdn.cookiebot.com',
         ],
         'style' => [
             'https://cdnjs.cloudflare.com',
@@ -58,11 +61,14 @@ return [
             'https://*.google.com',
             'https://assets.mailerlite.com',
             'https://groot.mailerlite.com',
+            'https://consent.cookiebot.com',
+            'https://consentcdn.cookiebot.com',
         ],
         'frame' => [
             'https://www.google.com',
             'https://*.googletagmanager.com',
             'https://td.doubleclick.net',
+            'https://consentcdn.cookiebot.com',
         ],
     ],
 
