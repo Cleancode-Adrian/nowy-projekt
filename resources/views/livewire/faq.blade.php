@@ -35,10 +35,13 @@
 
         <div class="card bg-blue-50 border-blue-200 mt-12">
             <h3 class="text-xl font-bold text-gray-900 mb-3">💬 Nie znalazłeś odpowiedzi?</h3>
-            <p class="text-gray-700 mb-4">Skontaktuj się z nami:</p>
-            <a href="mailto:biuro@cleancodeas.pl" class="text-blue-600 hover:text-blue-700 font-semibold">
-                biuro@cleancodeas.pl
-            </a>
+            <p class="text-gray-700 mb-4">Zadzwoń albo napisz - odpowiadamy w dni robocze:</p>
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+                <x-phone-link location="faq" class="btn btn-primary" />
+                <a href="mailto:{{ config('app.contact.email') }}" class="text-blue-600 hover:text-blue-700 font-semibold">
+                    {{ config('app.contact.email') }}
+                </a>
+            </div>
         </div>
     </div>
 </div>

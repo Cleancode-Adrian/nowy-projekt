@@ -198,6 +198,10 @@
                 <x-menu-item :page="$page" />
             @endforeach
 
+            <x-phone-link location="mobile_menu" class="nav-link mt-1 font-semibold text-brand-700">
+                Zadzwoń: {{ config('app.contact.phone_display') }}
+            </x-phone-link>
+
             @auth
                 @if($user->isClient())
                     <a href="{{ route('announcements.create') }}" class="btn btn-primary mt-3">Dodaj zlecenie</a>

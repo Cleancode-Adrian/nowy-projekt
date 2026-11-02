@@ -137,6 +137,22 @@ class DataLayerEventsTest extends TestCase
             ->assertSee('{"event":"generate_lead","lead_type":"zlecenie"}', false);
     }
 
+    public function test_klikalny_telefon_i_sledzenie_phone_click(): void
+    {
+        $home = $this->get('/');
+
+        $home->assertOk();
+        $home->assertSee('href="tel:+48724441843"', false);
+        $home->assertSee('data-phone-location="footer"', false);
+        $home->assertSee('data-phone-location="mobile_menu"', false);
+        $home->assertSee("event: 'phone_click'", false);
+        $home->assertSee('"telephone":"+48724441843"', false);
+
+        $this->get(route('faq'))
+            ->assertOk()
+            ->assertSee('data-phone-location="faq"', false);
+    }
+
     public function test_flash_z_nieprawidlowa_struktura_jest_ignorowany(): void
     {
         $this->withSession(['dl_event' => 'generate_lead'])

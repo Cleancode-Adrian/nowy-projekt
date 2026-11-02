@@ -16,6 +16,16 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
+    | Dane kontaktowe pokazywane publicznie (stopka, FAQ, JSON-LD).
+    | phone - format E.164 do linku tel:, phone_display - jak ma się wyświetlać.
+    */
+    'contact' => [
+        'phone' => env('CONTACT_PHONE', '+48724441843'),
+        'phone_display' => env('CONTACT_PHONE_DISPLAY', '724 441 843'),
+        'email' => env('CONTACT_EMAIL', 'biuro@cleancodeas.pl'),
+    ],
+
+    /*
     |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------

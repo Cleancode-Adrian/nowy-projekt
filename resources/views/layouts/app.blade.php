@@ -82,6 +82,27 @@
     @livewireStyles
 
     {{-- Additional Head Content --}}
+    @if(request()->routeIs('home'))
+        @php
+            $orgLd = array_filter([
+                '@context' => 'https://schema.org',
+                '@type' => 'Organization',
+                'name' => 'Projekciarz.pl',
+                'url' => url('/'),
+                'logo' => asset('favicon.svg'),
+                'email' => config('app.contact.email'),
+                'telephone' => config('app.contact.phone'),
+                'contactPoint' => config('app.contact.phone') ? [
+                    '@type' => 'ContactPoint',
+                    'telephone' => config('app.contact.phone'),
+                    'contactType' => 'customer service',
+                    'areaServed' => 'PL',
+                    'availableLanguage' => 'Polish',
+                ] : null,
+            ]);
+        @endphp
+        <script type="application/ld+json">{!! json_encode($orgLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
+    @endif
     @stack('head')
 </head>
 <body class="flex min-h-full flex-col antialiased">
@@ -220,6 +241,17 @@
     </style>
 
     <script>
+        // Kliknięcia w numer telefonu (każdy link tel:, także w treści wpisów).
+        document.addEventListener('click', function (e) {
+            var link = e.target.closest && e.target.closest('a[href^="tel:"]');
+            if (!link) return;
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'phone_click',
+                link_location: link.getAttribute('data-phone-location') || 'content'
+            });
+        });
+
         // Callback sukcesu wywoływany przez webforms.min.js po zapisie przez AJAX.
         function ml_webform_success_16123980() {
             var $ = ml_jQuery || jQuery;
