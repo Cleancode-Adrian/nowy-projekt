@@ -4,10 +4,12 @@ namespace App\Livewire;
 
 use App\Models\Announcement;
 use Livewire\Attributes\Locked;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 
 class SaveButton extends Component
 {
+    use TracksEvents;
     #[Locked]
     public $announcementId;
     public $full = false; // full width button or icon only
@@ -53,6 +55,7 @@ class SaveButton extends Component
 
             auth()->user()->savedAnnouncements()->syncWithoutDetaching([$this->announcementId]);
             $this->isSaved = true;
+            $this->trackEvent('save_announcement');
             $this->dispatch('notify', message: 'Dodano do zapisanych');
         }
     }

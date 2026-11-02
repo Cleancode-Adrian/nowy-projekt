@@ -7,10 +7,12 @@ use App\Models\Contract;
 use App\Models\ContractMilestone;
 use App\Models\Proposal;
 use Illuminate\Support\Str;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 
 class AnnouncementProposals extends Component
 {
+    use TracksEvents;
     public Announcement $announcement;
     public $proposals;
 
@@ -101,6 +103,7 @@ class AnnouncementProposals extends Component
         }
 
         $this->loadProposals();
+        $this->trackEvent('accept_proposal');
         $this->dispatch('notify', message: 'Oferta zaakceptowana! ✅', type: 'success');
     }
 

@@ -241,15 +241,24 @@
     </style>
 
     <script>
-        // Kliknięcia w numer telefonu (każdy link tel:, także w treści wpisów).
+        // Kliknięcia w telefon i e-mail (każdy link tel:/mailto:, także w treści wpisów).
         document.addEventListener('click', function (e) {
-            var link = e.target.closest && e.target.closest('a[href^="tel:"]');
+            var link = e.target.closest && e.target.closest('a[href^="tel:"], a[href^="mailto:"]');
             if (!link) return;
+            var isPhone = link.getAttribute('href').indexOf('tel:') === 0;
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
-                event: 'phone_click',
+                event: isPhone ? 'phone_click' : 'email_click',
                 link_location: link.getAttribute('data-phone-location') || 'content'
             });
+        });
+
+        // Zdarzenia z akcji Livewire bez przeładowania strony (App\Livewire\Concerns\TracksEvents).
+        window.addEventListener('dl-event', function (e) {
+            var payload = e.detail && e.detail.payload;
+            if (!payload || !payload.event) return;
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push(payload);
         });
 
         // Callback sukcesu wywoływany przez webforms.min.js po zapisie przez AJAX.

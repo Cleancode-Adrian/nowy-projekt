@@ -4,10 +4,12 @@ namespace App\Livewire;
 
 use App\Models\Announcement;
 use App\Models\Proposal;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 
 class ProposalForm extends Component
 {
+    use TracksEvents;
     public Announcement $announcement;
     public $price = '';
     public $delivery_days = '';
@@ -94,6 +96,7 @@ class ProposalForm extends Component
             \Log::warning('Failed to send email: ' . $e->getMessage());
         }
 
+        $this->trackEvent('submit_proposal', ['value' => (float) $this->price, 'currency' => 'PLN']);
         $this->hasProposal = true;
         $this->reset(['price', 'delivery_days', 'description']);
 

@@ -145,7 +145,7 @@ class DataLayerEventsTest extends TestCase
         $home->assertSee('href="tel:+48724441843"', false);
         $home->assertSee('data-phone-location="footer"', false);
         $home->assertSee('data-phone-location="mobile_menu"', false);
-        $home->assertSee("event: 'phone_click'", false);
+        $home->assertSee("'phone_click'", false);
         $home->assertSee('"telephone":"+48724441843"', false);
 
         $this->get(route('faq'))
@@ -179,6 +179,34 @@ class DataLayerEventsTest extends TestCase
             ->assertOk()
             ->assertDontSee('id="Cookiebot"', false)
             ->assertDontSee('Ustawienia cookies');
+    }
+
+    public function test_layout_nasluchuje_zdarzen_livewire_i_mailto(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSee("window.addEventListener('dl-event'", false)
+            ->assertSee("'email_click'", false);
+    }
+
+    public function test_zapis_ogloszenia_wysyla_save_announcement(): void
+    {
+        $client = User::factory()->create(['role' => 'client', 'is_approved' => true]);
+        $freelancer = User::factory()->create(['role' => 'freelancer', 'is_approved' => true]);
+        $category = Category::create(['name' => 'Strony WWW', 'slug' => 'strony-www', 'is_active' => true]);
+        $announcement = \App\Models\Announcement::create([
+            'user_id' => $client->id,
+            'category_id' => $category->id,
+            'title' => 'Strona dla gabinetu',
+            'description' => 'Opis',
+            'status' => 'published',
+            'is_approved' => true,
+        ]);
+
+        Livewire::actingAs($freelancer)
+            ->test(\App\Livewire\SaveButton::class, ['announcementId' => $announcement->id])
+            ->call('toggle')
+            ->assertDispatched('dl-event', payload: ['event' => 'save_announcement']);
     }
 
     public function test_flash_z_nieprawidlowa_struktura_jest_ignorowany(): void

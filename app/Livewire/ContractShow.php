@@ -4,10 +4,12 @@ namespace App\Livewire;
 
 use App\Models\Contract;
 use App\Models\Notification;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 
 class ContractShow extends Component
 {
+    use TracksEvents;
     public Contract $contract;
 
     public $newTitle = '';
@@ -139,6 +141,7 @@ class ContractShow extends Component
 
         $this->contract->refreshStatus();
         $this->loadContract();
+        $this->trackEvent('approve_milestone');
         $this->dispatch('notify', message: 'Etap zatwierdzony', type: 'success');
     }
 

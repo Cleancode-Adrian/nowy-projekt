@@ -6,10 +6,12 @@ use App\Events\MessageSent;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 
 class ShowMessages extends Component
 {
+    use TracksEvents;
     public User $otherUser;
     public $messages;
     public $content = '';
@@ -112,6 +114,7 @@ class ShowMessages extends Component
         $this->content = '';
         $this->loadMessages();
 
+        $this->trackEvent('send_message');
         $this->dispatch('notify', message: 'Wiadomość wysłana!', type: 'success');
         $this->dispatch('scroll-to-bottom');
     }

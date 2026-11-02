@@ -5,10 +5,12 @@ namespace App\Livewire;
 use App\Models\Proposal;
 use App\Models\Announcement;
 use Livewire\Attributes\Locked;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 
 class ProposalsList extends Component
 {
+    use TracksEvents;
     // Locked: bez tego klient mógł podmienić ID w żądaniu Livewire i wywołać
     // loadProposals() dla cudzego ogłoszenia (uprawnienia sprawdzane są tylko w mount()).
     #[Locked]
@@ -68,6 +70,7 @@ class ProposalsList extends Component
             ->update(['status' => 'rejected', 'rejected_at' => now()]);
 
         $this->loadProposals();
+        $this->trackEvent('accept_proposal');
         $this->dispatch('notify', message: 'Oferta zaakceptowana!', type: 'success');
     }
 

@@ -7,10 +7,12 @@ use App\Models\User;
 use App\Models\Announcement;
 use App\Services\ProfanityFilter;
 use App\Mail\NewRatingMail;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 
 class RateUser extends Component
 {
+    use TracksEvents;
     public User $ratedUser;
     public Announcement $announcement;
     public $rating = 5;
@@ -80,6 +82,7 @@ class RateUser extends Component
         }
 
         $this->hasRated = true;
+        $this->trackEvent('rate_user');
         $this->dispatch('notify', message: 'Dziękujemy za wystawienie oceny! Zostanie ona wyświetlona po weryfikacji przez administratora.', type: 'success');
     }
 

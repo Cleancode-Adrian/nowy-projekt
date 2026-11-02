@@ -5,12 +5,14 @@ namespace App\Livewire;
 use App\Models\Announcement;
 use App\Models\Category;
 use App\Models\SavedSearch;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class AdvancedSearch extends Component
 {
     use WithPagination;
+    use TracksEvents;
 
     public $search = '';
     public $category_id = '';
@@ -208,6 +210,7 @@ class AdvancedSearch extends Component
         $this->showSaveForm = false;
         $this->savedSearches = auth()->user()->savedSearches()->latest()->get();
 
+        $this->trackEvent('save_search');
         session()->flash('success', 'Wyszukiwanie zostało zapisane!');
     }
 
