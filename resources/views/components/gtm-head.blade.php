@@ -35,7 +35,7 @@
     gtag('set', 'url_passthrough', true);
 </script>
 @if($cookiebotId)
-<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="{{ $cookiebotId }}" type="text/javascript"></script>
+<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="{{ $cookiebotId }}" data-culture="{{ config('services.cookiebot.culture', 'PL') }}" type="text/javascript"></script>
 @endif
 <script>
     window.dataLayer.push({!! json_encode(['user_role' => $userRole, 'logged_in' => auth()->check()], $json) !!});

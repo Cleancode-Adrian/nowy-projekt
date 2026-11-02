@@ -169,7 +169,7 @@ class DataLayerEventsTest extends TestCase
             $this->assertNotFalse($consent, "Brak domyślnego Consent Mode na {$url}");
             $this->assertLessThan($cookiebot, $consent, "Consent default musi być przed Cookiebotem na {$url}");
             $this->assertStringContainsString("ad_user_data: 'denied'", $html);
-            $this->assertStringContainsString('data-cbid="fc720780-9d1c-4e63-a0c4-204d38173953"', $html);
+            $this->assertStringContainsString('data-cbid="fc720780-9d1c-4e63-a0c4-204d38173953" data-culture="PL"', $html);
         }
 
         $this->get('/')->assertSee('Cookiebot.renew()', false);

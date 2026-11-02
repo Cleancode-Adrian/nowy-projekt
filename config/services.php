@@ -38,6 +38,8 @@ return [
     // Baner zgód na cookies (Cookiebot CMP). Pusta wartość wyłącza skrypt.
     'cookiebot' => [
         'cbid' => env('COOKIEBOT_CBID', 'fc720780-9d1c-4e63-a0c4-204d38173953'),
+        // Język banera wymuszony na polski (bez tego Cookiebot zgaduje z przeglądarki).
+        'culture' => env('COOKIEBOT_CULTURE', 'PL'),
     ],
 
     'recaptcha' => [
