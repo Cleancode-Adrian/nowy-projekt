@@ -115,6 +115,7 @@ class ShowMessages extends Component
         $this->loadMessages();
 
         $this->trackEvent('send_message');
+        $this->trackFb('Contact');
         $this->dispatch('notify', message: 'Wiadomość wysłana!', type: 'success');
         $this->dispatch('scroll-to-bottom');
     }

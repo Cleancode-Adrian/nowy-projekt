@@ -42,6 +42,11 @@ return [
         'culture' => env('COOKIEBOT_CULTURE', 'PL'),
     ],
 
+    // Meta Pixel. Wysyła dane dopiero po zgodzie marketingowej w Cookiebot.
+    'meta_pixel' => [
+        'id' => env('META_PIXEL_ID', '4642966532592189'),
+    ],
+
     'recaptcha' => [
         'site_key' => env('RECAPTCHA_SITE_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),

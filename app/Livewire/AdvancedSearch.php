@@ -38,6 +38,22 @@ class AdvancedSearch extends Component
         }
     }
 
+    public function updatedSearch(): void
+    {
+        $this->trackCurrentSearch();
+    }
+
+    public function updatedCategoryId(): void
+    {
+        $this->trackCurrentSearch();
+    }
+
+    private function trackCurrentSearch(): void
+    {
+        $category = $this->category_id ? $this->categories->firstWhere('id', (int) $this->category_id)?->name : null;
+        $this->trackSearch($this->search, $category);
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();

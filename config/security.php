@@ -40,6 +40,8 @@ return [
             // Cookiebot CMP (uc.js + skrypty banera i deklaracji)
             'https://consent.cookiebot.com',
             'https://consentcdn.cookiebot.com',
+            // Meta Pixel
+            'https://connect.facebook.net',
         ],
         'style' => [
             'https://cdnjs.cloudflare.com',
@@ -62,6 +64,8 @@ return [
             'https://google.com',
             'https://www.google.pl',
             'https://www.googleadservices.com',
+            'https://www.facebook.com',
+            'https://connect.facebook.net',
             'https://assets.mailerlite.com',
             'https://groot.mailerlite.com',
             'https://consent.cookiebot.com',

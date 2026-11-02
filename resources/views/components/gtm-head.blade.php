@@ -37,6 +37,33 @@
 @if($cookiebotId)
 <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="{{ $cookiebotId }}" data-culture="{{ config('services.cookiebot.culture', 'PL') }}" type="text/javascript"></script>
 @endif
+@if($pixelId = config('services.meta_pixel.id'))
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+// RODO: nic nie wychodzi do Meta, dopóki użytkownik nie zgodzi się na cookies marketingowe.
+fbq('consent', 'revoke');
+fbq('init', {!! json_encode((string) $pixelId, $json) !!});
+fbq('track', 'PageView');
+@foreach(\App\Support\FbPixel::pending() as $fbEvent)
+fbq('track', {!! json_encode($fbEvent['name'], $json) !!}, {!! json_encode((object) ($fbEvent['data'] ?? []), $json) !!}, {eventID: {!! json_encode((string) ($fbEvent['id'] ?? ''), $json) !!}});
+@endforeach
+(function () {
+    function syncFbConsent() {
+        var ok = window.Cookiebot && Cookiebot.consent && Cookiebot.consent.marketing;
+        fbq('consent', ok ? 'grant' : 'revoke');
+    }
+    window.addEventListener('CookiebotOnConsentReady', syncFbConsent);
+    window.addEventListener('CookiebotOnAccept', syncFbConsent);
+    window.addEventListener('CookiebotOnDecline', syncFbConsent);
+})();
+</script>
+<!-- End Meta Pixel -->
+@endif
 <script>
     window.dataLayer.push({!! json_encode(['user_role' => $userRole, 'logged_in' => auth()->check()], $json) !!});
 @if($dlEvent)

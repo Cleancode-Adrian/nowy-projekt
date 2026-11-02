@@ -97,6 +97,7 @@ class ProposalForm extends Component
         }
 
         $this->trackEvent('submit_proposal', ['value' => (float) $this->price, 'currency' => 'PLN']);
+        $this->trackFb('SubmitApplication', ['content_ids' => [(string) $this->announcement->id], 'value' => (float) $this->price, 'currency' => 'PLN']);
         $this->hasProposal = true;
         $this->reset(['price', 'delivery_days', 'description']);
 

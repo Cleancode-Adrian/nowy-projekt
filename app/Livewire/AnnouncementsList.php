@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Announcement;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Livewire\Concerns\TracksEvents;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
@@ -12,6 +13,7 @@ use Livewire\Attributes\Url;
 class AnnouncementsList extends Component
 {
     use WithPagination;
+    use TracksEvents;
 
     #[Url(as: 'q')]
     public $search = '';
@@ -26,6 +28,28 @@ class AnnouncementsList extends Component
     public $maxBudget = '';
 
     public $selectedTags = [];
+
+    public function mount(): void
+    {
+        // Wejście z linku z filtrem (?q=..., ?category=...) to też wyszukiwanie.
+        $this->trackCurrentSearch();
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->trackCurrentSearch();
+    }
+
+    public function updatedCategory(): void
+    {
+        $this->trackCurrentSearch();
+    }
+
+    private function trackCurrentSearch(): void
+    {
+        $category = $this->category ? Category::where('slug', $this->category)->value('name') : null;
+        $this->trackSearch($this->search, $category);
+    }
 
     public function updatingSearch()
     {

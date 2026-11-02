@@ -143,6 +143,13 @@ class CreateAnnouncement extends Component
         }
 
         session()->flash('success', 'Ogłoszenie zostało dodane pomyślnie! Zostanie opublikowane po weryfikacji przez administratora.');
+        // Meta: Lead z budżetem (górny, a gdy go brak - dolny).
+        $budget = (float) ($announcement->budget_max ?: $announcement->budget_min ?: 0);
+        \App\Support\FbPixel::flash('Lead', array_filter([
+            'content_category' => $this->categories->firstWhere('id', (int) $this->category_id)?->name,
+            'value' => $budget ?: null,
+            'currency' => $budget ? ($announcement->budget_currency ?: 'PLN') : null,
+        ], fn ($v) => $v !== null));
         // Konwersja dla GTM - push do dataLayer renderuje layout po redirectcie.
         session()->flash('dl_event', ['event' => 'generate_lead', 'lead_type' => 'zlecenie']);
 

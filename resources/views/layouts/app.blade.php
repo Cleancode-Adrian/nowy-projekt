@@ -254,11 +254,29 @@
         });
 
         // Zdarzenia z akcji Livewire bez przeładowania strony (App\Livewire\Concerns\TracksEvents).
+        // Wyszukiwanie zmienia się co klawisz, więc 'search' / 'Search' wysyłamy
+        // dopiero po 1,5 s bez zmian - tylko ostateczną frazę.
+        var searchTimers = {};
+        function debounced(key, fn) {
+            clearTimeout(searchTimers[key]);
+            searchTimers[key] = setTimeout(fn, 1500);
+        }
+
         window.addEventListener('dl-event', function (e) {
             var payload = e.detail && e.detail.payload;
             if (!payload || !payload.event) return;
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push(payload);
+            var push = function () {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push(payload);
+            };
+            payload.event === 'search' ? debounced('dl', push) : push();
+        });
+
+        window.addEventListener('fb-track', function (e) {
+            var d = e.detail || {};
+            if (!d.name || typeof window.fbq !== 'function') return;
+            var send = function () { fbq('track', d.name, d.data || {}, { eventID: d.id }); };
+            d.name === 'Search' ? debounced('fb', send) : send();
         });
 
         // Callback sukcesu wywoływany przez webforms.min.js po zapisie przez AJAX.

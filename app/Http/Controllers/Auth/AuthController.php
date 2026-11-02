@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Support\FbPixel;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Mail\NewUserRegisteredMail;
@@ -143,6 +144,11 @@ class AuthController extends Controller
                 'method' => 'email',
                 'user_role' => $validated['role'] === 'client' ? 'klient' : 'wykonawca',
             ];
+
+            FbPixel::flash('CompleteRegistration', [
+                'status' => true,
+                'content_name' => $dlEvent['user_role'],
+            ]);
 
             if ($autoApprove) {
                 // Bez tego kroku osoba, która trafiła tu z reklamy, musiałaby
