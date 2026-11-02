@@ -6,6 +6,7 @@ use App\Models\Announcement;
 use App\Models\Category;
 use App\Models\SavedSearch;
 use App\Livewire\Concerns\TracksEvents;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -14,7 +15,11 @@ class AdvancedSearch extends Component
     use WithPagination;
     use TracksEvents;
 
+    // W URL-u, żeby wyszukiwanie dało się podlinkować i zmierzyć przy wejściu.
+    #[Url(as: 'q')]
     public $search = '';
+
+    #[Url(as: 'kategoria')]
     public $category_id = '';
     public $budget_min = '';
     public $budget_max = '';

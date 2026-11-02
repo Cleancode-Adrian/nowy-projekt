@@ -21,6 +21,12 @@ trait TracksEvents
     {
         $event = FbPixel::event($name, $data);
         $this->dispatch('fb-track', name: $event['name'], data: $event['data'], id: $event['id']);
+
+        // Wyszukiwanie zmienia się co klawisz - przez CAPI wysyłamy tylko
+        // konkretne akcje (oferta, wiadomość), nie każdy stan filtra.
+        if ($name !== 'Search') {
+            FbPixel::send($event);
+        }
     }
 
     /**

@@ -26,6 +26,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 | Request::HEADER_X_FORWARDED_PROTO,
         );
 
+        // Ciasteczka ustawiane w przeglądarce przez skrypty firm trzecich - Laravel
+        // nie może ich odszyfrowywać (dostałby null). Potrzebne do Meta CAPI:
+        // zgoda z Cookiebota oraz identyfikatory Pixela.
+        $middleware->encryptCookies(except: ['CookieConsent', '_fbp', '_fbc']);
+
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
         ]);

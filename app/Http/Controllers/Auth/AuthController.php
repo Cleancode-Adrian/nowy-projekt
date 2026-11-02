@@ -148,7 +148,7 @@ class AuthController extends Controller
             FbPixel::flash('CompleteRegistration', [
                 'status' => true,
                 'content_name' => $dlEvent['user_role'],
-            ]);
+            ], $user);
 
             if ($autoApprove) {
                 // Bez tego kroku osoba, która trafiła tu z reklamy, musiałaby

@@ -287,6 +287,9 @@
 
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({ event: 'newsletter_signup' });
+            if (typeof window.fbq === 'function') {
+                fbq('track', 'Lead', { content_name: 'Newsletter' }, { eventID: 'nl-' + Date.now() + '-' + Math.random().toString(36).slice(2) });
+            }
         }
 
         // Przycisk aktywny dopiero po zaznaczeniu zgody RODO

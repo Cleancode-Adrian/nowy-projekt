@@ -140,5 +140,23 @@
 
         {{ $announcements->links() }}
     </div>
-</div>
 
+{{-- Wejście z linku (?q=..., ?kategoria=...) = wyszukiwanie, odpalane od razu. --}}
+@if(trim((string) $search) !== '' || $category_id)
+@push('scripts')
+@php
+    $searchCategory = $category_id ? $categories->firstWhere('id', (int) $category_id)?->name : null;
+    $searchFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+    $fbSearch = array_filter(['search_string' => trim((string) $search), 'content_category' => $searchCategory], fn ($v) => $v !== null && $v !== '');
+    $gaSearch = ['event' => 'search'] + array_filter(['search_term' => trim((string) $search), 'search_category' => $searchCategory], fn ($v) => $v !== null && $v !== '');
+@endphp
+<script>
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({!! json_encode($gaSearch, $searchFlags) !!});
+    if (typeof window.fbq === 'function') {
+        fbq('track', 'Search', {!! json_encode((object) $fbSearch, $searchFlags) !!});
+    }
+</script>
+@endpush
+@endif
+</div>

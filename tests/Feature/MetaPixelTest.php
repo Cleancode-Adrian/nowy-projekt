@@ -140,6 +140,89 @@ class MetaPixelTest extends TestCase
             ->assertDontSee("fbq('track', 'Search'", false);
     }
 
+    public function test_newsletter_wysyla_lead(): void
+    {
+        $this->get('/')->assertOk()
+            ->assertSee("fbq('track', 'Lead', { content_name: 'Newsletter' }", false);
+    }
+
+    public function test_szukaj_z_parametrami_w_url_wysyla_search(): void
+    {
+        $cat = Category::create(['name' => 'Strony WWW', 'slug' => 'strony-www', 'is_active' => true]);
+
+        $this->get('/szukaj?q=wordpress&kategoria=' . $cat->id)
+            ->assertOk()
+            ->assertSee("fbq('track', 'Search', {\"search_string\":\"wordpress\",\"content_category\":\"Strony WWW\"});", false);
+
+        $this->get('/szukaj')->assertOk()->assertDontSee("fbq('track', 'Search'", false);
+    }
+
+    public function test_capi_wysyla_to_samo_zdarzenie_z_tym_samym_event_id(): void
+    {
+        config(['services.meta_pixel.capi_token' => 'test-token']);
+        \Illuminate\Support\Facades\Http::fake(['graph.facebook.com/*' => \Illuminate\Support\Facades\Http::response(['events_received' => 1])]);
+        Category::create(['name' => 'Strony WWW', 'slug' => 'strony-www', 'is_active' => true]);
+
+        $this->withUnencryptedCookie('CookieConsent', urlencode("{stamp:'abc',necessary:true,preferences:true,statistics:true,marketing:true,method:'explicit'}"))
+            ->withUnencryptedCookie('_fbp', 'fb.1.1700000000000.123456789');
+
+        $this->post('/register', [
+            'name' => 'Testowy Klient',
+            'phone' => '724 441 843',
+            'email' => 'Klient@Example.com',
+            'password' => 'haslo-testowe-123',
+            'password_confirmation' => 'haslo-testowe-123',
+            'role' => 'client',
+            'accept_privacy' => '1',
+            'accept_terms' => '1',
+        ]);
+
+        $browserId = collect(session('fb_events'))->firstWhere('name', 'CompleteRegistration')['id'];
+
+        \Illuminate\Support\Facades\Http::assertSent(function ($request) use ($browserId) {
+            $event = $request['data'][0] ?? [];
+
+            return str_contains($request->url(), 'graph.facebook.com/v21.0/4642966532592189/events')
+                && $request['access_token'] === 'test-token'
+                && $event['event_name'] === 'CompleteRegistration'
+                && $event['event_id'] === $browserId
+                && $event['action_source'] === 'website'
+                && $event['user_data']['em'] === [hash('sha256', 'klient@example.com')]
+                && $event['user_data']['ph'] === [hash('sha256', '48724441843')]
+                && $event['user_data']['fbp'] === 'fb.1.1700000000000.123456789';
+        });
+    }
+
+    public function test_capi_bez_zgody_marketingowej_nic_nie_wysyla(): void
+    {
+        config(['services.meta_pixel.capi_token' => 'test-token']);
+        \Illuminate\Support\Facades\Http::fake();
+
+        // Odmowa w Cookiebot: marketing:false.
+        $this->withUnencryptedCookie('CookieConsent', urlencode("{stamp:'abc',necessary:true,marketing:false}"))
+            ->post('/register', [
+                'name' => 'Testowy Klient',
+                'email' => 'odmowa@example.com',
+                'password' => 'haslo-testowe-123',
+                'password_confirmation' => 'haslo-testowe-123',
+                'role' => 'client',
+                'accept_privacy' => '1',
+                'accept_terms' => '1',
+            ]);
+
+        \Illuminate\Support\Facades\Http::assertNothingSent();
+    }
+
+    public function test_bez_tokenu_capi_nic_nie_wysyla(): void
+    {
+        config(['services.meta_pixel.capi_token' => null]);
+        \Illuminate\Support\Facades\Http::fake();
+
+        \App\Support\FbPixel::send(\App\Support\FbPixel::event('Lead'));
+
+        \Illuminate\Support\Facades\Http::assertNothingSent();
+    }
+
     public function test_csp_dopuszcza_meta(): void
     {
         config(['security.csp_enabled' => true, 'security.csp_report_only' => false]);
