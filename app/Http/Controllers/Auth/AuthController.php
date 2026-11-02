@@ -42,7 +42,7 @@ class AuthController extends Controller
             }
 
             return redirect()->intended(route('dashboard'))
-                ->with('dl_event', ['event' => 'login']);
+                ->with('dl_event', ['event' => 'login', 'method' => 'email']);
         }
 
         return back()->withErrors([
@@ -140,6 +140,7 @@ class AuthController extends Controller
             // do dataLayer dokładnie raz, po faktycznym zapisie konta.
             $dlEvent = [
                 'event' => 'sign_up',
+                'method' => 'email',
                 'user_role' => $validated['role'] === 'client' ? 'klient' : 'wykonawca',
             ];
 

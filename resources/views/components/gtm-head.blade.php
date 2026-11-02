@@ -1,24 +1,48 @@
-{{-- Google Tag Manager - jedyny tag analityczny w <head>. GA4 jest skonfigurowany
-     wewnątrz kontenera GTM, więc nie ładujemy osobno gtag.js (podwójne liczenie odsłon). --}}
+{{-- Kolejność ma znaczenie:
+     1. Consent Mode v2 - wartości domyślne (denied), zanim cokolwiek odpali.
+     2. Cookiebot (CMP) - pokazuje baner i robi gtag('consent','update') po wyborze.
+     3. Dane do dataLayer (rola użytkownika, zdarzenie z flasha).
+     4. Google Tag Manager - GA4 i reszta tagów są w kontenerze; osobnego
+        gtag.js nie ładujemy (podwójne liczenie odsłon). --}}
 @php
     // Zdarzenie konwersji ustawiane flashem po udanej akcji po stronie serwera
-    // (rejestracja, logowanie, publikacja zlecenia). Dzięki temu idzie do dataLayer
-    // dokładnie raz - po realnym zapisie w bazie i po redirectcie, nie przy każdym
-    // odświeżeniu strony.
+    // (rejestracja, logowanie, publikacja zlecenia). Idzie do dataLayer dokładnie
+    // raz - po realnym zapisie w bazie i po redirectcie.
     $dlEvent = session('dl_event');
     $dlEvent = is_array($dlEvent) && !empty($dlEvent['event']) ? $dlEvent : null;
+
+    $userRole = auth()->check()
+        ? match (auth()->user()->role) { 'client' => 'klient', 'freelancer' => 'wykonawca', default => auth()->user()->role }
+        : 'gosc';
+
+    $cookiebotId = config('services.cookiebot.cbid');
+    $json = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 @endphp
-{{-- Cookiebot (CMP) - musi być pierwszym skryptem w <head>, przed GTM, żeby
-     Google Consent Mode miał ustawione wartości domyślne zanim odpalą tagi. --}}
-@if($cookiebotId = config('services.cookiebot.cbid'))
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+        security_storage: 'granted',
+        wait_for_update: 500
+    });
+    gtag('set', 'ads_data_redaction', true);
+    gtag('set', 'url_passthrough', true);
+</script>
+@if($cookiebotId)
 <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="{{ $cookiebotId }}" type="text/javascript"></script>
 @endif
+<script>
+    window.dataLayer.push({!! json_encode(['user_role' => $userRole, 'logged_in' => auth()->check()], $json) !!});
+@if($dlEvent)
+    window.dataLayer.push({!! json_encode($dlEvent, $json) !!});
+@endif
+</script>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NXVNXNSM');</script>
 <!-- End Google Tag Manager -->
-@if($dlEvent)
-<script>
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({!! json_encode($dlEvent, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!});
-</script>
-@endif

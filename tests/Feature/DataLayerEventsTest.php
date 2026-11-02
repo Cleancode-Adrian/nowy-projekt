@@ -72,7 +72,7 @@ class DataLayerEventsTest extends TestCase
 
         $page = $this->get(route('announcements.create'));
         $page->assertOk();
-        $page->assertSee('{"event":"sign_up","user_role":"klient"}', false);
+        $page->assertSee('{"event":"sign_up","method":"email","user_role":"klient"}', false);
 
         // Odświeżenie strony nie może wysłać konwersji drugi raz.
         $this->get(route('announcements.create'))
@@ -89,7 +89,7 @@ class DataLayerEventsTest extends TestCase
 
         $this->get(route('login'))
             ->assertOk()
-            ->assertSee('{"event":"sign_up","user_role":"wykonawca"}', false);
+            ->assertSee('{"event":"sign_up","method":"email","user_role":"wykonawca"}', false);
     }
 
     public function test_logowanie_wysyla_login(): void
@@ -101,7 +101,7 @@ class DataLayerEventsTest extends TestCase
 
         $this->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('{"event":"login"}', false);
+            ->assertSee('{"event":"login","method":"email"}', false);
 
         $this->get(route('dashboard'))
             ->assertDontSee('"event":"login"', false);
@@ -164,7 +164,11 @@ class DataLayerEventsTest extends TestCase
             $gtm = strpos($html, 'googletagmanager.com/gtm.js');
             $this->assertNotFalse($cookiebot, "Brak Cookiebota na {$url}");
             $this->assertLessThan($gtm, $cookiebot, "Cookiebot musi być przed GTM na {$url}");
-            $this->assertSame($cookiebot, strpos($html, '<script'), "Cookiebot nie jest pierwszym skryptem na {$url}");
+            // Consent Mode default -> Cookiebot -> GTM.
+            $consent = strpos($html, "gtag('consent', 'default'");
+            $this->assertNotFalse($consent, "Brak domyślnego Consent Mode na {$url}");
+            $this->assertLessThan($cookiebot, $consent, "Consent default musi być przed Cookiebotem na {$url}");
+            $this->assertStringContainsString("ad_user_data: 'denied'", $html);
             $this->assertStringContainsString('data-cbid="fc720780-9d1c-4e63-a0c4-204d38173953"', $html);
         }
 
@@ -179,6 +183,17 @@ class DataLayerEventsTest extends TestCase
             ->assertOk()
             ->assertDontSee('id="Cookiebot"', false)
             ->assertDontSee('Ustawienia cookies');
+    }
+
+    public function test_user_role_jest_w_datalayer_przed_gtm(): void
+    {
+        $html = $this->get('/')->getContent();
+        $this->assertStringContainsString('{"user_role":"gosc","logged_in":false}', $html);
+        $this->assertLessThan(strpos($html, 'googletagmanager.com/gtm.js'), strpos($html, '"user_role":"gosc"'));
+
+        $client = User::factory()->create(['role' => 'client', 'is_approved' => true]);
+        $this->actingAs($client)->get('/')
+            ->assertSee('{"user_role":"klient","logged_in":true}', false);
     }
 
     public function test_layout_nasluchuje_zdarzen_livewire_i_mailto(): void
@@ -214,6 +229,6 @@ class DataLayerEventsTest extends TestCase
         $this->withSession(['dl_event' => 'generate_lead'])
             ->get('/')
             ->assertOk()
-            ->assertDontSee('dataLayer.push({"', false);
+            ->assertDontSee('"event":', false);
     }
 }

@@ -56,7 +56,13 @@ class SecurityHeadersTest extends TestCase
         $this->assertStringContainsString('https://*.googletagmanager.com', $script);
         $this->assertStringContainsString('https://googleads.g.doubleclick.net', $script);
 
+        $connect = $this->directive($csp, 'connect-src');
+        $this->assertStringContainsString('https://www.googleadservices.com', $connect);
+        $this->assertStringContainsString('https://google.com', $connect);
+        $this->assertStringContainsString('https://www.google.pl', $connect);
+
         $frame = $this->directive($csp, 'frame-src');
+        $this->assertStringContainsString('https://*.doubleclick.net', $frame);
         $this->assertStringContainsString('https://*.googletagmanager.com', $frame);
         $this->assertStringContainsString('https://td.doubleclick.net', $frame);
     }
