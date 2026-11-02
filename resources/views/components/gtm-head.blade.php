@@ -52,15 +52,21 @@ fbq('track', 'PageView');
 @foreach(\App\Support\FbPixel::pending() as $fbEvent)
 fbq('track', {!! json_encode($fbEvent['name'], $json) !!}, {!! json_encode((object) ($fbEvent['data'] ?? []), $json) !!}, {eventID: {!! json_encode((string) ($fbEvent['id'] ?? ''), $json) !!}});
 @endforeach
-(function () {
-    function syncFbConsent() {
-        var ok = window.Cookiebot && Cookiebot.consent && Cookiebot.consent.marketing;
-        fbq('consent', ok ? 'grant' : 'revoke');
+// Zgoda marketingowa z Cookiebota -> Pixel.
+function fbSyncConsent() {
+    if (window.Cookiebot && Cookiebot.consent && Cookiebot.consent.marketing) {
+        fbq('consent', 'grant');
+    } else {
+        fbq('consent', 'revoke');
     }
-    window.addEventListener('CookiebotOnConsentReady', syncFbConsent);
-    window.addEventListener('CookiebotOnAccept', syncFbConsent);
-    window.addEventListener('CookiebotOnDecline', syncFbConsent);
-})();
+}
+window.addEventListener('CookiebotOnConsentReady', fbSyncConsent);
+window.addEventListener('CookiebotOnLoad', fbSyncConsent);
+window.addEventListener('CookiebotOnAccept', fbSyncConsent);
+window.addEventListener('CookiebotOnDecline', fbSyncConsent);
+// uc.js ładuje się wcześniej - u powracającego użytkownika zgoda może być
+// znana, zanim powyższe nasłuchy zostały podpięte.
+if (window.Cookiebot && Cookiebot.consented) { fbSyncConsent(); }
 </script>
 <!-- End Meta Pixel -->
 @endif

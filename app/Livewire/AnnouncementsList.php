@@ -29,12 +29,6 @@ class AnnouncementsList extends Component
 
     public $selectedTags = [];
 
-    public function mount(): void
-    {
-        // Wejście z linku z filtrem (?q=..., ?category=...) to też wyszukiwanie.
-        $this->trackCurrentSearch();
-    }
-
     public function updatedSearch(): void
     {
         $this->trackCurrentSearch();

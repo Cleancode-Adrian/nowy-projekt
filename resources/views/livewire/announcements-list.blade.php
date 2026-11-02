@@ -111,9 +111,30 @@
         </div>
     </div>
 
+{{-- Wejście z linku z filtrem (?q=..., ?category=...) = wyszukiwanie. Odpalane od razu
+     przy pierwszym renderze; kolejne zmiany filtrów idą przez Livewire (TracksEvents). --}}
+@if(trim((string) $search) !== '' || $category)
+@push('scripts')
+@php
+    $searchCategory = $category ? ($categories->firstWhere('slug', $category)?->name ?? $category) : null;
+    $searchFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+    $fbSearch = array_filter(['search_string' => trim((string) $search), 'content_category' => $searchCategory], fn ($v) => $v !== null && $v !== '');
+    $gaSearch = ['event' => 'search'] + array_filter(['search_term' => trim((string) $search), 'search_category' => $searchCategory], fn ($v) => $v !== null && $v !== '');
+@endphp
+<script>
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({!! json_encode($gaSearch, $searchFlags) !!});
+    if (typeof window.fbq === 'function') {
+        fbq('track', 'Search', {!! json_encode((object) $fbSearch, $searchFlags) !!});
+    }
+</script>
+@endpush
+@endif
+
 {{-- Schema.org: lista ofert. Budujemy tablicę w PHP i kodujemy json_encode -
      wcześniejsze addslashes() dawało niepoprawny JSON (\' i surowe nowe linie). --}}
 @if($announcements->count() > 0)
+
 @push('head')
 @php
     $jsonLd = [

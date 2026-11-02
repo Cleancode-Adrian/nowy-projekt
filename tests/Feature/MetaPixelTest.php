@@ -117,6 +117,29 @@ class MetaPixelTest extends TestCase
             ->assertDispatched('fb-track', name: 'Search', data: ['search_string' => 'sklep', 'content_category' => 'Strony WWW']);
     }
 
+    public function test_zgoda_grant_z_cookiebota_jawnie_i_dla_powracajacych(): void
+    {
+        $html = $this->get('/')->getContent();
+
+        $this->assertStringContainsString("fbq('consent', 'grant');", $html);
+        $this->assertStringContainsString("addEventListener('CookiebotOnLoad', fbSyncConsent)", $html);
+        $this->assertStringContainsString('if (window.Cookiebot && Cookiebot.consented) { fbSyncConsent(); }', $html);
+    }
+
+    public function test_wejscie_z_linku_z_filtrem_wysyla_search_od_razu(): void
+    {
+        Category::create(['name' => 'Strony WWW', 'slug' => 'strony-www', 'is_active' => true]);
+
+        $this->get('/announcements?category=strony-www&q=sklep')
+            ->assertOk()
+            ->assertSee("fbq('track', 'Search', {\"search_string\":\"sklep\",\"content_category\":\"Strony WWW\"});", false)
+            ->assertSee('{"event":"search","search_term":"sklep","search_category":"Strony WWW"}', false);
+
+        $this->get('/announcements')
+            ->assertOk()
+            ->assertDontSee("fbq('track', 'Search'", false);
+    }
+
     public function test_csp_dopuszcza_meta(): void
     {
         config(['security.csp_enabled' => true, 'security.csp_report_only' => false]);
