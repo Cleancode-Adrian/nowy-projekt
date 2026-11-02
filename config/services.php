@@ -44,7 +44,7 @@ return [
 
     // Meta Pixel. Wysyła dane dopiero po zgodzie marketingowej w Cookiebot.
     'meta_pixel' => [
-        'id' => env('META_PIXEL_ID', '4642966532592189'),
+        'id' => env('META_PIXEL_ID', '1128855549687710'),
         // Conversions API - bez tokenu wysyłka z serwera jest wyłączona.
         'capi_token' => env('META_CAPI_TOKEN'),
         // Kod z Menedżera zdarzeń -> Testuj zdarzenia (tylko na czas testów).

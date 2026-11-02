@@ -20,14 +20,14 @@ class MetaPixelTest extends TestCase
     {
         parent::setUp();
         Mail::fake();
-        config(['services.meta_pixel.id' => '4642966532592189']);
+        config(['services.meta_pixel.id' => '1128855549687710']);
     }
 
     public function test_pixel_startuje_bez_zgody_i_slucha_cookiebota(): void
     {
         $html = $this->get('/')->assertOk()->getContent();
 
-        $this->assertStringContainsString("fbq('init', \"4642966532592189\")", $html);
+        $this->assertStringContainsString("fbq('init', \"1128855549687710\")", $html);
         $this->assertStringContainsString("fbq('track', 'PageView')", $html);
 
         // revoke przed init, a zgoda przychodzi z Cookiebota (kategoria marketing).
@@ -182,7 +182,7 @@ class MetaPixelTest extends TestCase
         \Illuminate\Support\Facades\Http::assertSent(function ($request) use ($browserId) {
             $event = $request['data'][0] ?? [];
 
-            return str_contains($request->url(), 'graph.facebook.com/v21.0/4642966532592189/events')
+            return str_contains($request->url(), 'graph.facebook.com/v21.0/1128855549687710/events')
                 && $request['access_token'] === 'test-token'
                 && $event['event_name'] === 'CompleteRegistration'
                 && $event['event_id'] === $browserId
