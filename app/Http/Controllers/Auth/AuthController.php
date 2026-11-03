@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Mail\NewUserRegisteredMail;
 use App\Mail\UserRegisteredMail;
-use App\Services\RecaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,17 +17,8 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    public function login(Request $request, RecaptchaService $recaptcha)
+    public function login(Request $request)
     {
-        // Verify reCAPTCHA (v3). In local/testing it is allowed to be unconfigured.
-        $recaptchaToken = (string) $request->input('g-recaptcha-response', '');
-        $minScore = (float) config('services.recaptcha.min_score_login', 0.7);
-        if (!$recaptcha->verify($recaptchaToken, $minScore, 'login')) {
-            return back()->withErrors([
-                'email' => 'Weryfikacja bezpieczeństwa (reCAPTCHA) nie powiodła się. Odśwież stronę i spróbuj ponownie.',
-            ])->onlyInput('email');
-        }
-
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -51,18 +41,9 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    public function register(Request $request, RecaptchaService $recaptcha)
+    public function register(Request $request)
     {
         try {
-            // Verify reCAPTCHA (v3). In local/testing it is allowed to be unconfigured.
-            $recaptchaToken = (string) $request->input('g-recaptcha-response', '');
-            $minScore = (float) config('services.recaptcha.min_score_register', 0.6);
-            if (!$recaptcha->verify($recaptchaToken, $minScore, 'register')) {
-                return back()->withErrors([
-                    'email' => 'Weryfikacja bezpieczeństwa (reCAPTCHA) nie powiodła się. Odśwież stronę i spróbuj ponownie.',
-                ])->withInput();
-            }
-
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users',

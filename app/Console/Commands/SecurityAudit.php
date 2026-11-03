@@ -96,7 +96,6 @@ class SecurityAudit extends Command
         $this->checkConfig('APP_DEBUG wyłączony', !config('app.debug'));
         $this->checkConfig('APP_ENV = production', config('app.env') === 'production');
         $this->checkConfig('Bezpieczne ciasteczka sesji', (bool) config('session.secure'));
-        $this->checkConfig('Klucz reCAPTCHA ustawiony', (bool) config('services.recaptcha.secret_key'));
         $this->checkConfig('APP_KEY ustawiony', (bool) config('app.key'));
 
         if ($problems > 0 && !$fix) {

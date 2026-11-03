@@ -12,7 +12,6 @@
 
     <form method="POST" action="{{ route('register') }}" id="registerForm" class="group/form space-y-5">
         @csrf
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
         {{-- Rola --}}
         <fieldset>
@@ -91,6 +90,5 @@
     </p>
 
     <x-slot:scripts>
-        @include('auth.partials.recaptcha', ['formId' => 'registerForm', 'action' => 'register'])
     </x-slot:scripts>
 </x-auth-layout>

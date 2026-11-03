@@ -15,7 +15,6 @@
 
     <form method="POST" action="{{ route('login') }}" class="space-y-5" id="loginForm">
         @csrf
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
         <div>
             <label for="email" class="label">Adres e-mail</label>
@@ -45,6 +44,5 @@
     </p>
 
     <x-slot:scripts>
-        @include('auth.partials.recaptcha', ['formId' => 'loginForm', 'action' => 'login'])
     </x-slot:scripts>
 </x-auth-layout>

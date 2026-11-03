@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('api-login', function (Request $request) {
-            // API nie ma reCAPTCHA, więc limity są ostrzejsze niż na stronie.
+            // Logowanie przez API - limity ostrzejsze niż na stronie.
             $email = (string) $request->input('email', '');
             return [
                 Limit::perMinute(5)->by('api|' . strtolower($email) . '|' . $request->ip()),

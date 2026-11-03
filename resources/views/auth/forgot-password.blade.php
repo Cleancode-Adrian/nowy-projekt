@@ -10,7 +10,6 @@
 
     <form method="POST" action="{{ route('password.email') }}" class="space-y-5" id="forgotPasswordForm">
         @csrf
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
         <div>
             <label for="email" class="label">Adres e-mail</label>
@@ -26,6 +25,5 @@
     </p>
 
     <x-slot:scripts>
-        @include('auth.partials.recaptcha', ['formId' => 'forgotPasswordForm', 'action' => 'forgot_password'])
     </x-slot:scripts>
 </x-auth-layout>

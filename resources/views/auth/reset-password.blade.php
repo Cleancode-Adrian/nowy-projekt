@@ -13,7 +13,6 @@
     <form method="POST" action="{{ route('password.update') }}" class="space-y-5" id="resetPasswordForm">
         @csrf
         <input type="hidden" name="token" value="{{ $token }}">
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
         <div>
             <label for="email" class="label">Adres e-mail</label>
@@ -40,6 +39,5 @@
     </p>
 
     <x-slot:scripts>
-        @include('auth.partials.recaptcha', ['formId' => 'resetPasswordForm', 'action' => 'reset_password'])
     </x-slot:scripts>
 </x-auth-layout>

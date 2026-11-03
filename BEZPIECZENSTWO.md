@@ -106,7 +106,6 @@ Następnie zrotuj sekrety w `.env`:
 
 - `DB_PASSWORD` — nowe hasło użytkownika bazy
 - `MAIL_PASSWORD` — nowe hasło aplikacji Gmail
-- `RECAPTCHA_SECRET_KEY` — nowy sekret w konsoli reCAPTCHA
 - klucze OpenAI / Unsplash — wygeneruj nowe i wpisz w `/admin/blog/generator`
 
 `APP_KEY` **zostaw bez zmian** — jego zmiana unieważnia wszystkie sesje
@@ -141,8 +140,6 @@ Upewnij się też, że są ustawione:
 APP_ENV=production
 APP_DEBUG=false
 SESSION_SECURE_COOKIE=true
-RECAPTCHA_SITE_KEY=...
-RECAPTCHA_SECRET_KEY=...
 ```
 
 Po każdej zmianie `.env`: `php artisan config:cache`.
@@ -292,9 +289,7 @@ find app -name "*.php" -exec php -l {} \; | grep -v "No syntax errors"
 ```
 
 > **Nigdy nie włączaj `APP_DEBUG=true` ani `APP_ENV=local` na produkcji.**
-> Debug wyświetla zawartość `.env` na stronie błędu, a `APP_ENV=local`
-> dodatkowo **wyłącza weryfikację reCAPTCHA** przy logowaniu i rejestracji
-> (`RecaptchaService` przepuszcza brak sekretu tylko w `local`/`testing`).
+> Debug wyświetla zawartość `.env` na stronie błędu.
 > Przyczynę błędu znajdziesz w `storage/logs/laravel.log` — tam jest ten sam
 > stack trace, tylko bez pokazywania go całemu internetowi.
 
