@@ -65,5 +65,12 @@
 </div>
 
 {{ $scripts ?? '' }}
+<script>
+    // Powrót przyciskiem "Wstecz" pokazuje stronę z pamięci przeglądarki ze starym
+    // tokenem CSRF -> wysłanie formularza kończyło się 419. Przeładowujemy ją.
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) { window.location.reload(); }
+    });
+</script>
 </body>
 </html>

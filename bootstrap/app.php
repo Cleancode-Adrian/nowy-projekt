@@ -45,4 +45,20 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->dontReport([
             Illuminate\Session\TokenMismatchException::class,
         ]);
+
+        // 419 (wygasła sesja / stary token CSRF w formularzu): zamiast martwej
+        // strony "Page Expired" wracamy do formularza z wpisanymi danymi
+        // (bez haseł) i świeżym tokenem - użytkownik klika jeszcze raz.
+        // Livewire i zapytania JSON obsługują 419 po swojemu, więc ich nie ruszamy.
+        $exceptions->render(function (Symfony\Component\HttpKernel\Exception\HttpException $e, Request $request) {
+            if ($e->getStatusCode() !== 419 || $request->expectsJson() || $request->hasHeader('X-Livewire')) {
+                return null;
+            }
+
+            $fallback = $request->is('admin/*') ? '/admin/login' : $request->path();
+
+            return redirect()->to(url()->previous() !== $request->fullUrl() ? url()->previous() : url($fallback))
+                ->withInput($request->except(['password', 'password_confirmation', 'current_password', '_token']))
+                ->withErrors(['email' => 'Sesja wygasła. Kliknij przycisk jeszcze raz - dane formularza zostały zachowane (poza hasłem).']);
+        });
     })->create();
