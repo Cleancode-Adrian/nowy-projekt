@@ -145,7 +145,7 @@
                                 <div class="ml-form-fieldRow flex flex-col gap-2 sm:flex-row">
                                     <div class="ml-field-group ml-field-email ml-validate-email ml-validate-required flex-1">
                                         <label for="newsletter-email" class="sr-only">Adres e-mail</label>
-                                        <input id="newsletter-email" aria-required="true" type="email" class="input py-3" data-inputmask="" name="fields[email]" placeholder="twoj@email.pl" autocomplete="email" required>
+                                        <input id="newsletter-email" aria-required="true" type="email" class="input py-3" name="fields[email]" placeholder="twoj@email.pl" autocomplete="email" required>
                                     </div>
                                     <div class="ml-form-embedSubmit">
                                         <button type="submit" class="primary btn btn-primary w-full py-3 sm:w-auto" id="newsletter-submit-btn">Zapisz się</button>
@@ -296,7 +296,7 @@
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({ event: 'newsletter_signup' });
             if (typeof window.fbq === 'function') {
-                fbq('track', 'Lead', { content_name: 'Newsletter' }, { eventID: 'nl-' + Date.now() + '-' + Math.random().toString(36).slice(2) });
+                fbq('track', 'Subscribe', { content_name: 'Newsletter' }, { eventID: 'nl-' + Date.now() + '-' + Math.random().toString(36).slice(2) });
             }
         }
 

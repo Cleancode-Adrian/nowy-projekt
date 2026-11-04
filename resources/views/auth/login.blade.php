@@ -40,7 +40,7 @@
 
     <p class="mt-8 text-center text-sm text-ink-500">
         Nie masz jeszcze konta?
-        <a href="{{ route('register') }}" class="font-semibold text-brand-600 hover:text-brand-700">Załóż je bezpłatnie</a>
+        <a href="{{ route('register', \App\Http\Middleware\CaptureAttribution::linkParams(request())) }}" class="font-semibold text-brand-600 hover:text-brand-700">Załóż je bezpłatnie</a>
     </p>
 
     <x-slot:scripts>

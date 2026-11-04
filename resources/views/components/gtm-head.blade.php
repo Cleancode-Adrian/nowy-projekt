@@ -8,8 +8,14 @@
     // Zdarzenie konwersji ustawiane flashem po udanej akcji po stronie serwera
     // (rejestracja, logowanie, publikacja zlecenia). Idzie do dataLayer dokładnie
     // raz - po realnym zapisie w bazie i po redirectcie.
-    $dlEvent = session('dl_event');
-    $dlEvent = is_array($dlEvent) && !empty($dlEvent['event']) ? $dlEvent : null;
+    // Może być kilka naraz (np. sign_up + generate_lead po założeniu konta
+    // w formularzu zlecenia) - App\Support\DataLayer.
+    $dlEvents = \App\Support\DataLayer::pending();
+
+    // Gość odbity z chronionej strony na logowanie (bootstrap/app.php).
+    if (is_string($loginWall = session('login_wall')) && $loginWall !== '') {
+        $dlEvents[] = ['event' => 'login_wall_view', 'link_location' => $loginWall];
+    }
 
     $userRole = auth()->check()
         ? match (auth()->user()->role) { 'client' => 'klient', 'freelancer' => 'wykonawca', default => auth()->user()->role }
@@ -72,9 +78,9 @@ if (window.Cookiebot && Cookiebot.consented) { fbSyncConsent(); }
 @endif
 <script>
     window.dataLayer.push({!! json_encode(['user_role' => $userRole, 'logged_in' => auth()->check()], $json) !!});
-@if($dlEvent)
+@foreach($dlEvents as $dlEvent)
     window.dataLayer.push({!! json_encode($dlEvent, $json) !!});
-@endif
+@endforeach
 </script>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NXVNXNSM');</script>

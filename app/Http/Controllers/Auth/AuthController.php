@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Support\FbPixel;
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Mail\NewUserRegisteredMail;
-use App\Mail\UserRegisteredMail;
+use App\Services\UserRegistration;
+use App\Support\FbPixel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
@@ -41,116 +35,13 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    public function register(Request $request)
+    public function register(Request $request, UserRegistration $registration)
     {
+        $validated = $request->validate(UserRegistration::rules(), UserRegistration::messages());
+
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users',
-                'password' => ['required', 'confirmed', Password::min(8)],
-                'phone' => 'nullable|string|max:20',
-                'company' => 'nullable|string|max:255',
-                'role' => 'required|in:client,freelancer',
-                'accept_privacy' => 'required|accepted',
-                'accept_terms' => 'required|accepted',
-            ], [
-                'accept_privacy.accepted' => 'Musisz zaakceptować politykę prywatności',
-                'accept_terms.accepted' => 'Musisz zaakceptować regulamin',
-            ]);
-
-            // Zleceniodawcy wchodzą od razu - jedyne, co mogą zrobić, to opublikować
-            // zlecenie, a te i tak przechodzą moderację przed pokazaniem publicznie.
-            // Wykonawcy składają oferty i kontaktują się z klientami, więc ich konta
-            // nadal zatwierdza administrator ręcznie.
-            $autoApprove = $validated['role'] === 'client'
-                && config('security.auto_approve_clients', true);
-
-            // Use database transaction to ensure data integrity
-            $user = DB::transaction(function () use ($validated, $autoApprove) {
-                return User::create([
-                    'name' => $validated['name'],
-                    'email' => $validated['email'],
-                    'password' => Hash::make($validated['password']),
-                    'phone' => $validated['phone'] ?? null,
-                    'company' => $validated['company'] ?? null,
-                    'role' => $validated['role'],
-                    'is_approved' => $autoApprove,
-                ]);
-            });
-
-            // Link weryfikacyjny - wysyłamy tylko, gdy weryfikacja jest egzekwowana,
-            // żeby nie zasypywać użytkowników mailem, który do niczego nie służy.
-            if (config('security.require_email_verification')) {
-                try {
-                    $user->sendEmailVerificationNotification();
-                } catch (\Exception $e) {
-                    Log::warning('Failed to send email verification link: ' . $e->getMessage(), [
-                        'user_id' => $user->id,
-                    ]);
-                }
-            }
-
-            // Email do użytkownika - potwierdzenie rejestracji
-            try {
-                Mail::to($user->email)->send(new UserRegisteredMail($user));
-            } catch (\Exception $e) {
-                Log::warning('Failed to send user registration email: ' . $e->getMessage(), [
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                    'exception' => $e->getTraceAsString()
-                ]);
-            }
-
-            // Powiadomienie do wszystkich adminów
-            try {
-                $admins = User::where('role', 'admin')->get();
-                foreach ($admins as $admin) {
-                    try {
-                        Mail::to($admin->email)->send(new NewUserRegisteredMail($user));
-                    } catch (\Exception $e) {
-                        Log::warning('Failed to send user registration notification email to admin: ' . $e->getMessage(), [
-                            'admin_id' => $admin->id,
-                            'user_id' => $user->id,
-                        ]);
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::warning('Failed to fetch admins for notification: ' . $e->getMessage());
-            }
-
-            // Zdarzenie konwersji dla GTM - wysyłane po redirectcie, więc trafia
-            // do dataLayer dokładnie raz, po faktycznym zapisie konta.
-            $dlEvent = [
-                'event' => 'sign_up',
-                'method' => 'email',
-                'user_role' => $validated['role'] === 'client' ? 'klient' : 'wykonawca',
-            ];
-
-            FbPixel::flash('CompleteRegistration', [
-                'status' => true,
-                'content_name' => $dlEvent['user_role'],
-            ], $user);
-
-            if ($autoApprove) {
-                // Bez tego kroku osoba, która trafiła tu z reklamy, musiałaby
-                // logować się drugi raz zaraz po założeniu konta.
-                Auth::login($user);
-                $request->session()->regenerate();
-
-                return redirect()->intended(route('announcements.create'))
-                    ->with('success', 'Konto utworzone. Możesz od razu opisać swój projekt.')
-                    ->with('dl_event', $dlEvent);
-            }
-
-            return redirect()->route('login')
-                ->with('success', 'Konto utworzone! Sprawdź swoją skrzynkę email i czekaj na zatwierdzenie przez administratora.')
-                ->with('dl_event', $dlEvent);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Re-throw validation exceptions to show proper error messages
-            throw $e;
-        } catch (\Exception $e) {
-            // Log the full error for debugging
+            $user = $registration->register($validated);
+        } catch (\Throwable $e) {
             Log::error('User registration failed: ' . $e->getMessage(), [
                 'exception' => $e->getTraceAsString(),
                 'request_data' => $request->except(['password', 'password_confirmation']),
@@ -160,6 +51,34 @@ class AuthController extends Controller
                 'email' => 'Wystąpił błąd podczas rejestracji. Spróbuj ponownie lub skontaktuj się z nami: biuro@cleancodeas.pl',
             ])->withInput();
         }
+
+        // Zdarzenie konwersji dla GTM - wysyłane po redirectcie, więc trafia
+        // do dataLayer dokładnie raz, po faktycznym zapisie konta.
+        $dlEvent = [
+            'event' => 'sign_up',
+            'method' => 'email',
+            'user_role' => $validated['role'] === 'client' ? 'klient' : 'wykonawca',
+        ];
+
+        FbPixel::flash('CompleteRegistration', [
+            'status' => true,
+            'content_name' => $dlEvent['user_role'],
+        ], $user);
+
+        if ($user->is_approved) {
+            // Bez tego kroku osoba, która trafiła tu z reklamy, musiałaby
+            // logować się drugi raz zaraz po założeniu konta.
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('announcements.create'))
+                ->with('success', 'Konto utworzone. Możesz od razu opisać swój projekt.')
+                ->with('dl_event', $dlEvent);
+        }
+
+        return redirect()->route('login')
+            ->with('success', 'Konto utworzone! Sprawdź swoją skrzynkę email i czekaj na zatwierdzenie przez administratora.')
+            ->with('dl_event', $dlEvent);
     }
 
     public function logout(Request $request)
@@ -171,4 +90,3 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 }
-

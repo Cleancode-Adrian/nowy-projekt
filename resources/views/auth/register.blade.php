@@ -86,7 +86,7 @@
 
     <p class="mt-8 text-center text-sm text-ink-500">
         Masz już konto?
-        <a href="{{ route('login') }}" class="font-semibold text-brand-600 hover:text-brand-700">Zaloguj się</a>
+        <a href="{{ route('login', \App\Http\Middleware\CaptureAttribution::linkParams(request())) }}" class="font-semibold text-brand-600 hover:text-brand-700">Zaloguj się</a>
     </p>
 
     <x-slot:scripts>

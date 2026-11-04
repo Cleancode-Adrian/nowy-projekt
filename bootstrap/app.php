@@ -37,6 +37,20 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->append(SecurityHeaders::class);
 
+        // Źródło wejścia z reklamy (utm_*, fbclid) - zapamiętane w sesji.
+        $middleware->web(append: [App\Http\Middleware\CaptureAttribution::class]);
+
+        // Gość odbity na logowanie z chronionej strony: na stronie logowania
+        // idzie login_wall_view (link_location = skąd przyszedł), żeby było
+        // widać w GA4, ile osób odpada na ścianie logowania.
+        $middleware->redirectGuestsTo(function (Request $request) {
+            if ($request->hasSession() && !$request->expectsJson()) {
+                $request->session()->flash('login_wall', str_replace('/', '_', trim($request->path(), '/')) ?: 'home');
+            }
+
+            return route('login');
+        });
+
         // W Laravelu 11+ throttle:api NIE jest domyślnie włączony.
         $middleware->throttleApi('api');
     })

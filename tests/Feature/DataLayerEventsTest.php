@@ -134,7 +134,7 @@ class DataLayerEventsTest extends TestCase
         $this->actingAs($client)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('{"event":"generate_lead","lead_type":"zlecenie"}', false);
+            ->assertSee('{"event":"generate_lead","lead_type":"zlecenie","item_category":"strony-www","value":0,"currency":"PLN"}', false);
     }
 
     public function test_klikalny_telefon_i_sledzenie_phone_click(): void

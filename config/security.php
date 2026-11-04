@@ -115,6 +115,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Formularz zlecenia dla gości ("najpierw projekt, konto na końcu")
+    |--------------------------------------------------------------------------
+    |
+    | true: gość z reklamy od razu widzi formularz zlecenia, opisuje projekt,
+    | a konto zakłada (albo loguje się) w ostatnim kroku, tuż przed publikacją.
+    | false: stare zachowanie - /announcements/create wymaga logowania.
+    |
+    */
+
+    'guest_announcement_form' => env('GUEST_ANNOUNCEMENT_FORM', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Upload plików
     |--------------------------------------------------------------------------
     |

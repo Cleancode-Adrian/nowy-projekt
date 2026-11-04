@@ -67,7 +67,7 @@ class MetaPixelTest extends TestCase
             ->assertDontSee('CompleteRegistration', false);
     }
 
-    public function test_dodanie_zlecenia_wysyla_lead_z_budzetem(): void
+    public function test_dodanie_zlecenia_wysyla_lead_ze_stalym_event_id(): void
     {
         $client = User::factory()->create(['role' => 'client', 'is_approved' => true]);
         $category = Category::create(['name' => 'Strony WWW', 'slug' => 'strony-www', 'is_active' => true]);
@@ -81,8 +81,10 @@ class MetaPixelTest extends TestCase
             ->set('budget_max', 5000)
             ->call('submit');
 
+        $id = \App\Models\Announcement::firstOrFail()->id;
+
         $this->actingAs($client)->get(route('dashboard'))
-            ->assertSee("fbq('track', \"Lead\", {\"content_category\":\"Strony WWW\",\"value\":5000,\"currency\":\"PLN\"}", false);
+            ->assertSee("fbq('track', \"Lead\", {\"content_name\":\"Zlecenie\",\"content_category\":\"strony-www\"}, {eventID: \"lead-{$id}\"});", false);
     }
 
     public function test_strona_zlecenia_wysyla_view_content_i_view_item(): void
@@ -140,10 +142,14 @@ class MetaPixelTest extends TestCase
             ->assertDontSee("fbq('track', 'Search'", false);
     }
 
-    public function test_newsletter_wysyla_lead(): void
+    public function test_newsletter_wysyla_subscribe_a_nie_lead(): void
     {
-        $this->get('/')->assertOk()
-            ->assertSee("fbq('track', 'Lead', { content_name: 'Newsletter' }", false);
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertStringContainsString("fbq('track', 'Subscribe', { content_name: 'Newsletter' }", $html);
+        $this->assertStringNotContainsString("fbq('track', 'Lead', { content_name: 'Newsletter' }", $html);
+        // Pusty data-inputmask ładował plugin inputmask z MailerLite (503).
+        $this->assertStringNotContainsString('data-inputmask', $html);
     }
 
     public function test_szukaj_z_parametrami_w_url_wysyla_search(): void

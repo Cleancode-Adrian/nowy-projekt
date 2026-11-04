@@ -18,18 +18,22 @@ use Illuminate\Support\Str;
  */
 class FbPixel
 {
-    public static function event(string $name, array $data = []): array
+    /**
+     * $id - stały identyfikator (np. "lead-{id zlecenia}"), żeby Pixel i CAPI
+     * zawsze miały ten sam event_id, a ponowne wysłanie nie liczyło się drugi raz.
+     */
+    public static function event(string $name, array $data = [], ?string $id = null): array
     {
-        return ['name' => $name, 'data' => $data, 'id' => (string) Str::uuid()];
+        return ['name' => $name, 'data' => $data, 'id' => $id ?: (string) Str::uuid()];
     }
 
     /**
      * $user - gdy zdarzenie dotyczy kogoś, kto nie jest jeszcze zalogowany
      * (rejestracja), a chcemy przekazać jego e-mail do dopasowania w CAPI.
      */
-    public static function flash(string $name, array $data = [], $user = null): void
+    public static function flash(string $name, array $data = [], $user = null, ?string $id = null): void
     {
-        $event = static::event($name, $data);
+        $event = static::event($name, $data, $id);
 
         $events = session('fb_events', []);
         $events[] = $event;
@@ -106,6 +110,20 @@ class FbPixel
         return (bool) preg_match('/\bmarketing\s*:\s*true\b/i', $consent);
     }
 
+    /**
+     * fbc zbudowany z fbclid zapamiętanego przy wejściu z reklamy (CaptureAttribution).
+     * Pixel zapisuje _fbc dopiero po zgodzie - jeśli ktoś zgodził się później,
+     * na stronie bez fbclid, ciasteczka nie ma, a Meta i tak dopasuje kliknięcie.
+     * Format wg Meta: fb.1.{czas kliknięcia w ms}.{fbclid}
+     */
+    public static function fbcFromSession(): ?string
+    {
+        $fbclid = session('attribution.fbclid');
+        $at = session('attribution.fbclid_at');
+
+        return $fbclid ? 'fb.1.' . ((int) $at ?: (int) round(microtime(true) * 1000)) . '.' . $fbclid : null;
+    }
+
     /** Telefon w formacie E.164 bez "+": polskie 9 cyfr dostają 48 z przodu. */
     private static function normalizePhone(?string $phone): ?string
     {
@@ -134,7 +152,7 @@ class FbPixel
             'client_ip_address' => $request->ip(),
             'client_user_agent' => $request->userAgent(),
             'fbp' => $request->cookie('_fbp'),
-            'fbc' => $request->cookie('_fbc'),
+            'fbc' => $request->cookie('_fbc') ?: static::fbcFromSession(),
         ]);
 
         return array_filter([

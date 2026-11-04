@@ -46,8 +46,11 @@ $authMiddleware = array_values(array_filter([
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/', HomePage::class)->name('home');
 Route::get('/announcements', AnnouncementsList::class)->name('announcements.index');
-// Protected announcement create route (must be before /announcements/{id} to avoid route conflicts)
-Route::get('/announcements/create', CreateAnnouncement::class)->middleware($authMiddleware)->name('announcements.create');
+// Formularz zlecenia (must be before /announcements/{id} to avoid route conflicts).
+// Gość opisuje projekt, a konto zakłada w ostatnim kroku (config security.guest_announcement_form).
+Route::get('/announcements/create', CreateAnnouncement::class)
+    ->middleware(config('security.guest_announcement_form', true) ? [] : $authMiddleware)
+    ->name('announcements.create');
 // Public announcement show route (must be after /create and /edit routes)
 Route::get('/announcements/{id}', ShowAnnouncement::class)->name('announcements.show');
 Route::get('/szukaj', AdvancedSearch::class)->name('search.advanced');
