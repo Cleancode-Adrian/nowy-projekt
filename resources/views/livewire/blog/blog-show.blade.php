@@ -132,12 +132,19 @@
                     {!! $post->content_with_anchors !!}
                 </div>
 
-                {{-- Zachęta --}}
+                {{-- Zachęta: zleceniodawcom i gościom publikacja zlecenia, wykonawcom lista zleceń --}}
                 <div class="mt-12 rounded-2xl bg-ink-900 p-6 text-white sm:p-8">
-                    <p class="text-sm font-medium text-ink-300">Masz projekt do zrobienia?</p>
-                    <p class="mt-1 text-xl font-semibold">Opisz zlecenie i porównaj oferty wykonawców</p>
-                    <p class="mt-2 text-ink-300">Publikacja jest bezpłatna. Oferty przychodzą z portfolio i ocenami od poprzednich klientów.</p>
-                    <a href="{{ route('announcements.create') }}" class="btn btn-primary mt-5">Dodaj zlecenie</a>
+                    @if(auth()->user()?->isFreelancer())
+                        <p class="text-sm font-medium text-ink-300">Szukasz nowych projektów?</p>
+                        <p class="mt-1 text-xl font-semibold">Przejrzyj aktualne zlecenia i złóż ofertę</p>
+                        <p class="mt-2 text-ink-300">Nowe projekty od zleceniodawców pojawiają się codziennie.</p>
+                        <a href="{{ route('announcements.index') }}" class="btn btn-primary mt-5">Zobacz zlecenia</a>
+                    @else
+                        <p class="text-sm font-medium text-ink-300">Masz projekt do zrobienia?</p>
+                        <p class="mt-1 text-xl font-semibold">Opisz zlecenie i porównaj oferty wykonawców</p>
+                        <p class="mt-2 text-ink-300">Publikacja jest bezpłatna. Oferty przychodzą z portfolio i ocenami od poprzednich klientów.</p>
+                        <a href="{{ route('announcements.create') }}" class="btn btn-primary mt-5">Dodaj zlecenie</a>
+                    @endif
                 </div>
             </article>
 

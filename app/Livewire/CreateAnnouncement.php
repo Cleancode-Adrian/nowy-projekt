@@ -74,6 +74,12 @@ class CreateAnnouncement extends Component
             return redirect()->route('login');
         }
 
+        // Zlecenia publikują tylko zleceniodawcy (i admin). Wykonawca składa oferty.
+        if (!$this->canPublish()) {
+            session()->flash('error', 'Zlecenia mogą dodawać tylko zleceniodawcy. Jako wykonawca możesz przeglądać zlecenia i składać oferty.');
+            return redirect()->route('announcements.index');
+        }
+
         // Check if there are any active categories
         if ($this->categories->isEmpty()) {
             session()->flash('error', 'Brak aktywnych kategorii. Skontaktuj się z administratorem.');
@@ -81,8 +87,19 @@ class CreateAnnouncement extends Component
         }
     }
 
+    private function canPublish(): bool
+    {
+        $user = auth()->user();
+
+        return $user && ($user->isClient() || $user->isAdmin());
+    }
+
     public function submit()
     {
+        // Ponowne sprawdzenie przy zapisie - żądanie Livewire można wysłać
+        // z pominięciem mount().
+        abort_unless($this->canPublish(), 403, 'Zlecenia mogą dodawać tylko zleceniodawcy.');
+
         $this->validate();
 
         // Sprawdzenie wulgaryzmów w tytule i opisie

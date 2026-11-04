@@ -43,7 +43,9 @@
                     <li><a href="{{ route('announcements.index') }}" class="transition-colors hover:text-white">Zlecenia</a></li>
                     <li><a href="{{ route('search.advanced') }}" class="transition-colors hover:text-white">Wyszukiwarka</a></li>
                     <li><a href="{{ route('leaderboard') }}" class="transition-colors hover:text-white">Ranking wykonawców</a></li>
-                    <li><a href="{{ route('announcements.create') }}" class="transition-colors hover:text-white">Dodaj zlecenie</a></li>
+                    @unless(auth()->user()?->isFreelancer())
+                        <li><a href="{{ route('announcements.create') }}" class="transition-colors hover:text-white">Dodaj zlecenie</a></li>
+                    @endunless
                 </ul>
             </div>
 
