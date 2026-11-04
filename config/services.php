@@ -42,6 +42,13 @@ return [
         'culture' => env('COOKIEBOT_CULTURE', 'PL'),
     ],
 
+    // GA4 Measurement Protocol - zdarzenia z serwera (qualify_lead po akceptacji
+    // zlecenia przez admina). Bez api_secret wysyłka jest wyłączona.
+    'ga4' => [
+        'measurement_id' => env('GA4_MEASUREMENT_ID', 'G-XY55LLSQMQ'),
+        'api_secret' => env('GA4_API_SECRET'),
+    ],
+
     // Meta Pixel. Wysyła dane dopiero po zgodzie marketingowej w Cookiebot.
     'meta_pixel' => [
         'id' => env('META_PIXEL_ID', '1128855549687710'),

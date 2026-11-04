@@ -36,6 +36,10 @@
             <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">{{ session('success') }}</div>
         @endif
 
+        <p id="draft-restored" hidden wire:ignore class="mb-4 rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-800">
+            Przywróciliśmy wcześniej rozpoczęty opis zlecenia. Możesz go poprawić i kontynuować.
+        </p>
+
         <form id="announcement-form" wire:submit.prevent="{{ $guest && $step === 1 ? 'next' : 'submit' }}" novalidate>
             @if(!$accountStep)
                 <div class="card space-y-6">
@@ -53,7 +57,7 @@
                     <div>
                         <label for="description" class="mb-2 block text-sm font-semibold text-ink-700">Opis projektu *</label>
                         <textarea id="description" wire:model="description" rows="9" class="input @error('description') border-red-500 @enderror"
-                                  placeholder="Czego potrzebujesz? Jaki jest zakres prac, termin, przykładowe strony, które Ci się podobają?"></textarea>
+                                  placeholder="np. Strona firmowa dla piekarni, 5 podstron, formularz kontaktowy, mam logo. Podoba mi się styl strony …"></textarea>
                         @error('description') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         <p class="mt-1 text-xs text-ink-500">Minimum 50 znaków. Im więcej szczegółów, tym trafniejsze oferty.</p>
                     </div>
@@ -87,6 +91,19 @@
                         </div>
                         <p class="mt-1 text-xs text-ink-500">Zostaw puste, jeśli budżet jest do uzgodnienia.</p>
                     </div>
+
+                    {{-- Pola opcjonalne - domyślnie zwinięte, żeby formularz był krótki (zwłaszcza na telefonie).
+                         Rozwinięte, gdy coś jest wypełnione albo ma błąd. --}}
+                    @php
+                        $optionalOpen = $deadline || $location || $is_urgent || !empty($selectedTags) || !empty($attachments)
+                            || $errors->hasAny(['deadline', 'location', 'selectedTags', 'selectedTags.*', 'attachments.*']);
+                    @endphp
+                    <details class="group rounded-xl border border-ink-100" @if($optionalOpen) open @endif>
+                        <summary class="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-ink-800">
+                            <span>Więcej szczegółów <span class="font-normal text-ink-500">(opcjonalnie: termin, lokalizacja, technologie, załączniki)</span></span>
+                            <svg class="h-5 w-5 shrink-0 text-ink-400 transition-transform group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                        </summary>
+                        <div class="space-y-6 border-t border-ink-100 p-4">
 
                     {{-- Termin i lokalizacja --}}
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -143,6 +160,9 @@
                         <span class="text-sm font-semibold text-ink-900">Projekt pilny</span>
                         <span class="text-xs text-ink-500">(będzie wyróżniony)</span>
                     </label>
+
+                        </div>
+                    </details>
 
                     {{-- Dalej / Wyślij --}}
                     <div class="flex flex-col-reverse gap-3 border-t border-ink-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
@@ -262,6 +282,37 @@
             </ul>
         </div>
     </div>
+
+    {{-- Autozapis szkicu w localStorage: kto wyjdzie w trakcie (np. po maila z hasłem),
+         po powrocie ma opis z powrotem. Czyszczony po publikacji (layout, flash
+         clear_announcement_draft). Dane zostają tylko w przeglądarce użytkownika. --}}
+    @script
+    <script>
+        const KEY = 'projekciarz_draft';
+        const FIELDS = ['title', 'description', 'category_id', 'budget_min', 'budget_max', 'deadline', 'location'];
+
+        try {
+            const draft = JSON.parse(localStorage.getItem(KEY) || '{}');
+            let restored = false;
+            FIELDS.forEach(f => {
+                if (draft[f] && !$wire.get(f)) { $wire.set(f, draft[f], false); restored = true; }
+            });
+            if (restored) {
+                const note = document.getElementById('draft-restored');
+                if (note) note.hidden = false;
+            }
+        } catch (e) {}
+
+        setInterval(() => {
+            try {
+                const data = Object.fromEntries(FIELDS.map(f => [f, $wire.get(f) || '']));
+                if (Object.values(data).some(v => String(v).trim() !== '')) {
+                    localStorage.setItem(KEY, JSON.stringify(data));
+                }
+            } catch (e) {}
+        }, 3000);
+    </script>
+    @endscript
 
     {{-- lead_form_start: pierwsza interakcja z formularzem zlecenia, raz na wizytę. --}}
     @push('scripts')

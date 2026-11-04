@@ -27,6 +27,31 @@ class Announcement extends Model
     {
         static::saved(fn () => static::forgetHomeCache());
         static::deleted(fn () => static::forgetHomeCache());
+
+        // qualify_lead (GA4): zlecenie zaakceptowane przez admina. Raz na zlecenie,
+        // niezależnie od tego, którą ścieżką panelu zostało zatwierdzone.
+        static::updated(function (Announcement $announcement) {
+            if ($announcement->wasChanged('is_approved') && $announcement->is_approved && !$announcement->qualify_tracked_at) {
+                $announcement->trackQualifiedLead();
+            }
+        });
+    }
+
+    /**
+     * Wysyła qualify_lead przez GA4 Measurement Protocol (admin zatwierdza zlecenie
+     * na serwerze - przeglądarki zleceniodawcy przy tym nie ma). Flagę ustawiamy
+     * zawsze, żeby ponowne zatwierdzenie nie wysłało drugiego zdarzenia.
+     */
+    public function trackQualifiedLead(): void
+    {
+        \App\Support\Ga4MeasurementProtocol::send($this->ga_client_id, 'qualify_lead', [
+            'lead_type' => 'zlecenie',
+            'item_category' => $this->category?->slug,
+            'value' => 0,
+            'currency' => 'PLN',
+        ]);
+
+        $this->forceFill(['qualify_tracked_at' => now()])->saveQuietly();
     }
 
     public static function forgetHomeCache(): void
@@ -55,6 +80,7 @@ class Announcement extends Model
         'approved_at',
         'views_count',
         'proposals_count',
+        'ga_client_id',
     ];
 
     protected function casts(): array
@@ -67,6 +93,8 @@ class Announcement extends Model
             'is_approved' => 'boolean',
             'is_urgent' => 'boolean',
             'approved_at' => 'datetime',
+            'lead_tracked_at' => 'datetime',
+            'qualify_tracked_at' => 'datetime',
         ];
     }
 

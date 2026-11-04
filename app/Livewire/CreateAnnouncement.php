@@ -191,6 +191,9 @@ class CreateAnnouncement extends Component
         $announcement = $this->createAnnouncement($user);
         $this->trackLead($announcement, $user);
 
+        // Szkic z localStorage nie jest już potrzebny - layout go usunie.
+        session()->flash('clear_announcement_draft', true);
+
         if (!auth()->check()) {
             // Konto czeka na akceptację (AUTO_APPROVE_CLIENTS=false) - zlecenie
             // jest zapisane, ale użytkownik nie może się jeszcze zalogować.
@@ -323,6 +326,8 @@ class CreateAnnouncement extends Component
             'is_urgent' => $this->is_urgent,
             'status' => 'pending',
             'is_approved' => false,
+            // Do późniejszych zdarzeń z serwera (qualify_lead po akceptacji).
+            'ga_client_id' => \App\Support\Ga4MeasurementProtocol::currentClientId(),
         ]);
 
         if (!empty($this->selectedTags)) {
@@ -360,6 +365,16 @@ class CreateAnnouncement extends Component
      */
     private function trackLead(Announcement $announcement, User $user): void
     {
+        // Jeden Lead na zlecenie: flagę ustawiamy atomowo, więc nawet podwójne
+        // wywołanie nie wyśle drugiego zdarzenia.
+        $claimed = Announcement::whereKey($announcement->id)
+            ->whereNull('lead_tracked_at')
+            ->update(['lead_tracked_at' => now()]);
+
+        if (!$claimed) {
+            return;
+        }
+
         $categorySlug = $this->categories->firstWhere('id', (int) $announcement->category_id)?->slug
             ?? $announcement->category?->slug;
 

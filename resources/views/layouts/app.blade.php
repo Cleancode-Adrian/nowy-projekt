@@ -249,6 +249,11 @@
     </style>
 
     <script>
+        @if(session('clear_announcement_draft'))
+        // Zlecenie opublikowane - szkic z formularza nie jest już potrzebny.
+        try { localStorage.removeItem('projekciarz_draft'); } catch (e) {}
+        @endif
+
         // Kliknięcia w telefon i e-mail (każdy link tel:/mailto:, także w treści wpisów).
         document.addEventListener('click', function (e) {
             var link = e.target.closest && e.target.closest('a[href^="tel:"], a[href^="mailto:"]');

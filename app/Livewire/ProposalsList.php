@@ -71,6 +71,12 @@ class ProposalsList extends Component
 
         $this->loadProposals();
         $this->trackEvent('accept_proposal');
+        // GA4: lead domknięty - zleceniodawca wybrał wykonawcę (kluczowe zdarzenie).
+        $this->trackEvent('close_convert_lead', [
+            'lead_type' => 'zlecenie',
+            'value' => (float) $proposal->price,
+            'currency' => $proposal->currency ?: 'PLN',
+        ]);
         $this->dispatch('notify', message: 'Oferta zaakceptowana!', type: 'success');
     }
 

@@ -29,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Ciasteczka ustawiane w przeglądarce przez skrypty firm trzecich - Laravel
         // nie może ich odszyfrowywać (dostałby null). Potrzebne do Meta CAPI:
         // zgoda z Cookiebota oraz identyfikatory Pixela.
-        $middleware->encryptCookies(except: ['CookieConsent', '_fbp', '_fbc']);
+        $middleware->encryptCookies(except: ['CookieConsent', '_fbp', '_fbc', '_ga']);
 
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
