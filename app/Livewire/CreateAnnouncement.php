@@ -11,6 +11,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Rules\SafeUpload;
 use App\Services\ProfanityFilter;
+use App\Services\Turnstile;
 use App\Services\UserRegistration;
 use App\Support\DataLayer;
 use App\Support\FbPixel;
@@ -69,6 +70,9 @@ class CreateAnnouncement extends Component
 
     /** Pułapka na boty - pole niewidoczne dla ludzi. */
     public $website = '';
+
+    /** Token Cloudflare Turnstile z kroku zakładania konta. */
+    public $turnstile_token = '';
 
     protected function rules()
     {
@@ -238,6 +242,8 @@ class CreateAnnouncement extends Component
         }
         RateLimiter::hit($key, 60);
 
+        $this->verifyTurnstile();
+
         $rules = UserRegistration::rules('reg_', false);
         unset($rules['reg_company']); // formularz zlecenia nie pyta o firmę
 
@@ -267,6 +273,33 @@ class CreateAnnouncement extends Component
         }
 
         return $user;
+    }
+
+    /**
+     * Token Turnstile jest jednorazowy - po każdej próbie (udanej czy nie)
+     * odświeżamy widżet, żeby poprawka np. hasła nie wymagała przeładowania.
+     */
+    private function verifyTurnstile(): void
+    {
+        if (!Turnstile::enabled()) {
+            return;
+        }
+
+        $token = (string) $this->turnstile_token;
+        $this->turnstile_token = '';
+        $this->dispatch('turnstile-reset');
+
+        if ($token === '') {
+            throw ValidationException::withMessages([
+                'turnstile_token' => 'Poczekaj chwilę, aż zakończy się weryfikacja antyspamowa (pole nad przyciskiem), i spróbuj ponownie.',
+            ]);
+        }
+
+        if (!app(Turnstile::class)->verify($token, request()->ip())) {
+            throw ValidationException::withMessages([
+                'turnstile_token' => 'Weryfikacja antyspamowa nie powiodła się. Spróbuj ponownie.',
+            ]);
+        }
     }
 
     private function loginExistingUser(): ?User

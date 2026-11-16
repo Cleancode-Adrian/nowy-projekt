@@ -49,6 +49,13 @@ return [
         'api_secret' => env('GA4_API_SECRET'),
     ],
 
+    // Cloudflare Turnstile na formularzach rejestracji. Bez obu kluczy wyłączony.
+    // Klucze: dash.cloudflare.com -> Turnstile -> Add widget (tryb Managed).
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret_key' => env('TURNSTILE_SECRET_KEY'),
+    ],
+
     // Meta Pixel. Wysyła dane dopiero po zgodzie marketingowej w Cookiebot.
     'meta_pixel' => [
         'id' => env('META_PIXEL_ID', '1128855549687710'),

@@ -17,15 +17,23 @@ use Illuminate\Validation\Rules\Password;
  */
 class UserRegistration
 {
+    /** Litery (także z akcentami), spacje, apostrof, kropka, myślnik. */
+    public const NAME_PATTERN = "/^[\pL\pM][\pL\pM\s'.\-]*$/u";
+
+    /** Adres strony w treści pola (http://, www., domena/ścieżka). */
+    public const LINK_PATTERN = '/(:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,}\/)/i';
+
     /** Reguły walidacji pól konta. $prefix pozwala użyć ich w Livewire (np. "reg_"). */
     public static function rules(string $prefix = '', bool $withRole = true): array
     {
         $rules = [
-            $prefix . 'name' => 'required|string|max:255',
+            // Same litery: boty wpisują w imię reklamę z linkiem, a my odsyłamy
+            // ją w mailu powitalnym na cudzy adres (spam z naszej domeny).
+            $prefix . 'name' => ['required', 'string', 'max:100', 'regex:' . static::NAME_PATTERN],
             $prefix . 'email' => 'required|email|max:255|unique:users,email',
             $prefix . 'password' => ['required', 'confirmed', Password::min(8)],
             $prefix . 'phone' => 'nullable|string|max:20',
-            $prefix . 'company' => 'nullable|string|max:255',
+            $prefix . 'company' => ['nullable', 'string', 'max:255', 'not_regex:' . static::LINK_PATTERN],
             $prefix . 'accept_privacy' => 'required|accepted',
             $prefix . 'accept_terms' => 'required|accepted',
         ];
@@ -40,6 +48,9 @@ class UserRegistration
     public static function messages(string $prefix = ''): array
     {
         return [
+            $prefix . 'name.regex' => 'Imię i nazwisko może zawierać tylko litery, spacje i myślniki.',
+            $prefix . 'name.max' => 'Imię i nazwisko może mieć maksymalnie 100 znaków.',
+            $prefix . 'company.not_regex' => 'Nazwa firmy nie może zawierać linków.',
             $prefix . 'accept_privacy.accepted' => 'Musisz zaakceptować politykę prywatności',
             $prefix . 'accept_privacy.required' => 'Musisz zaakceptować politykę prywatności',
             $prefix . 'accept_terms.accepted' => 'Musisz zaakceptować regulamin',
@@ -47,6 +58,27 @@ class UserRegistration
             $prefix . 'email.unique' => 'Konto z tym adresem e-mail już istnieje. Zaloguj się.',
             $prefix . 'password.confirmed' => 'Hasła nie są takie same.',
             $prefix . 'password.min' => 'Hasło musi mieć co najmniej 8 znaków.',
+        ];
+    }
+
+    /** Reguła tokenu Turnstile - pusta, gdy Turnstile jest wyłączony. */
+    public static function captchaRules(): array
+    {
+        if (!Turnstile::enabled()) {
+            return [];
+        }
+
+        return [Turnstile::FIELD => ['required', 'string', function (string $attribute, mixed $value, \Closure $fail) {
+            if (!app(Turnstile::class)->verify($value, request()->ip())) {
+                $fail('Weryfikacja antyspamowa nie powiodła się. Odśwież stronę i spróbuj ponownie.');
+            }
+        }]];
+    }
+
+    public static function captchaMessages(): array
+    {
+        return [
+            Turnstile::FIELD . '.required' => 'Poczekaj chwilę, aż zakończy się weryfikacja antyspamowa (pole nad przyciskiem), i wyślij formularz ponownie.',
         ];
     }
 

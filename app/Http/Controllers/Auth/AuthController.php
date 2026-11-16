@@ -37,7 +37,18 @@ class AuthController extends Controller
 
     public function register(Request $request, UserRegistration $registration)
     {
-        $validated = $request->validate(UserRegistration::rules(), UserRegistration::messages());
+        if ($request->filled('website')) {
+            // Bot wypełnił ukryte pole - udajemy zwykły błąd, nic nie zapisujemy.
+            Log::info('Rejestracja odrzucona przez honeypot', ['ip' => $request->ip()]);
+
+            return back()->withErrors(['email' => 'Nie udało się założyć konta. Spróbuj ponownie.'])
+                ->withInput($request->except(['password', 'password_confirmation', 'website']));
+        }
+
+        $validated = $request->validate(
+            UserRegistration::rules() + UserRegistration::captchaRules(),
+            UserRegistration::messages() + UserRegistration::captchaMessages()
+        );
 
         try {
             $user = $registration->register($validated);

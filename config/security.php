@@ -42,6 +42,8 @@ return [
             'https://consentcdn.cookiebot.com',
             // Meta Pixel
             'https://connect.facebook.net',
+            // Cloudflare Turnstile (rejestracja)
+            'https://challenges.cloudflare.com',
         ],
         'style' => [
             'https://cdnjs.cloudflare.com',
@@ -70,6 +72,7 @@ return [
             'https://groot.mailerlite.com',
             'https://consent.cookiebot.com',
             'https://consentcdn.cookiebot.com',
+            'https://challenges.cloudflare.com',
         ],
         'frame' => [
             'https://www.google.com',
@@ -77,6 +80,7 @@ return [
             'https://td.doubleclick.net',
             'https://*.doubleclick.net',
             'https://consentcdn.cookiebot.com',
+            'https://challenges.cloudflare.com',
         ],
     ],
 

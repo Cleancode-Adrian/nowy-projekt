@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\UserRegistration;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,11 +15,11 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:100', 'regex:' . UserRegistration::NAME_PATTERN],
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
-            'company' => 'nullable|string|max:255',
+            'company' => ['nullable', 'string', 'max:255', 'not_regex:' . UserRegistration::LINK_PATTERN],
             // Rola 'admin' nigdy nie może przyjść z requestu.
             'role' => 'nullable|in:client,freelancer',
         ]);

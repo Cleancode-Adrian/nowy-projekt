@@ -97,6 +97,7 @@ class SecurityAudit extends Command
         $this->checkConfig('APP_ENV = production', config('app.env') === 'production');
         $this->checkConfig('Bezpieczne ciasteczka sesji', (bool) config('session.secure'));
         $this->checkConfig('APP_KEY ustawiony', (bool) config('app.key'));
+        $this->checkConfig('Turnstile na rejestracji (TURNSTILE_*)', \App\Services\Turnstile::enabled());
 
         if ($problems > 0 && !$fix) {
             $this->newLine();

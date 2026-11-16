@@ -132,6 +132,9 @@ REQUIRE_EMAIL_VERIFICATION=false
 TRUSTED_PROXIES=127.0.0.1,::1
 ADMIN_EMAIL=twoj-email@domena.pl
 ADMIN_PASSWORD=
+# Anty-spam na rejestracji (dash.cloudflare.com -> Turnstile -> Add widget, tryb Managed)
+TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=
 ```
 
 Upewnij się też, że są ustawione:
@@ -223,6 +226,7 @@ Musisz dostać **403**.
 | `deploy.sh` | `chmod -R 755` na całym projekcie otwierał `.env` na odczyt dla systemu | 644/755 rozdzielnie, `.env` na 600, tryb konserwacji, `queue:restart` |
 | Seeder | hasło admina zapisane jawnie w repozytorium | hasło z `.env` lub losowe; konta demo pomijane na produkcji |
 | Rejestracja API | ustawiała nieistniejącą rolę `user` | walidacja `in:client,freelancer`, domyślnie `client` |
+| Spam przez rejestrację | boty wpisywały reklamę z linkiem w „Imię i nazwisko” i cudzy e-mail - mail powitalny wysyłał ją z naszej domeny | imię tylko z liter (`UserRegistration::NAME_PATTERN`), bez linków w firmie, honeypot, Cloudflare Turnstile na `/register` i w formularzu zlecenia (wyłączony bez kluczy, przy awarii Cloudflare przepuszcza) |
 | Repozytorium | `.env.*`, zrzuty bazy i pliki `.sql` mogły trafić do gita | uszczelniony `.gitignore` + `.gitattributes` (koniec z CRLF) |
 
 Nowe pliki:

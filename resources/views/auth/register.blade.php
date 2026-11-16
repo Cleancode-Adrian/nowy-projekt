@@ -81,6 +81,14 @@
             </label>
         </div>
 
+        {{-- Pułapka na boty: niewidoczne dla ludzi i czytników ekranu --}}
+        <div class="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
+            <label for="website">Strona www</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <x-turnstile class="flex justify-center" />
+
         <button type="submit" class="btn btn-primary w-full py-3">Załóż konto</button>
     </form>
 

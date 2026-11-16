@@ -245,6 +245,11 @@
                             </label>
                             @error('reg_accept_privacy') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
+
+                        <div>
+                            <x-turnstile model="turnstile_token" />
+                            @error('turnstile_token') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
                     @else
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
